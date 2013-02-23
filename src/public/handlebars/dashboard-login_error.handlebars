@@ -1,0 +1,27 @@
+{{#if port_non_integer}}
+Port must be integer (or empty for the default value - 28915).
+{{/if}}
+
+{{#if http_port_non_integer}}
+Http port must be integer (or empty for the default value - 8080).
+{{/if}}
+
+{{#if both_port_non_integer}}
+Port and Http port must be integer (or empty for the default value).
+{{/if}}
+
+{{#if connection_rdb_fail}}
+We could not connect to the database. Please verify your settings.
+{{/if}}
+
+{{#if connection_http_fail}}
+We could connect to RethinkDB but connect to the http interface.
+{{/if}}
+
+{{#if save_file_fail}}
+Could not save settings in a file. Wrong port?
+{{/if}}
+
+{{#if ajax_fail}}
+Something went wrong with the ajax request. Please try again.
+{{/if}}

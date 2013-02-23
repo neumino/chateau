@@ -1,0 +1,25 @@
+{{#if ajax_fail}}
+Something went wrong with the ajax request. Please try again.
+{{/if}}
+{{#if db_name_empty}}
+A database name can not be empty.
+{{/if}}
+{{#if table_name_empty}}
+A table name can not be empty.
+{{/if}}
+{{#if need_a_database_first}}
+You need to create a database first.
+{{/if}}
+{{#if server_error}}
+An error occured on the server.
+<pre>{{error}}</pre>
+{{/if}}
+{{#if ajax_fail_try_load_databases}}
+We could not load the databases. Please <a href="#" class="add_database_option_again">try</a> again.
+{{/if}}
+{{#if wrong_db_name}}
+You have to enter the name of this database to delete it.
+{{/if}}
+{{#if wrong_table_name}}
+You have to enter the name of this table to delete it.
+{{/if}}

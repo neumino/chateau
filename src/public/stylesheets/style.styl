@@ -1,0 +1,350 @@
+// Mixins
+.border_radius(radius)
+    -webkit-border-radius: radius
+    -moz-border-radius: radius
+    -ms-border-radius: radius
+    -o-border-radius: radius
+    border-radius: radius
+
+
+.background_gradient (top_color, bottom_color)
+    background: top_color
+    background: -moz-linear-gradient(top,  top_color 0%, bottom_color 100%)
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,top_color), color-stop(100%,bottom_color))
+    background: -webkit-linear-gradient(top,  top_color 0%,bottom_color 100%)
+    background: -o-linear-gradient(top,  top_color 0%,bottom_color 100%)
+    background: -ms-linear-gradient(top,  top_color 0%,bottom_color 100%)
+    background: linear-gradient(to bottom,  top_color 0%,bottom_color 100%)
+
+.drop_shadow(left, top, radius, offset, color)
+    -moz-box-shadow: left top radius offset color
+    -webkit-box-shadow: left top radius offset color
+    box-shadow: left top radius offset color
+
+
+.inner_shadow(left, top, radius, offset, color)
+    -moz-box-shadow: inset left top radius offset color
+    -webkit-box-shadow: inset left top radius offset color
+    box-shadow: inset left top radius offset color
+// End - Mixins
+
+// Variables
+background_color = #1D2C36
+// End - Variables
+
+// Global elements
+html, body
+    padding: 0px
+    margin: 0px
+    height: 100%
+    background: #fff url('/images/stripe.png') repeat-y;
+#wrapper
+    min-height: 100%
+    height: 100%
+    padding: 60px
+    position: relative
+    margin: 0px
+    padding: 0px
+
+
+
+// Header
+header
+    width: auto
+    height: 30px
+    margin: 0px
+    padding: 12px 0px 0px 40px
+    background: background_color url('/images/logo.png') 5px 5px no-repeat
+    a
+        font: monospace
+        color: #fff
+        font-weight: bold
+        font-size: 1.2em
+        text-decoration: none
+        &:hover
+            text-decoration: underline
+            color: #fff
+
+.nav
+    float: left;
+    width: 60px
+    padding: 0px
+    margin: 0px 0px 0px 0px
+    display: inline-block
+    list-style: none
+    background: background_color
+// End - Header
+
+// Content
+#content_wrapper
+    width: auto
+    height: auto
+    margin-left: 60px
+    background: background_color
+#content
+    margin: 0px;
+    background: #fff
+    padding: 30px
+    border-top-left-radius: 15px;
+    h1
+        font-size: 1.4em
+
+// Dashboard
+.login
+    .description-label
+        margin: 3px 0px 3px 60px
+    .save_config
+        clear: both
+        display: block
+        margin-left: 60px
+        float: left
+    input
+        display: block
+        margin-left: 60px
+    .error
+        width: 460px
+    .not_displayed
+        display: none
+    .loading
+        margin: 8px 0px 0px 17px
+        display: none
+        &.checking
+            display: block
+            float: left
+            margin: 2px 10px 0px 0px
+// End - Dashboard
+
+// Home
+.home
+    .not_displayed
+        display: none
+    .top_content
+        overflow: auto
+    .loading
+        margin: 8px 0px 0px 17px
+        display: none
+        float: left
+        &.displayed
+            display: block
+            margin: 2px 10px 0px 0px
+        &.next_to_select
+            margin: 7px 10px 0px 10px
+
+    .options_container
+        float: right
+        margin: 0px 0px 10px 0px
+        .btn
+            .icon-plus-sign
+                margin: 1px 5px 0px 0px
+            margin: 0px 0px 0px 15px
+    .feedback_create
+        display: none
+        margin-bottom: -2px
+    .add_something
+        display: none
+        clear: both
+        position: relative;
+        background: #fafafa
+        border: 1px solid #ccc
+        padding: 0px 0px 10px 0px
+        margin-top: 10px
+    .add_something:after, .add_something:before
+        bottom: 100%
+        border: solid transparent
+        content: " "
+        height: 0
+        width: 0
+        position: absolute
+        pointer-events: none
+    .add_something_db:after
+        border-color: rgba(213, 213, 213, 0)
+        border-bottom-color: #f3f3f3
+        border-width: 9px
+        right: 0%
+        margin-right: 181px
+        margin-bottom: -1px
+    .add_something_db:before
+        border-color: rgba(0, 0, 0, 0)
+        border-bottom-color: #ccc
+        border-width: 10px
+        right: 0%
+        margin-right: 180px
+        margin-bottom: -1px
+    .add_something_table:after
+        border-color: rgba(213, 213, 213, 0)
+        border-bottom-color: #f3f3f3
+        border-width: 9px
+        right: 0%
+        margin-right: 51px
+        margin-bottom: -1px
+    .add_something_table:before
+        border-color: rgba(0, 0, 0, 0)
+        border-bottom-color: #ccc
+        border-width: 10px
+        right: 0%
+        margin-right: 50px
+        margin-bottom: -1px
+    .add_something
+        .title_container
+            display: block
+            background: #f3f3f3
+            color: #000
+            border-bottom: 1px solid #ccc
+            h2
+                padding: 1px 20px
+                font-size: 1.2em
+                font-weight: bold
+                margin: 0px
+                .close_add_something
+                    float: right
+                    color: #222;
+        .add_content
+            padding: 5px 20px
+            p
+                margin: 4px 0px
+            .btn
+                clear: both
+                display: block
+            .database_selected
+                float: left
+        .alert
+            margin: 10px 20px
+
+    .no_content
+        color: #000
+        font-weight: bold
+        font-size: 1.2em
+
+    .databases
+        clear: both
+        list-style: none;
+        padding: 0px
+        margin: 0px
+        width: auto
+        a
+            color: #000
+            font-weight: bold
+            font-size: 1.2em
+        .database_container
+            clear: both
+            list-style: none
+            margin: 10px 0px
+
+            .database
+                overflow: auto
+                padding: 5px 20px
+                width: auto
+                border: 1px solid #ccc
+                background: #f3f3f3
+                .database_options_container
+                    float: right
+                .link_container
+                    margin: 6px 0px 3px 0px
+                    float: left
+                .icon-th-large
+                    margin: 3px 8px 0px 0px
+            .tables
+                clear: both
+                list-style: none
+                padding: 0px
+                margin: 0px
+                width: auto
+                .table_container
+                    clear: both
+                    overflow: auto
+                    list-style: none
+                    padding: 5px 20px
+                    margin: 0px
+                    border-left: 1px solid #ccc
+                    border-right: 1px solid #ccc
+                    border-bottom: 1px solid #ccc
+                    background: #fafafa
+                    width: auto
+                    .table_options_container
+                        float: right
+                    .table
+                        float: left
+                        color: #444
+                        width: auto
+                        margin: 6px 0px 0px 0px
+                        .icon-th
+                            margin: 0px 8px 0px 5px
+
+                    a
+                        color: #444
+                        font-size: 1em
+                        font-weight: bold
+
+    .delete_something
+        display: none
+        clear: both
+        position: relative;
+        background: #fff
+        border: 1px solid #ccc
+        padding: 0px 0px 10px 0px
+        margin-top: 40px
+    .delete_something:after, .add_something:before
+        bottom: 100%
+        border: solid transparent
+        content: " "
+        height: 0
+        width: 0
+        position: absolute
+        pointer-events: none
+    .delete_something_db:after
+        border-color: rgba(213, 213, 213, 0)
+        border-bottom-color: #f2dede
+        border-width: 9px
+        right: 0%
+        margin-right: 11px
+        margin-bottom: -1px
+    .delete_something_db:before
+        border-color: rgba(0, 0, 0, 0)
+        border-bottom-color: #ccc
+        border-width: 10px
+        right: 0%
+        margin-right: 10px
+        margin-bottom: -1px
+    .delete_something_table:after
+        border-color: rgba(213, 213, 213, 0)
+        border-bottom-color: #f2dede
+        border-width: 9px
+        right: 0%
+        margin-right: 51px
+        margin-bottom: -1px
+    .delete_something_table:before
+        border-color: rgba(0, 0, 0, 0)
+        border-bottom-color: #ccc
+        border-width: 10px
+        right: 0%
+        margin-right: 50px
+        margin-bottom: -1px
+
+    .delete_something_container
+        margin-top: 30px
+        .delete_something
+            display: none
+            .error
+                margin: 10px
+            .title_container
+                display: block
+                background: #f2dede
+                color: #000
+                border-bottom: 1px solid #ccc
+                h3
+                    padding: 1px 20px
+                    font-size: 1em
+                    font-weight: bold
+                    margin: 0px
+                    color: #b94a48
+                .close_delete_something
+                    float: right
+                    color: #222;
+            .warning_content
+                background: #fff
+                padding: 10px 20px
+            .btn
+                display: block
+
+
+// End - Home

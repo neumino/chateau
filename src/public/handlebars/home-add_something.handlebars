@@ -1,0 +1,34 @@
+<div class="title_container">
+    {{#if new_db}}
+    <h2>New database
+    <a href="#" class="close_add_something">&times;</a>
+    </h2>
+    {{/if}}
+    {{#if new_table}}
+    <h2>New table
+    <a href="#" class="close_add_something">&times;</a>
+    </h2>
+    {{/if}}
+</div>
+<div class="alert alert-error not_displayed error_create">
+    <a href="#" class="close">&times;</a>
+    <span class="error_create_content"></span>
+</div>
+<div class="add_content">
+    {{#if new_db}}
+    <p>Database name</p>
+    <input type="text" name="database_name" id="new_database_name" />
+    <button class="btn submit_new_database" class="submit_new_database">Create</div>
+    {{/if}}
+
+    {{#if new_table}}
+    <p>Table name</p>
+    <input type="text" name="table_name" id="new_table_name" />
+    <p>Database</p>
+    <select name="database_selected" id="database_selected" class="database_selected" disabled="disabled">
+        <option value="" class="loading_option" disabled="disabled">Loading databases</option>
+    </select>
+    <img src="/images/ajax-loader.gif" class="loading displayed next_to_select" />
+    <button class="btn submit_new_table" disabled="disabled">Create</div>
+    {{/if}}
+</div>

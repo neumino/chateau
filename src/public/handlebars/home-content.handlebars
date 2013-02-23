@@ -1,0 +1,32 @@
+{{#if no_content}}
+    <li class="database_container no_content">
+        <div class="database">
+            <div class="link_container"><i class="icon-th-large"></i>No database found</div>
+        </div>
+    </li>
+{{else}}
+    {{#each databases}}
+    <li class="database_container not_displayed">
+        <div class="database">
+            <div class="link_container"><a href="#db/{{name}}"><i class="icon-th-large"></i>{{name}}</a></div>
+            <div class="database_options_container">
+                {{!<button class="btn"><i class="icon-edit"></i></button>}}
+                <button class="btn btn_delete_database" data-name={{name}}><i class="icon-remove-circle"></i></button>
+            </div>
+            <div class="delete_something_container"></div>
+        </div>
+        <ul class="tables" id="db_{{name}}">
+            {{#each tables}}
+            <li class="table_container">
+            <div class="table"><a href="#table/{{../name}}/{{this}}"><i class="icon-th"></i>{{this}}</a></div>
+                <div class="table_options_container">
+                    {{!<button class="btn"><i class="icon-edit"></i></button>}}
+                    <button class="btn btn_delete_table" data-database="{{../name}}" data-name="{{this}}"><i class="icon-remove-circle"></i></button>
+                </div>
+                <div class="delete_something_container"></div>
+            </li>
+            {{/each}}
+        </ul>
+    </li>
+    {{/each}}
+{{/if}}
