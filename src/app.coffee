@@ -39,6 +39,7 @@ app.post '/rethinkdb/create_table', rethinkdb.create_table
 app.post '/rethinkdb/get_databases', rethinkdb.get_databases
 app.post '/rethinkdb/delete_database', rethinkdb.delete_database
 app.post '/rethinkdb/delete_table', rethinkdb.delete_table
+app.post '/rethinkdb/get_documents', rethinkdb.get_documents
 app.get '/users', user.list
 
 http.createServer(app).listen app.get('port'), ->

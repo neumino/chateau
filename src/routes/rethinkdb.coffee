@@ -121,3 +121,33 @@ exports.delete_table = (req, res) =>
             res.send JSON.stringify
                 status: 'fail'
                 error: result
+                
+exports.get_documents = (req, res) =>
+    id = req.body.id
+    db_name = req.body.db_name
+    table_name = req.body.table_name
+    skip_value = req.body.skip_value
+    order_by = req.body.order_by
+    limit_value = 200
+    connection = shared_app_ref.connections[id]
+
+    query = r.db(db_name).table(table_name)
+    if order_by?
+        query = query.orderBy(order_by)
+    if skip_value? and skip_value isnt 0
+        query = query.skip(skip_value)
+    #query = query.limit(limit_value+1)
+    cursor = connection.run query, {}
+    results = []
+    cursor.next (doc) ->
+        if doc isnt undefined
+            if results.length < limit_value
+                results.push doc
+            else
+                res.send JSON.stringify
+                    mode_data: true
+                    results: results
+        else
+            res.send JSON.stringify
+                mode_data: false
+                results: results

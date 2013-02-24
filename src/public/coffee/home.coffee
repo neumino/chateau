@@ -24,13 +24,22 @@ class HomeView extends Backbone.View
         'click .btn_delete_database': 'ask_confirmation_delete_database'
         'click .btn_delete_table': 'ask_confirmation_table_database'
 
+    initialize: (args) =>
+        if args?.filter_db is true
+            @filter_db = true
+            @db_name = args.db
+        else
+            @filter_db = false
+
     close_alert: (event) =>
         event.preventDefault()
         @$(event.target).parent().slideUp 'fast', ->
             $(event.target).siblings('span').empty()
     
     render: =>
-        @$el.html @template['main']()
+        @$el.html @template['main']
+            filter_db: @filter_db
+            db_name: @db_name
         @get_all()
         return @
 
@@ -59,6 +68,9 @@ class HomeView extends Backbone.View
     show_all: (args) =>
         animation = args.animation
         data = JSON.parse args.data
+        that = @
+        if @filter_db is true
+            data = _.filter data, (db) -> return db.name is that.db_name
 
         # Save data
         @databases = data.sort(Helpers.prototype.sort_by_name)
@@ -122,8 +134,8 @@ class HomeView extends Backbone.View
                 that.$('.add_something').addClass 'add_something_db'
                 that.$('.add_something').removeClass 'add_something_table'
 
-                $(@).slideDown 'fast'
-                that.$('#new_table_name').focus()
+                $(@).slideDown 'fast', ->
+                    that.$('#new_database_name').focus()
             @state = 'show_add_db'
         @delegateEvents()
 
@@ -150,8 +162,8 @@ class HomeView extends Backbone.View
                     new_table: true
                 that.$('.add_something').addClass 'add_something_table'
                 that.$('.add_something').removeClass 'add_something_db'
-                $(@).slideDown 'fast'
-                that.$('#new_table_name').focus()
+                $(@).slideDown 'fast', ->
+                    that.$('#new_table_name').focus()
                 that.load_databases_for_new_table() # It would be too much sweat to start it before
             @state = 'show_add_table'
         @delegateEvents()
@@ -329,7 +341,6 @@ class HomeView extends Backbone.View
         @delete_view.give_focus()
 
     ask_confirmation_table_database: (event) =>
-        console.log 'trigger'
         root = @$(event.target)
         if event.target.className is 'icon-remove-circle'
             root = root.parent()

@@ -3,6 +3,8 @@ class Router extends Backbone.Router
         '': 'login'
         'login': 'login'
         'home': 'home'
+        'db/:db_name': 'db'
+        'table/:db_name/:table_name': 'table'
     
     initialize: =>
         @view_container = $('#content_wrapper')
@@ -31,6 +33,30 @@ class Router extends Backbone.Router
             @view?.destroy()
             @view = new LoginView
             @view_container.html @view.render({checking: true}).$el
+    db: (db) =>
+        if @connected is true
+            @view?.destroy()
+            @view = new HomeView
+                filter_db: true
+                db: db
+            @view_container.html @view.render().$el
+        else
+            @view?.destroy()
+            @view = new LoginView
+            @view_container.html @view.render({checking: true}).$el
+
+    table: (db_name, table_name) =>
+        if @connected is true
+            @view?.destroy()
+            @view = new TableView
+                db_name: db_name
+                table_name: table_name
+            @view_container.html @view.render().$el
+        else
+            @view?.destroy()
+            @view = new LoginView
+            @view_container.html @view.render({checking: true}).$el
+
 
 
     check_settings: =>

@@ -1,20 +1,28 @@
-<h1>List of databases and tables</h1>
-<img src="/images/ajax-loader.gif" class="loading" />
-<div class="top_content">
-    <div class="alert alert-error not_displayed error"></div>
-    <div class="alert not_displayed feedback_create">
-        <a href="#" class="close">&times;</a>
-        <span class="feedback_create_content"></span>
+{{#if filter_db}}
+<h1><a href="#">Home</a> <span class="child">&gt;</span> database <a href="#db/{{db_name}}">{{db_name}}</a></h1>
+{{else}}
+<h1><a href="#">Home</a> <span class="child">&gt;</span> list of databases and tables</h1>
+{{/if}}
+<div class="main_padding">
+    <img src="/images/ajax-loader.gif" class="loading" />
+    <div class="top_content">
+        <div class="alert alert-error not_displayed error"></div>
+        <div class="alert not_displayed feedback_create">
+            <a href="#" class="close">&times;</a>
+            <span class="feedback_create_content"></span>
+        </div>
+        <div class="options_container">
+            {{#unless filter_db}}
+            <button class="btn add_db"><i class="icon-plus-sign"></i>New database</button>
+            {{/unless}}
+            <button class="btn add_table"><i class="icon-plus-sign"></i>New table</button>
+        </div>
     </div>
-    <div class="options_container">
-        <button class="btn add_db"><i class="icon-plus-sign"></i>New database</button>
-        <button class="btn add_table"><i class="icon-plus-sign"></i>New table</button>
+    <div class="add_something">
     </div>
+    <ul class="databases">
+        <li class="loading_container">
+            <p><img src="/images/ajax-loader.gif" class="loading displayed" />Loading data...</p>
+        </li>
+    </ul>
 </div>
-<div class="add_something">
-</div>
-<ul class="databases">
-    <li class="loading_container">
-        <p><img src="/images/ajax-loader.gif" class="loading displayed" />Loading data...</p>
-    </li>
-</ul>
