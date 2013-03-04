@@ -1,17 +1,18 @@
 <h1>Welcome in your chateau!</h1>
-<p>The server did not find a config file. We can create it for you.</p>
-<p>If you do not fill a value, we are going to try the default value.</p>
-{{#if error}}
-<div class="alert alert-error error">{[error}}</div>
-{{else}}
-<div class="alert alert-error not_displayed error"></div>
-{{/if}}
-<div class="description-label">Server</div>
-<input type="text" name="config-host" id="config-host" placeholder="localhost or IP" {{#if host}}value="{{host}}"{{/if}}/>
-<div class="description-label">ReQL port</div>
-<input type="text" name="config-port" id="config-port" placeholder="28015" {{#if port}}value="{{port}}"{{/if}} />
-<div class="description-label">Http port</div>
-<input type="text" name="config-http_port" id="config-http_port" placeholder="8080" {{#if http_port}}value="{{http_port}}"{{/if}} />
-<button class="btn save_config">Save</button>
-<img src="/images/ajax-loader.gif" class="loading" />
-
+<div class="main_padding">
+    <p>The server did not find a config file. We can create it for you.</p>
+    <p>If you do not fill a value, we are going to try the default value.</p>
+    {{#if error}}
+    <div class="alert alert-error error">{{print_safe error}}</div>
+    {{else}}
+    <div class="alert alert-error not_displayed error"></div>
+    {{/if}}
+    <div class="description-label">Server</div>
+    <input type="text" name="config-host" id="config-host" placeholder="localhost or IP" {{#if host}}value="{{host}}"{{/if}}/>
+    <div class="description-label">ReQL port</div>
+    <input type="text" name="config-port" id="config-port" placeholder="28015" {{#if port}}value="{{port}}"{{/if}} />
+    <div class="description-label">Http port</div>
+    <input type="text" name="config-http_port" id="config-http_port" placeholder="8080" {{#if http_port}}value="{{http_port}}"{{/if}} />
+    <button class="btn save_config">Save</button>
+    <img src="/images/ajax-loader.gif" class="loading" />
+</div>

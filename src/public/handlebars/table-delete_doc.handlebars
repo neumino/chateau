@@ -1,0 +1,21 @@
+<td colspan={{colspan}}>
+    <div class="delete_container">
+        <div class="title_container">
+            <h3>
+                Delete document
+                <a href="#" class="close_delete_document">&times;</a>
+            </h3>
+        </div>
+        <div class="alert alert-error not_displayed error">
+            <a href="#" class="close">&times;</a>
+            <span class="error_content"></span>
+        </div>
+        <div class="warning_content">
+            <p>You are about to delete the document above whose primary key is:<br/>
+            <span class="primary_key_container">{{primary_key_value}}</span><br/>
+            Are you sure you want to delete it?</p>
+            <button class="btn btn_submit_confirm_delete">Delete</button>
+        </div>
+    </div>
+</td>
+<td class="invisible_cell"></td>

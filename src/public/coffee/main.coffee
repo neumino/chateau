@@ -18,7 +18,19 @@ class Helpers
             return -1
         else
             return 0
-   
+
+Handlebars.registerHelper 'comma_separated_list', (array) ->
+    result = ''
+    for value in array
+        result += Handlebars.templates['table-value_raw']
+    return Handlebars.SafeString result
+
+Handlebars.registerHelper 'print_safe', (str) ->
+    return new Handlebars.SafeString str
+
+Handlebars.registerHelper 'inject_template', (template_name, data) ->
+    template = Handlebars.templates[template_name]
+    return new Handlebars.SafeString template data
 
 $(document).ready ->
     window.id = Helpers.prototype.generate_uuid()

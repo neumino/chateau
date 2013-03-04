@@ -1,0 +1,26 @@
+<div class="value {{#if is_object}}value_is_object{{/if}}">
+    {{#unless is_object}}
+    {{#if is_primary_key}}
+        <input type="text" class="field_value" disabled="disabled" value="undefined - The server will generated a uuid">
+    {{else}}{{#if primary_key_defined}}
+        <input type="text" class="field_value" disabled="disabled" {{#if value_is_defined}}value="{{value}}"{{/if}}/>
+    {{else}}{{#if is_undefined}}
+        <input type="text" class="field_value" disabled="disabled" value="undefined">
+    {{else}}{{#if is_boolean}}
+        <select name="type" data-key="{{key}}" class="field_value">
+            <option value="true" {{#if value_is_true}}selected="selected"{{/if}}>true</option>
+            <option value="false" {{#if value_is_false}}selected="selected"{{/if}}>false</option>
+        </select>
+    {{else}}{{#if is_null}}
+        <input type="text" class="field_value" disabled="disabled" value="null"/>
+    {{else}}{{#if is_string}}
+    <textarea class="field_value short_field">{{#if value_is_defined}}{{value}}{{/if}}</textarea>
+    {{else}}{{#if is_array}}
+    <textarea class="field_value short_field">{{#if value_is_defined}}{{value}}{{else}}[]{{/if}}</textarea>
+    {{else}}{{#if is_text}}
+    <textarea class="field_value text_field">{{#if value_is_defined}}{{value}}{{/if}}</textarea>
+    {{else}}
+    <input type="text" class="field_value" {{#if value_is_defined}}value="{{value}}"{{/if}}/>
+    {{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}
+    {{/unless}}
+</div>

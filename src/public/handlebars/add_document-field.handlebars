@@ -1,0 +1,33 @@
+<div class="field {{#if is_object}}field_is_object{{/if}} {{#unless key_name}}new_field{{/unless}}" data-key_name="{{key_name}}">
+    <div class="key_name_container">
+        {{#if key_name}}
+            <strong>{{key_name}}</strong>
+            {{#if is_primary_key}}
+            <em>(primary key)</em>
+            {{/if}}
+            {{else}}
+            <input type="text" class="undefined_key_name" placeholder="key"/>
+        {{/if}}
+    </div>
+
+    <div class="type_container">
+        Type:
+        <select name="type" class="field_type" {{#if is_primary_key}}data-is_primary_key="true"{{/if}} {{#if primary_key_defined}}disabled="disabled"{{/if}}>
+            {{#if is_primary_key}}
+                <option value="undefined" selected="selected">undefined</option>
+                <option value="number">number</option>
+                <option value="string">string</option>
+            {{else}}
+                <option value="undefined" {{#if is_undefined}}selected="selected"{{/if}}>undefined</option>
+                <option value="number" {{#if is_number}}selected="selected"{{/if}}>number</option>
+                <option value="null" {{#if is_null}}selected="selected"{{/if}}>null</option>
+                <option value="boolean" {{#if is_boolean}}selected="selected"{{/if}}>boolean</option>
+                <option value="string" {{#if is_string}}selected="selected"{{/if}}{{#if is_text}}selected="selected"{{/if}}>string</option>
+                <option value="array" {{#if is_array}}selected="selected"{{/if}}>array</option>
+                <option value="object" {{#if is_object}}selected="selected"{{/if}}>object</option>
+            {{/if}}
+        </select>
+    </div>
+    {{inject_template 'add_document-field_input' this}}
+</div>
+

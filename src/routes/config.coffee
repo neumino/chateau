@@ -78,6 +78,8 @@ check_config = (args) ->
             url = 'http://'+host+':'+http_port+'/ajax/semilattice/rdb_namespaces'
         else
             url = 'http://'+host+'/ajax/semilattice/rdb_namespaces'
+
+        shared_app_ref.url = url
         $.ajax
             url: url
             success: success_semilattice

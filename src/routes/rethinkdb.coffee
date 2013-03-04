@@ -136,7 +136,43 @@ exports.get_documents = (req, res) =>
         query = query.orderBy(order_by)
     if skip_value? and skip_value isnt 0
         query = query.skip(skip_value)
-    #query = query.limit(limit_value+1)
+    query = query.limit(limit_value+1)
+    
+    callback = (data)->
+        primary_key = null
+        for uuid, table of data
+            if table?['name'] is table_name
+                primary_key = table['primary_key']
+                break
+        if primary_key is null
+            res.send JSON.stringify
+                status: 'fail'
+                error: 'no_primary_key'
+        else
+            execute_query
+                query: query
+                primary_key: primary_key
+                connection: connection
+                limit_value: limit_value
+                res: res
+                req: req
+    $.ajax
+        url: shared_app_ref.url
+        success: callback
+        error: ->
+            res.send JSON.stringify
+                status: 'fail'
+                error: 'fail_to_retrieve_semilattice'
+
+                    
+execute_query = (args) ->
+    query = args.query
+    connection = args.connection
+    primary_key = args.primary_key
+    limit_value = args.limit_value
+    req = args.req
+    res = args.res
+
     cursor = connection.run query, {}
     results = []
     cursor.next (doc) ->
@@ -145,9 +181,49 @@ exports.get_documents = (req, res) =>
                 results.push doc
             else
                 res.send JSON.stringify
-                    mode_data: true
+                    more_data: true
+                    primary_key: primary_key
                     results: results
         else
             res.send JSON.stringify
-                mode_data: false
+                more_data: false
+                primary_key: primary_key
                 results: results
+
+
+exports.add_document = (req, res) =>
+    id = req.body.id
+    db_name = req.body.db_name
+    table_name = req.body.table_name
+    new_document = req.body.new_document
+    connection = shared_app_ref.connections[id]
+
+    query = r.db(db_name).table(table_name).insert(new_document)
+    cursor = connection.run query, {}
+    cursor.collect (results) =>
+        res.send JSON.stringify results
+
+exports.update_document = (req, res) =>
+    id = req.body.id
+    db_name = req.body.db_name
+    table_name = req.body.table_name
+    new_document = req.body.new_document
+    primary_key_value = req.body.primary_key_value
+    connection = shared_app_ref.connections[id]
+
+    query = r.db(db_name).table(table_name).get(primary_key_value).replace(new_document)
+    cursor = connection.run query, {}
+    cursor.collect (results) =>
+        res.send JSON.stringify results
+
+exports.delete_document = (req, res) =>
+    id = req.body.id
+    db_name = req.body.db_name
+    table_name = req.body.table_name
+    primary_key_value = req.body.primary_key_value
+    connection = shared_app_ref.connections[id]
+
+    query = r.db(db_name).table(table_name).get(primary_key_value).del()
+    cursor = connection.run query, {}
+    cursor.collect (results) =>
+        res.send JSON.stringify results

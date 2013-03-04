@@ -1,0 +1,23 @@
+{{#if new_database}}
+The database was successfully created.
+{{/if}}
+{{#if new_table}}
+The table was successfully created.
+{{/if}}
+{{#if delete_database}}
+The database was successfully deleted.
+{{/if}}
+{{#if delete_table}}
+The table was successfully deleted.
+{{/if}}
+{{#if success_add_document}}
+The following document was inserted:
+<pre>{{document}}</pre>
+{{/if}}
+{{#if success_delete_document}}
+The document with the primary key {{primary_key_value}} has been deleted.
+{{/if}}
+{{#if success_update_document}}
+The document with the primary key {{primary_key_value}} has been replaced with:
+<pre>{{new_document}}</pre>
+{{/if}}

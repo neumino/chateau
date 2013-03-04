@@ -5,7 +5,7 @@ class LoginView extends Backbone.View
         list_tables: Handlebars.templates['dashboard-list_tables']
         list_tables_content: Handlebars.templates['dashboard-list_tables-content']
         login: Handlebars.templates['dashboard-login']
-        login_error: Handlebars.templates['dashboard-login_error']
+        login_error: Handlebars.templates['error']
         checking: Handlebars.templates['dashboard-checking']
     events:
         'click .save_config': 'save_config'

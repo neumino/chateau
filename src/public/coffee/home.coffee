@@ -6,8 +6,8 @@ class HomeView extends Backbone.View
     template:
         main: Handlebars.templates['home-main']
         content: Handlebars.templates['home-content']
-        error: Handlebars.templates['home-error']
-        feedback: Handlebars.templates['home-feedback']
+        error: Handlebars.templates['error']
+        feedback: Handlebars.templates['feedback']
         add_something: Handlebars.templates['home-add_something']
         databases_options: Handlebars.templates['home-add_something-database_option']
     state: null #show_add_db, show_add_table
@@ -23,6 +23,7 @@ class HomeView extends Backbone.View
         'keypress #new_table_name': 'handle_keypress_new_table'
         'click .btn_delete_database': 'ask_confirmation_delete_database'
         'click .btn_delete_table': 'ask_confirmation_table_database'
+        'click .close_add_something': 'close_add_something'
 
     initialize: (args) =>
         if args?.filter_db is true
@@ -362,7 +363,7 @@ class DeleteView extends Backbone.View
     template:
         main: Handlebars.templates['home-delete_warning']
         error: Handlebars.templates['home-error']
-        feedback: Handlebars.templates['home-feedback']
+        feedback: Handlebars.templates['feedback']
     add_something_view_changed: false
     events:
         'click .btn_confirm_delete':'handle_click'

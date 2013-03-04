@@ -91,13 +91,12 @@ class Router extends Backbone.Router
             @navigate 'login'
             @view?.destroy()
             @view = new LoginView
-            @view_container.html @view.render({connection_rdb_fail: true}).$el
+            @view_container.html @view.render({error: {connection_rdb_fail: true}}).$el
 
 
 
     ajax_fail_check: =>
-        @render
-            error: @login_error {ajax_fail: true}
+        # TODO
 
 
 

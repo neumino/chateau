@@ -1,22 +1,71 @@
-Handlebars.registerHelper 'comma_separated_list', (array) ->
-    result = ''
-    for value in array
-        result += Handlebars.templates['table-value_raw']
-    return Handlebars.SafeString result
-
-
 class TableView extends Backbone.View
     id: 'content'
     className: 'table_view'
     template:
         main: Handlebars.templates['table-main']
         tr: Handlebars.templates['table-tr']
-        td: Handlebars.templates['table-td']
+        no_doc: Handlebars.templates['table-no_doc']
         options: Handlebars.templates['table-options']
+        error: Handlebars.templates['error']
+        feedback: Handlebars.templates['feedback']
+        td: Handlebars.templates['table-td']
 
      events:
         'click .show_row': 'show_row'
         'click .btn_add_document': 'show_add_document'
+        'click .close': 'close_alert'
+
+    initialize: (args) =>
+        @db_name = args.db_name
+        @table_name = args.table_name
+
+        @skip_value = 0
+        @get_documents() # SPARTAAAA
+
+        @callbacks_on_resize = {}
+        @callbacks_on_scroll = {}
+        @keys = {}
+
+        @new_document_view = new NewDocumentView
+            table_name: @table_name
+            db_name: @db_name
+            container: @
+
+    render: =>
+        that = @
+        @$el.html @template['main']
+            db_name: @db_name
+            table_name: @table_name
+
+        callback_resize_top_content = (e) ->
+            width = $(window).width()-140
+            if $(window).scrollLeft() >= 60
+                width += 60
+            else
+                width += $(window).scrollLeft()
+            that.$('.top_content').css 'width', width
+        callback_resize_top_content()
+        @callbacks_on_resize['top_content'] = callback_resize_top_content
+        @bind_callbacks_on_resize()
+
+
+        callback_scroll_top_content = (e) ->
+            margin = $(window).scrollLeft()
+            if margin < 60
+                margin = 0
+            else
+                margin -= 60
+            that.$('.top_content').css 'margin-left', margin
+        callback_scroll_top_content()
+        @callbacks_on_scroll['top_content'] = callback_scroll_top_content
+        @bind_callbacks_on_scroll()
+
+        return @
+
+    close_alert: (event) =>
+        event.preventDefault()
+        @$(event.target).parent().slideUp 'fast', ->
+            $(event.target).siblings('span').empty()
 
     handle_mousedown: (event) =>
         if @mousedown is true
@@ -55,6 +104,7 @@ class TableView extends Backbone.View
             @toggle_options_document()
             @$('.options_document').removeClass 'options_document_hidden'
 
+    # Toggle its position
     toggle_options_document: =>
         table_width = 0
         $('.entry').first().children().each (i, element) ->
@@ -67,31 +117,7 @@ class TableView extends Backbone.View
             @$('.options_document').addClass 'options_document_float'
 
 
-    initialize: (args) =>
-        @db_name = args.db_name
-        @table_name = args.table_name
-
-        @skip_value = 0
-        @get_documents
-            skip_value: @skip_value
-
-        @callbacks_on_scroll = {}
-
-
-    render: =>
-        that = @
-        @$el.html @template['main']
-            db_name: @db_name
-            table_name: @table_name
-
-        @callbacks_on_scroll['new_document'] = (e) ->
-            that.$('.options_document').css 'margin-top', (-1*$(@).scrollTop())+'px'
-        @bind_callbacks_on_scroll()
-
-        return @
-
     get_documents: (args) =>
-        skip_value = args?.skip_value || 0
         order_by = args?.order_by
 
         $.ajax
@@ -102,7 +128,7 @@ class TableView extends Backbone.View
                 id: window.id
                 db_name: @db_name
                 table_name: @table_name
-                skip_value: skip_value
+                skip_value: @skip_value
             success: @ajax_success_get_documents
             error: @ajax_fail_get_documents
 
@@ -110,74 +136,123 @@ class TableView extends Backbone.View
         data = JSON.parse data
         more_data = data.more_data
         results = data.results
-        primary_key = data.primary_key
+        @primary_key = data.primary_key
         keys = {}
         that = @
+        
 
         @$('.loading_container').slideUp 'fast'
 
-        # Let's do some work. We sort keys per average occurence, basically, the less holes, the more on the left
-        for result in results
-            @build_map_keys
+        if data.results.length is 0
+            @$('.content_container').html @template['no_doc']
+            keys =
+                keys: {}
+                most_frequent_type: "object"
+                object_count: 0
+                occurence_count: 0
+                occurrence_rebalanced: 0
+                sorted_keys: [@primary_key]
+                type:
+                    object: 0
+            keys['keys'] = {}
+            keys['keys'][@primary_key] =
+                is_primary_key: true
+                most_frequent_type: "string"
+                occurence_count: 0
+                occurrence_rebalanced: Infinity
+                primitive_value_count: 0
+                type:
+                    string: 0
+
+        else
+            # Let's do some work. We sort keys per average occurence, basically, the less holes, the more on the left
+            # That's some serious shit I wrote at 4am...
+            for result in results
+                @build_map_keys
+                    keys: keys
+                    value: result
+
+            @compute_occurrence_keys
                 keys: keys
-                result: result
+                results: results
 
-        @compute_occurrence_keys
-            keys: keys
-            results: results
+            @build_most_frequent_type
+                keys: keys
 
-        #TODO Tweak primary key
-        @sort_keys
-            keys: keys
-        #TODO deal if a key just match {}
-        @$('.content_container').html @template['tr']()
-        @$('.entry').last().append @template['td']
-            record_num: true
-            value: '#'
-            first: true
-            col: 0
+            for key, value of keys['keys']
+                if key is @primary_key
+                    value.occurrence_rebalanced = Infinity
+                    value.is_primary_key = true
+                    break
 
-        @display_keys
-            keys: keys
-            prefix: ''
-            col:
-                col: 1
+            @sort_keys
+                keys: keys
 
-        for result, i in results
-            @$('.content_container').append @template['tr']()
+            #TODO deal if a key just match {}
+            @$('.content_container').empty()
+            @$('.content_container').html @template['tr']
+                primary_key_value: '' # Err, I'm too lazy to handle the case 0 == handle in handlebars
             @$('.entry').last().append @template['td']
                 record_num: true
-                value: @skip_value+i+1
+                value: '#'
+                first: true
                 col: 0
-            @display_result
-                result: result
+
+            @display_keys
                 keys: keys
+                prefix: ''
                 col:
                     col: 1
-        @$('.value_container').mousedown (e) -> e.stopPropagation()
-        @$('.click_detector').mousedown @handle_mousedown
-        @$('.value_container').each (index, element) ->
-            $(element).css 'width', that.$(element).width()
-            $(element).css 'max-width', that.$(element).width()
-        @$('.value').each (index, element) ->
-            that.$(element).css 'width', that.$(element).width()
-            that.$(element).css 'max-width', that.$(element).width()
 
-        @$('.entry').slice(1).append @template['options']()
+            for result, i in results
+                new_document_view = new DocumentView
+                    keys: keys
+                    result: result
+                    index: @skip_value+i+1
+                    primary_key: @primary_key
+                    table_name: @table_name
+                    db_name: @db_name
+                    container: @
+                @$('.content_container').append new_document_view.render().$el
 
-        @callbacks_on_scroll['options_document'] = (e) ->
-            that.$('.options_document').css 'margin-top', (-1*$(document).scrollTop())+'px'
-        @bind_callbacks_on_scroll()
+            @$('.value_container').mousedown (e) -> e.stopPropagation()
+            @$('.click_detector').mousedown @handle_mousedown
+            @$('.value_container').each (index, element) ->
+                $(element).css 'width', that.$(element).width()
+                $(element).css 'max-width', that.$(element).width()
+            @$('.value').each (index, element) ->
+                that.$(element).css 'width', that.$(element).width()
+                that.$(element).css 'max-width', that.$(element).width()
+
+            @$('.entry').slice(1).append @template['options']()
+
+            @$('.content_displayer').css 'display', 'none'
+            @$('.content_displayer').css 'visibility', 'visible'
+
+        @new_document_view.set_data
+            keys: keys
+            more_data: data.more_data
 
         @toggle_options_document()
 
+        # Let's delay for a smoother result
+        cb = ->
+            @$('.content_displayer').slideDown 'fast'
+        setTimeout cb, 10
         @delegateEvents()
-
+    
+    # TODO Cache stuff
     bind_callbacks_on_scroll: =>
         that = @
         $(document).scroll (e) ->
             for key, callback of that.callbacks_on_scroll
                 callback()
+    bind_callbacks_on_resize: =>
+        that = @
+        $(document).resize (e) ->
+            for key, callback of that.callbacks_on_resize
+                callback()
+
 
 
     stop_propagation: (even) ->
@@ -188,30 +263,6 @@ class TableView extends Backbone.View
         @stop_propagation = false
 
 
-    display_result: (args) =>
-        keys = args.keys
-        result = args.result
-        col = args.col
-
-        last_entry = @$('.entry').last()
-        if keys['primitive_value']?
-            last_entry.append @template['td']
-                value: result
-                undefined: result is undefined
-                null: result is null
-                number: typeof result is 'number'
-                string: typeof result is 'string'
-                boolean: typeof result is 'boolean'
-                array: Object.prototype.toString(result) is '[object Array]'
-                col: col.col
-            col.col++
-
-        else if keys['object']?
-            for key in keys['sorted_keys']
-                @display_result
-                    keys: keys['object'][key]
-                    result: result[key]
-                    col: col
 
     display_keys: (args) =>
         keys = args.keys
@@ -219,8 +270,18 @@ class TableView extends Backbone.View
         col = args.col
 
         last_entry = @$('.entry').last()
-        if keys['primitive_value']?
-            if keys['object']?
+        if keys['keys']?
+            for key in keys['sorted_keys']
+                if prefix isnt ''
+                    new_prefix = prefix+'.'+key
+                else
+                    new_prefix = key
+                @display_keys
+                    keys: keys['keys'][key]
+                    prefix: new_prefix
+                    col: col
+        else # This is a primitive
+            if keys['keys']?
                 value = prefix+'.value'
             else
                 value = prefix
@@ -229,32 +290,23 @@ class TableView extends Backbone.View
                 value: value
                 col: col.col
             col.col++
-        else if keys['object']?
-            for key in keys['sorted_keys']
-                if prefix isnt ''
-                    new_prefix = prefix+'.'+key
-                else
-                    new_prefix = key
-                @display_keys
-                    keys: keys['object'][key]
-                    prefix: new_prefix
-                    col: col
+
                     
 
 
     sort_keys: (args) =>
         keys = args.keys
 
-        if keys['object']?
-            for key of keys['object']
+        if keys['keys']?
+            for key of keys['keys']
                 @sort_keys
-                    keys: keys['object'][key]
+                    keys: keys['keys'][key]
             sorted_keys = []
-            for key of keys['object']
+            for key of keys['keys']
                 sorted_keys.push key
             sorted_keys.sort (a, b) ->
-                a_value = keys['object'][a].occurrence
-                b_value = keys['object'][b].occurrence
+                a_value = keys['keys'][a].occurrence_rebalanced
+                b_value = keys['keys'][b].occurrence_rebalanced
 
                 if a_value < b_value
                     return 1
@@ -272,39 +324,51 @@ class TableView extends Backbone.View
 
             keys['sorted_keys'] = sorted_keys
 
+    build_most_frequent_type: (args) =>
+        keys = args.keys
+        map_type = keys.type
+
+        if keys['keys']?
+            for key of keys['keys']
+                @build_most_frequent_type
+                    keys: keys['keys'][key]
+
+       
+        max = -1
+        most_frequent_type = null
+
+        for type, value of map_type
+            if value > max
+                most_frequent_type = type
+                max = value
+        # We give priority to text
+        if most_frequent_type is 'string' and map_type['text'] > 0
+            most_frequent_type = 'text'
+        keys['most_frequent_type'] = most_frequent_type
 
 
     compute_occurrence_keys: (args) =>
         keys = args.keys
-        results = args.results
 
         occurrence = 0
-        if keys['object']?
-            for key of keys['object']
+        if keys['keys']?
+            for key of keys['keys']
                 @compute_occurrence_keys
-                    keys: keys['object'][key]
-                    results: results
+                    keys: keys['keys'][key]
 
             occurrence = 0
             count = 0
-            if keys['primitive_value']?
-                occurrence += keys['primitive_value']
+            if keys['primitive_value_count']?
+                occurrence += keys['primitive_value_count']
                 count++
-            if occurrence isnt occurrence
-                debugger
-            for key of keys['object']
-                occurrence += keys['object'][key]['occurrence']
+            for key of keys['keys']
+                occurrence += keys['keys'][key]['occurrence_rebalanced']
                 count++
-                if occurrence isnt occurrence
-                    debugger
-
             occurrence /= count
-            if occurrence isnt occurrence
-                debugger
 
-            keys['occurrence'] = occurrence
+            keys['occurrence_rebalanced'] = occurrence
         else
-            keys['occurrence'] = keys['primitive_value']
+            keys['occurrence_rebalanced'] = keys['primitive_value_count']
 
     ###
     {
@@ -343,22 +407,57 @@ class TableView extends Backbone.View
     ###
     build_map_keys:(args) =>
         keys = args.keys
-        result = args.result
+        value = args.value
 
-        if jQuery.isPlainObject(result)
-            for key, value of result
-                if not keys['object']
-                    keys['object'] = {}
-                if not keys['object'][key]?
-                    keys['object'][key] = {}
+        if jQuery.isPlainObject(value)
+            for key, new_value of value
+                if not keys['keys']
+                    keys['keys'] = {}
+                if not keys['keys'][key]?
+                    keys['keys'][key] = {}
                 @build_map_keys
-                    keys: keys['object'][key]
-                    result: value
-        else
-            if keys['primitive_value']?
-                keys['primitive_value']++
+                    keys: keys['keys'][key]
+                    value: new_value
+            if keys['object_count']?
+                keys['object_count']++
             else
-                keys['primitive_value'] = 1
+                keys['object_count'] = 1
+        else
+            if keys['primitive_value_count']?
+                keys['primitive_value_count']++
+            else
+                keys['primitive_value_count'] = 1
+        if not keys['occurence_count']?
+            keys['occurence_count'] = 1
+        else
+            keys['occurence_count']++
+
+        type = @typeof value
+        if not keys['type']?
+            keys['type'] = {}
+        if not keys['type'][type]
+            keys['type'][type] = 1
+        else
+            keys['type'][type]++
+
+    typeof: (value) =>
+        if value is undefined
+            return 'undefined'
+        else if value is null
+            return 'null'
+        else if typeof value is 'boolean'
+            return 'boolean'
+        else if typeof value is 'string'
+            if value.search(/\n/) is -1
+                return 'string'
+            else
+                return 'text'
+        else if typeof value is 'number'
+            return 'number'
+        else if Object.prototype.toString.call(value) is '[object Array]'
+            return 'array'
+        else
+            return 'object'
         
     ajax_fail_get_documents: =>
         @$('.loading_container').slideUp 'fast', ->
@@ -372,6 +471,45 @@ class TableView extends Backbone.View
     show_row: (event) =>
         event.preventDefault()
 
-
     show_add_document: (event) =>
-        #TODO
+        that = @
+        if @new_document_view.display is true
+            @new_document_view.display = false
+            @$('.add_document').slideUp 'fast'
+        else
+            @$('.add_document').html @new_document_view.render().$el
+            @$('.add_document').css 'width', $(window).width()-90-32
+            @$('.add_document').slideDown 'fast'
+            @new_document_view.delegateEvents()
+            callback_move_form = (e) ->
+                margin_left = $(window).scrollLeft()
+                if margin_left > 60
+                    that.$('.add_document').css 'margin-left', (margin-left-60)+'px'
+                    that.$('.add_document').css 'width', $(window).width()-90-32+60+'px'
+                else
+                    that.$('.add_document').css 'margin-left', '0px'
+                    that.$('.add_document').css 'width', ($(window).width()-90-32+margin_left)+'px'
+            callback_move_form()
+            @callbacks_on_scroll['new_document'] = callback_move_form
+
+
+    success_add_result: (document) =>
+        @$('.add_document').slideUp 'fast'
+        @$('.feedback_add_content').html @template['feedback']
+            success_add_document: true
+            document: JSON.stringify(document, null, 2)
+        @$('.feedback_add').slideDown 'fast'
+
+    show_successful_delete: (args) =>
+        @$('.feedback_add_content').html @template['feedback']
+            success_delete_document: true
+            primary_key_value: args.primary_key_value
+        @$('.feedback_add').slideDown 'fast'
+
+    show_successful_update: (args) =>
+        @$('.feedback_add_content').html @template['feedback']
+            success_update_document: true
+            primary_key_value: args.primary_key_value
+            new_document: JSON.stringify(args.new_document, null, 2)
+        @$('.feedback_add').slideDown 'fast'
+

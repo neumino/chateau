@@ -139,6 +139,8 @@ header
             margin: 2px 10px 0px 0px
 // End - Dashboard
 
+// TODO Merge styles that often repeat
+
 // Home
 .home
     .not_displayed
@@ -378,7 +380,19 @@ header
     .not_displayed
         display: none
     .top_content
+        min-height: 50px
         min-width: 100%
+        .options_container
+            float: right
+            margin: 0px 0px 10px 0px
+            height: 40px
+            .btn_add_document
+                .icon-plus-sign
+                    margin: 1px 5px 0px 0px
+                position: fixed
+                right: 0px
+                margin: 10px 30px 0px 0px
+
     .loading
         margin: 2px 11px 0px 17px
         float: left
@@ -388,24 +402,20 @@ header
         &.next_to_select
             margin: 7px 10px 0px 10px
 
-    .options_container
-        float: right
-        margin: 0px 0px 10px 0px
-        .btn
-            .icon-plus-sign
-                margin: 1px 5px 0px 0px
-            margin: 0px 0px 0px 15px
+
     .feedback_create
         display: none
         margin-bottom: -2px
     .add_document
         display: none
+        position: fixed
+        right: 0px
+        margin: 0px 0px 20px 0px
         clear: both
         position: relative;
         background: #fafafa
         border: 1px solid #ccc
-        padding: 0px 0px 10px 0px
-        margin-top: 10px
+        padding: 0px
     .add_document:after, .add_document:before
         bottom: 100%
         border: solid transparent
@@ -419,16 +429,16 @@ header
         border-bottom-color: #f3f3f3
         border-width: 9px
         right: 0%
-        margin-right: 181px
+        margin-right: 71px
         margin-bottom: -1px
     .add_document:before
         border-color: rgba(0, 0, 0, 0)
         border-bottom-color: #ccc
         border-width: 10px
         right: 0%
-        margin-right: 180px
+        margin-right: 70px
         margin-bottom: -1px
-    .add_document
+    .add_document, .update_document
         .title_container
             display: block
             background: #f3f3f3
@@ -439,11 +449,11 @@ header
                 font-size: 1.2em
                 font-weight: bold
                 margin: 0px
-                .close_add_something
+                .close_add_document
                     float: right
                     color: #222;
-        .add_content
-            padding: 5px 20px
+        .add_document_content, .update_container
+            padding: 0px
             p
                 margin: 4px 0px
             .btn
@@ -451,6 +461,55 @@ header
                 display: block
             .database_selected
                 float: left
+            .fields_main_container
+                padding: 5px 20px
+                .field
+                    &.field_is_object
+                        width: 532
+                    max-width: 500px
+                    select
+                        padding: 0px 6px
+                        box-sizing: content-box;
+                        -moz-box-sizing: content-box;
+                        -webkit-box-sizing: content-box;
+                    .key_name_container
+                        float: left
+                        padding: 8px 0px 0px 0px
+                        .undefined_key_name
+                            margin-top: -7px
+                            width: 196px
+                    .type_container
+                        margin-left: 10px;
+                        float: right
+                        select
+                            margin: 0px 0px 5px 0px
+                    .value
+                        clear: both
+                        padding: 0px 14px 0px 0px
+                        &.value_is_object
+                            width: 500px
+                            margin-left: 10px
+                            border-left: 2px dotted #ccc
+                            padding: 10px 0px 10px 20px
+                        .field_value
+                            width: 100%
+                        .text_field
+                            height: 70px
+                            overflow: hidden
+                        .short_field
+                            height: 20px
+                            overflow: hidden
+                    input:disabled
+                        -webkit-touch-callout: none;
+                        -webkit-user-select: none;
+                        -khtml-user-select: none;
+                        -moz-user-select: none;
+                        -ms-user-select: none;
+                        user-select: none;
+        .submit_add_document
+            margin: 20px 0px
+
+
         .alert
             margin: 10px 20px
 
@@ -458,45 +517,56 @@ header
         color: #000
         font-weight: bold
         font-size: 1.2em
+    .content_displayer
+        visibility: hidden
     .content_container
         clear: both
-        font: 13px/18px monospace, mono, consolasp
+        font: 13px/18px monospace, mono, consolas
         border-collapse:collapse;
+        .no_doc
+            font: 13px verdana
         .entry
             position: relative
             &:hover
                 .options_document
-                    display: block
+                    .btn
+                        visibility: visible
                     &.options_document_hidden
-                        display: none
+                        .btn
+                            visibility: hidden
+
 
         .options_document
             margin: 0px
             .btn
                 margin-top: 5px
         .options_document_float
-            display: none
             width: 90px
             min-width: 90px
             height: 39px
             padding: 0px 20px
+            .btn
+                visibility: hidden
         .options_document_fixed
             position: fixed
             right: 0px
             z-index: 10
-            display: none
             width: 90px
             min-width: 90px
             height: 39px
             padding: 0px 20px
+            .btn
+                visibility: hidden
 
-        .value
+
+        .td_value
             position: relative
             border: 1px solid #aaa
             padding: 0px
             overflow: hidden
             max-width: 310px
             .click_detector
+                /* height: 34px // Need more work */
                 padding: 0px 6px 0px 0px
                 cursor: e-resize
                 .value_container
@@ -527,5 +597,71 @@ header
                 visibility: hidden
                 border-left: none
                 border-top: none
+        .delete_document
+            max-width: 100%
+            .delete_container
+                display: none
+                font-family: Verdana
+                margin: 10px 30px
+                border: 1px solid #ccc
+                .inviisble_cell
+                    visibility: hidden
+                .title_container
+                    display: block
+                    background: #f2dede
+                    color: #000
+                    border-bottom: 1px solid #ccc
+                    h3
+                        padding: 1px 20px
+                        font-size: 1em
+                        font-weight: bold
+                        margin: 0px
+                        color: #b94a48
+                    .close_delete_document
+                        float: right
+                        color: #222;
+                .warning_content
+                    overflow: auto
+                    background: #fff
+                    padding: 10px 20px
+                    .primary_key_container
+                        padding-left: 20px
+                    .btn_submit_confirm_delete
+                        float: right
+                .btn
+                    display: block
+        .update_document
+            max-width: 100%
+            .update_container
+                display: none
+                font-family: Verdana
+                margin: 10px 30px
+                border: 1px solid #ccc
+                .inviisble_cell
+                    visibility: hidden
+                .title_container
+                    display: block
+                    background: #fcf8e3
+                    color: #000
+                    border-bottom: 1px solid #ccc
+                    h3
+                        padding: 1px 20px
+                        font-size: 1em
+                        font-weight: bold
+                        margin: 0px
+                        color: #222
+                    .close_delete_document
+                        float: right
+                        color: #222;
+                .warning_content
+                    overflow: auto
+                    background: #fff
+                    padding: 10px 20px
+                    .primary_key_container
+                        padding-left: 20px
+                    .btn_submit_confirm_delete
+                        float: right
+                .btn
+                    display: block
 
 // End - Table View
