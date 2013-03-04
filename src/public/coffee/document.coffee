@@ -276,6 +276,8 @@ class DocumentUpdateView extends Backbone.View
                 is_undefined: type is 'undefined'
                 is_null: type is 'null'
                 is_boolean: type is 'boolean'
+                value_is_true: value is true
+                value_is_false: value is false
                 is_string: type is 'string'
                 is_text: type is 'text'
                 is_number: type is 'number'
@@ -314,9 +316,6 @@ class DocumentUpdateView extends Backbone.View
         @slideUp()
 
     submit_update_document: (event) =>
-        array = eval(array)
-        array = eval(array)
-        array = eval(array)
         fields = $(event.target).siblings('.fields_main_container').children('.field')
         new_document = {}
         errors = []
@@ -357,13 +356,14 @@ class DocumentUpdateView extends Backbone.View
                     when 'boolean'
                         if value is 'true'
                             current_object[key_name] = true
-                        else if valuue is 'false'
+                        else if value is 'false'
                             current_object[key_name] = false
                         #else # Error cannot be true
                     when 'string'
                         current_object[key_name] = value
                     when 'array'
                         current_object[key_name] = eval(value)
+            return true
 
 
         fields.each callback
