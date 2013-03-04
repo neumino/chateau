@@ -1,10 +1,42 @@
 Chateau - RethinkDB's castle
 ====
 
-Attempting something awesome.
+Chateau is a data explorer for RethinkDB. RethinkDB already comes with a "data explorer", which is more a query buider.
 
 
-
-Limitations
+Install
 ====
-No https protocol
+Install node.js
+Install these libraries
+    npm install express
+    npm install coffee-script
+    npm install handlebars
+    npm install stylus
+    npm install rethinkdb
+
+
+Run
+====
+node build/app.js
+
+
+Versions
+====
+2013.03.03 - Alpha
+    List databases, tables, documents.
+    Add/update/delete document
+
+
+TODO - Rough road maps
+====
+Do the TODOs in the code
+Refactor the code for add/update a document
+Implement/test all errors handling
+Add loading for logout
+Sort the documents
+Filter documents
+Support joins
+Add custom actions
+Add custom views
+Support https
+Get a dog (a golden retriever)
