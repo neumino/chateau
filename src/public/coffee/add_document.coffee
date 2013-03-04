@@ -182,7 +182,6 @@ class NewDocumentView extends Backbone.View
                         current_object[key_name] = value
                     when 'array'
                         current_object[key_name] = eval(value)
-                        debugger
 
 
         fields.each callback
