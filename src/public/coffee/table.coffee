@@ -45,18 +45,21 @@ class TableView extends Backbone.View
             else
                 width += $(window).scrollLeft()
             that.$('.top_content').css 'width', width
+
+            @$('.add_document').css 'width', $(window).width()-90-32
         callback_resize_top_content()
         @callbacks_on_resize['top_content'] = callback_resize_top_content
         @bind_callbacks_on_resize()
 
 
         callback_scroll_top_content = (e) ->
-            margin = $(window).scrollLeft()
-            if margin < 60
-                margin = 0
+            margin_left = $(window).scrollLeft()
+            if margin_left > 60
+                that.$('.top_content').css 'margin-left', (margin_left-60)+'px'
+                that.$('.top_content').css 'width', $(window).width()-90-32+60+'px'
             else
-                margin -= 60
-            that.$('.top_content').css 'margin-left', margin
+                that.$('.top_content').css 'margin-left', '0px'
+                that.$('.top_content').css 'width', ($(window).width()-90-32+margin_left)+'px'
         callback_scroll_top_content()
         @callbacks_on_scroll['top_content'] = callback_scroll_top_content
         @bind_callbacks_on_scroll()
@@ -479,20 +482,8 @@ class TableView extends Backbone.View
             @$('.add_document').slideUp 'fast'
         else
             @$('.add_document').html @new_document_view.render().$el
-            @$('.add_document').css 'width', $(window).width()-90-32
             @$('.add_document').slideDown 'fast'
             @new_document_view.delegateEvents()
-            callback_move_form = (e) ->
-                margin_left = $(window).scrollLeft()
-                if margin_left > 60
-                    that.$('.add_document').css 'margin-left', (margin-left-60)+'px'
-                    that.$('.add_document').css 'width', $(window).width()-90-32+60+'px'
-                else
-                    that.$('.add_document').css 'margin-left', '0px'
-                    that.$('.add_document').css 'width', ($(window).width()-90-32+margin_left)+'px'
-            callback_move_form()
-            @callbacks_on_scroll['new_document'] = callback_move_form
-
 
     success_add_result: (document) =>
         @$('.add_document').slideUp 'fast'
