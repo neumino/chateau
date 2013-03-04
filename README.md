@@ -6,14 +6,17 @@ Chateau is a data explorer for RethinkDB. RethinkDB already comes with a "data e
 
 Install
 ----
-Install node.js
-Install these libraries
+Install node.js amd the following node libraries
 ```
 npm install express
 npm install coffee-script
 npm install handlebars
 npm install stylus
 npm install rethinkdb
+```
+Build with
+```
+make
 ```
 
 
