@@ -32,6 +32,7 @@ class TableView extends Backbone.View
             container: @
 
     render: =>
+        #TODO Fix this shit!!!
         that = @
         @$el.html @template['main']
             db_name: @db_name
@@ -55,7 +56,7 @@ class TableView extends Backbone.View
                 margin = 0
             else
                 margin -= 60
-            margin += $(window).width()-400
+            margin += $(window).width()-320
             that.$('.options_container').css 'margin-left', margin
         callback_scroll_top_content()
         @callbacks_on_scroll['top_content'] = callback_scroll_top_content
