@@ -32,6 +32,7 @@ TODO - Rough road maps
 Do the TODOs in the code
 Refactor the code for add/update a document
 Implement/test all errors handling
+Fix Makefile
 Add loading for logout
 Sort the documents
 Filter documents
