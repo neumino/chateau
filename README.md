@@ -64,4 +64,4 @@ Things to do
 
 Note
 ----
-I (Michel Tu) am working at RethinkDB, but this project is a personal one.
+I am working at RethinkDB, but this project is a personal one.
