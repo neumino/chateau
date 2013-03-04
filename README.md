@@ -47,6 +47,7 @@ Michel Tu - orphee@gmail.com
 
 Things to do
 ----
+- Decide once and for all how we display the .top_content
 - Fix some css edges cases
 - Do the TODOs in the code
 - Refactor the code for add/update a document
