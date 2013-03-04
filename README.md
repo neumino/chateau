@@ -45,16 +45,16 @@ Michel Tu - orphee@gmail.com
 
 Things to do
 ----
-Fix some css edges cases
-Do the TODOs in the code
-Refactor the code for add/update a document
-Implement/test all errors handling
-Fix Makefile
-Add loading for logout
-Sort the documents
-Filter documents
-Support joins
-Add custom actions
-Add custom views
-Support https
-Get a dog (a golden retriever)
+- Fix some css edges cases
+- Do the TODOs in the code
+- Refactor the code for add/update a document
+- Implement/test all errors handling
+- Fix Makefile
+- Add loading for logout
+- Sort the documents
+- Filter documents
+- Support joins
+- Add custom actions
+- Add custom views
+- Support https
+- Get a dog (a golden retriever)
