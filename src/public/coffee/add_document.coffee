@@ -135,9 +135,6 @@ class NewDocumentView extends Backbone.View
             key_prefix: JSON.stringify prefix
 
     submit_document: (event) =>
-        array = eval(array)
-        array = eval(array)
-        array = eval(array)
         fields = $(event.target).siblings('.fields_container').children('.field')
         new_document = {}
         errors = []
@@ -178,13 +175,14 @@ class NewDocumentView extends Backbone.View
                     when 'boolean'
                         if value is 'true'
                             current_object[key_name] = true
-                        else if valuue is 'false'
+                        else if value is 'false'
                             current_object[key_name] = false
                         #else # Error cannot be true
                     when 'string'
                         current_object[key_name] = value
                     when 'array'
                         current_object[key_name] = eval(value)
+                        debugger
 
 
         fields.each callback

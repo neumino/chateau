@@ -1,17 +1,5 @@
-{{#if undefined}}
-<span class="value-undefined">undefined</span>
-{{/if}}
-{{#if null}}
-<span class="value-null">null</span>
-{{/if}}
-{{#if number}}
-<span class="value-number">{{value}}</span>
-{{/if}}
-{{#if string}}
-<span class="value-string">{{value}}</span>
-{{/if}}
-{{#if array}}
-<span class="value-array">
-    [{{comma_separated_list value}}]
-</span>
-{{/if}}
+{{#if undefined}}<span class="value_undefined">undefined</span> {{/if}}
+{{#if null}}<span class="value_null">null</span>{{/if}}
+{{#if number}}<span class="value_number">{{value}}</span>{{/if}}
+{{#if string}}<span class="value_string">{{value}}</span>{{/if}}
+{{#if array}}<span class="value_array">[{{comma_separated_list value}}]</span>{{/if}}

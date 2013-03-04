@@ -20,9 +20,7 @@
         <div class="value-{{col}} value_boolean value_container">{{#if value}}true{{else}}false{{/if}}</div>
         {{/if}}
         {{#if array}}
-        <div class="value-{{col}} value_array value_container">
-            [{{comma_separated_list value}}]
-        </div>
+        <div class="value-{{col}} value_array value_container">[{{comma_separated_list value}}]</div>
         {{/if}}
     {{#unless record_num}}
     </div>

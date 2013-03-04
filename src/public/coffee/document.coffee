@@ -85,9 +85,10 @@ class DocumentView extends Backbone.View
                 number: typeof result is 'number'
                 string: typeof result is 'string'
                 boolean: typeof result is 'boolean'
-                array: Object.prototype.toString(result) is '[object Array]'
+                array: Object.prototype.toString.call(result) is '[object Array]'
                 col: col.col
             col.col++
+
 
     ask_confirmation_delete_document: (event) =>
         root = $(event.target)

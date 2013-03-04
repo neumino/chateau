@@ -21,9 +21,18 @@ class Helpers
 
 Handlebars.registerHelper 'comma_separated_list', (array) ->
     result = ''
-    for value in array
+    for value, i in array
         result += Handlebars.templates['table-value_raw']
-    return Handlebars.SafeString result
+            undefined: value is undefined
+            null: value is null
+            number: typeof value is 'number'
+            string: typeof value is 'string'
+            boolean: typeof value is 'boolean'
+            array: Object.prototype.toString.call(value) is '[object Array]'
+            value: value
+        if i isnt array.length-1
+            result += ', '
+    return new Handlebars.SafeString result
 
 Handlebars.registerHelper 'print_safe', (str) ->
     return new Handlebars.SafeString str
