@@ -55,7 +55,8 @@ class TableView extends Backbone.View
                 margin = 0
             else
                 margin -= 60
-            that.$('.top_content').css 'margin-left', margin
+            margin += $(window).width()-400
+            that.$('.options_container').css 'margin-left', margin
         callback_scroll_top_content()
         @callbacks_on_scroll['top_content'] = callback_scroll_top_content
         @bind_callbacks_on_scroll()
