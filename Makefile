@@ -16,7 +16,7 @@ BUILD_ROUTES=$(BUILD)/routes
 
 TEMP=temp
 
-all:
+build: $(BUILD)
 	mkdir -p $(TEMP)
 	mkdir -p $(BUILD)
 	mkdir -p $(BUILD_PUBLIC_CSS)
@@ -37,5 +37,7 @@ all:
 test:
 	bash -c "node $(BUILD)/app.js"
 
+all: build test
+
 clean:
-	@rm -Rf $(BUILD)/*
+	@rm -Rf $(BUILD)
