@@ -8,11 +8,13 @@ Install
 ----
 Install node.js
 Install these libraries
-    npm install express
-    npm install coffee-script
-    npm install handlebars
-    npm install stylus
-    npm install rethinkdb
+```
+npm install express
+npm install coffee-script
+npm install handlebars
+npm install stylus
+npm install rethinkdb
+```
 
 
 Run
