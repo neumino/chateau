@@ -1,4 +1,4 @@
-Chateau - RethinkDB's castle
+Chateau - Another data explorer for RethinkDB
 ====
 
 RethinkDB already comes with a "data explorer", which is more like a query buider.  
