@@ -33,6 +33,7 @@ app.get '/', routes.index
 app.get '/config.js', config.config
 app.post '/config/create', config.create
 app.post '/config/check', config.check
+app.post '/config/delete', config.delete
 app.post '/rethinkdb/get_all', rethinkdb.get_all
 app.post '/rethinkdb/create_database', rethinkdb.create_database
 app.post '/rethinkdb/create_table', rethinkdb.create_table

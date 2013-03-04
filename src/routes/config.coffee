@@ -31,6 +31,14 @@ exports.check = (req, res) ->
         res: res
         write_to_disk: false
 
+exports.delete = (req, res) ->
+    fs.unlink "config.json", (err) ->
+        if err?
+            res.send JSON.stringify
+                status: 'fail'
+        res.send JSON.stringify
+            status: 'ok'
+
 check_config = (args) ->
     host = args.host
     port = args.port

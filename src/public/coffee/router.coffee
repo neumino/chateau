@@ -5,6 +5,7 @@ class Router extends Backbone.Router
         'home': 'home'
         'db/:db_name': 'db'
         'table/:db_name/:table_name': 'table'
+        'logout': 'logout'
     
     initialize: =>
         @view_container = $('#content_wrapper')
@@ -15,6 +16,21 @@ class Router extends Backbone.Router
         else
             @server = window.server
             @check_settings()
+
+    logout: =>
+        $.ajax
+            url: "/config/delete"
+            type: 'POST'
+            contentType: 'application/json'
+            data: JSON.stringify {}
+            success: @logout_success
+            error: @ajax_fail_logout
+
+    logout_success: =>
+        @server = null
+        window.server = null
+        @connected = false
+        @login()
 
     login: =>
         if @connected is true
