@@ -29,9 +29,9 @@ node build/app.js
 
 Versions
 ----
-2013.03.03 - Alpha  
-  List databases, tables, documents.
-  Add/update/delete document
+2013.03.03 - Alpha:  
+  List databases, tables, documents  
+  Add/update/delete document  
 
 
 License
@@ -43,8 +43,7 @@ Contact
 Michel Tu - orphee@gmail.com
 
 
-
-TODO - Rough road maps
+Things to do
 ----
 Do the TODOs in the code
 Refactor the code for add/update a document
