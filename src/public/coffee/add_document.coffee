@@ -187,6 +187,7 @@ class NewDocumentView extends Backbone.View
 
         fields.each callback
 
+        #TODO Check errors if array_value is not array?
         if errors.length > 0
             @$('.error_add_document').empty()
             for error in errors
