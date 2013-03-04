@@ -1,6 +1,5 @@
 express = require 'express'
 routes = require './routes'
-user = require './routes/user'
 config = require './routes/config'
 rethinkdb = require './routes/rethinkdb'
 http = require 'http'
@@ -44,7 +43,6 @@ app.post '/rethinkdb/get_documents', rethinkdb.get_documents
 app.post '/rethinkdb/add_document', rethinkdb.add_document
 app.post '/rethinkdb/update_document', rethinkdb.update_document
 app.post '/rethinkdb/delete_document', rethinkdb.delete_document
-app.get '/users', user.list
 
 http.createServer(app).listen app.get('port'), ->
     console.log("Express server listening on port " + app.get('port'))
