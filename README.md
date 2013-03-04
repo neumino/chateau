@@ -29,9 +29,9 @@ node build/app.js
 
 Versions
 ----
-2013.03.03 - Alpha:  
-  List databases, tables, documents  
-  Add/update/delete document  
+- 2013.03.03 - Alpha:  
+    * List databases, tables, documents
+    * Add/update/delete document  
 
 
 License
