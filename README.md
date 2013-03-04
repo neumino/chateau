@@ -31,9 +31,10 @@ node build/app.js
 Versions
 ----
 - 2013.03.03 - Alpha:  
+    * Cool stuff: Infer the schema
+    * Other cool stuff: Order keys in a smart way
     * List databases, tables, documents
     * Add/update/delete document  
-    * Cool stuff: Infer the schema
 
 
 License
