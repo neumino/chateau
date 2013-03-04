@@ -60,3 +60,7 @@ Things to do
 - Add custom views
 - Support https
 - Get a dog (a golden retriever)
+
+Note
+----
+I (Michel Tu) am working at RethinkDB, but this project is a personal one.
