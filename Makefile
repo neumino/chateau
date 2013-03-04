@@ -33,6 +33,8 @@ all:
 	coffee -co $(BUILD_PUBLIC_JS) $(TEMP)/main.coffee 
 	#coffee --join $(BUILD_PUBLIC_JS)/main.js --compile $(SRC_PUBLIC_COFFEE)/*.coffee
 	handlebars $(SRC_PUBLIC_HANDLEBARS) -f $(BUILD_PUBLIC_JS)/template.js
+
+test:
 	bash -c "node $(BUILD)/app.js"
 
 clean:
