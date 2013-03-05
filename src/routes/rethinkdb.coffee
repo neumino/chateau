@@ -128,7 +128,7 @@ exports.get_documents = (req, res) =>
     table_name = req.body.table_name
     skip_value = req.body.skip_value
     order_by = req.body.order_by
-    limit_value = 200
+    limit_value = 1000
     connection = shared_app_ref.connections[id]
 
     query = r.db(db_name).table(table_name)
