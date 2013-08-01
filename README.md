@@ -1,6 +1,9 @@
 Chateau - Another data explorer for RethinkDB
 ====
 
+__Note__: Chateau currently does not work -- It's going under heavy refactoring right now (08/01/2013).
+
+
 RethinkDB already comes with a "data explorer", which is more like a query buider.  
 Chateau is a data explorer where you can manage your data without writing a single query.  
 It's still an alpha version so many features are missing, but it's enough if you want to bootstrap a new application and use Chateau as a panel admin for you data.
