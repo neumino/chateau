@@ -30,6 +30,7 @@ node app.js
 
 ### Coming next (not in order)
 - Rename/delete fields
+- Write HOW TO
 - Give a little more love to the interface (add colors -- it's too grayish now)
 - Let people order by field (only with secondary indexes?)
 - Run some count queries too?

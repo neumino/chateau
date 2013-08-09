@@ -3,10 +3,8 @@
   "version": "0.2.0",
   "description": "Data explorer for RethinkDB",
   "main": "app.js",
-  "directories": {
-  },
-  "scripts": {
-  },
+  "directories": {},
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git://github.com/neumino/chateau"
@@ -17,15 +15,12 @@
   ],
   "author": "Michel Tu <orphee@gmail.com> (http://justonepixel.com/)",
   "license": "MIT",
-  "readmeFilename": "README.md",
-  "gitHead": "",
   "bugs": {
     "url": "https://github.com/neumino/chateau/issues"
   },
-  "dependencies":{
+  "dependencies": {
     "express": ">= 3.3.4",
     "jade": ">= 0.34.1",
     "rethinkdb": ">= 1.7.0-2"
-
   }
 }
