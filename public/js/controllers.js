@@ -157,7 +157,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
     $scope.getValidTypes = getValidTypes;
     $scope.status = 'loading';
     $scope.skip= parseInt($routeParams.skip) || 0;
-    $scope.limit= parseInt($routeParams.limit) || 10;
+    $scope.limit= parseInt($routeParams.limit) || 100;
 
     $scope.db = $routeParams.db;
     $scope.table = $routeParams.table;
