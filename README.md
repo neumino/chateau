@@ -13,6 +13,7 @@ npm install
 ```
 
 ### Configure
+Update the file `config.js` if you are not using the default RethinkDB parameters.
 
 ### Run
 Start the server
