@@ -428,7 +428,6 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
     $http.get('/api/table', {params: {db: $scope.db, table: $scope.table, sample: true}}).
         success(function(data) {
             $scope.status = 'ready';
-            console.log(data)
 
             $scope.flattenedTypes = data.flattenedTypes;
             $scope.nestedFields = data.nestedFields;
@@ -492,8 +491,6 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
                 }
             }
             $scope.newDocFields = deepCopy($scope.nestedFields);
-
-            console.log($scope.newDoc);
         })
 
     $scope.pushScope = function(doc, fields) {
@@ -511,8 +508,6 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
             table: $scope.table,
             doc: $scope.retrieveDoc()
         }
-        console.log('------')
-        console.log(data.doc)
         $http.post('/api/doc/insert/', data).
             success(function(data) {
                 $location.path('/table/'+$scope.db+'/'+$scope.table);
