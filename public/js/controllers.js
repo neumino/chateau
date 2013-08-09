@@ -170,7 +170,6 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
 
     $http.get('/api/table', {params: {db: $scope.db, table: $scope.table, skip: $scope.skip, limit: $scope.limit, order: $routeParams.order}}).
         success(function(data) {
-            console.log(data)
             if (data.noDoc === true) {
                 $scope.status = 'empty'
             }
