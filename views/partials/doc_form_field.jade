@@ -1,0 +1,19 @@
+div.field(ng-repeat="field in newDocFields")
+    
+    div.field_and_type_container(data-fields="{{field.prefix.concat([field.field])}}")
+        select.type(ng-change="changeNewDocFieldType(field.prefix.concat([field.field]))", ng-disabled="(field.isPrimaryKey == true) && (operation == 'update')", ng-model="newType")
+            option(ng-repeat="type in getValidTypes(field.isPrimaryKey)", ng-selected="computeType(getAttr(newDoc, field.prefix.concat([field.field]))) == type") {{type}}
+        
+        p {{field.field}}
+
+    {{JSON.stringify(getAttr(newDoc, field.prefix.concat([field.field])))}}
+
+    ng-include(src="'/partials/doc_form_input'")
+
+div.newFieldContainer
+    input.newField(type="text", placeholder="New field name", ng-model="newField")
+    button.btn.add_field(ng-click="addField(newDocFields)")
+        i.icon-plus-sign
+        | Add field
+
+    div.alert.empty_field(ng-model="error", ng-show="error == true") The field name cannot be the empty string.

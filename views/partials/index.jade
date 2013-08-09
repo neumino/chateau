@@ -1,0 +1,27 @@
+div.home(ng-switch on="status")
+    div.actions
+        a(href="/add/db") Add a database
+        a(href="/add/table") Add a table
+
+    div.alert.hidden
+        a.close(href="#", ng-click="hide($event)") ×
+        span.alert_content
+
+    div(ng-switch-when="loading")
+        div Loading
+    div(ng-switch-when="empty")
+        div No database found
+    div(ng-switch-when="list")
+        ul.database(ng-repeat="database in databases")
+            li.database
+                div.database
+                    a.meta_action(href="/delete/db/{{database.database}}") Delete
+
+                    i.icon-th-large
+                    a.db_name.black.bold(href="/db/{{database.database}}") {{database.database}}
+                ul.tables
+                    li.table(ng-repeat="table in database.tables")
+                        a.meta_action(href="/delete/table/{{database.database}}/{{table}}") Delete
+
+                        i.icon-th
+                        a.gray(href="/table/{{database.database}}/{{table}}") {{table}}

@@ -1,0 +1,62 @@
+div.table_view(ng-switch on="status")
+    div.actions(ng-switch on="display == -1")
+        a(href="doc/add/{{db}}/{{table}}") Add a document
+
+    div.alert.hidden
+        a.close(href="#", ng-click="hide($event)") ×
+        span.alert_content
+
+    div(ng-switch-when="loading")
+        div Loading
+    div(ng-switch-when="empty")
+        div.table_view(ng-switch on="status")
+            div.section
+                h1 No document
+
+                div.content
+                    p No documents were returned.
+                    p
+                        a(href="#", ng-click="goBack($event)") Go back
+
+    div(ng-switch-when="list")
+        table.results.table.table-bordered
+            tr.fields
+                th.pound_key
+                    div #
+                th(ng-repeat="field in fields", class="col-{{$index}}")
+                    div.expand(ng-mousedown="resize($index, $event)")
+                        div.field_container(ng-mousedown="stopPropagation($event)") {{field}}
+            tbody(ng-repeat="document in flattened_docs", ng-switch on="display == $index")
+                tr.doc(class="doc-{{$index}}")
+                    td.index_cell
+                        span.index {{$index+skip}}
+                        a(ng-click="updateTrigger($index)")
+                            i.icon-edit.float_edit
+                        a(ng-click="deleteTrigger($index)")
+                            i.icon-trash.float_edit
+                    td.value_td(ng-repeat="field in document", class="col-{{$index}}")
+                        div.value_container(class="{{field.type}}") {{formatValue(field.value)}}
+                tr
+                    td.op(ng-switch-when="true", colspan="{{document.length+1}}", class="op-{{$index}}", ng-switch on="operation")
+                        div.confirm_delete.alert.no_border_top(ng-switch-when="delete")
+                            h3.alert_title Delete a document
+                            p Are you sure you want to delete the document above?
+                            div.button_container
+                                button.float.btn(ng-click='cancel()') Cancel
+                                button.float.btn(ng-click='deleteDoc($index)') Delete
+                        div.update_form_container.alert.no_border_top(ng-switch-when="update")
+                            h3.alert_title Update a document
+                            div.doc_form_container(ng-model="form", ng-include src="'partials/doc_form_field'", onload="pushScope(documents[$index])")
+
+                            div.button_container
+                                button.float.btn(ng-click='cancel()') Cancel
+                                button.float.btn(ng-click='updateDoc()') Update
+
+
+        div.link_previous_next(ng-switch on="skip > 0")
+            p(ng-switch-when="true") <a href="/table/{{db}}/{{table}}/{{order}}/{{max(skip-limit, 0)}}/{{limit}}">«« Previous</a>
+            p(ng-switch-default) «« Previous
+        div.link_previous_next ||
+        div.link_previous_next(ng-switch on="more_data")
+            p(ng-switch-when="1") <a href="/table/{{db}}/{{table}}/{{order}}/{{skip+limit}}/{{limit}}">Next »»</a>
+            p(ng-switch-default) Next »»

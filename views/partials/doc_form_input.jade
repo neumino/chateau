@@ -1,0 +1,16 @@
+div.value_wrap(ng-switch on="computeType(getAttr(newDoc, field.prefix.concat([field.field])))")
+
+    input.value(ng-switch-when="undefined", disabled, type="text", value="undefined")
+    input.value(ng-switch-when="null", disabled, type="text", value="null" )
+    input.value(ng-switch-when="number", ng-disabled="(field.isPrimaryKey == true) && (operation == 'update')", type="text", value="{{getAttr(newDoc, field.prefix.concat([field.field]))}}" )
+
+    textarea.value(ng-switch-when="string", ng-disabled="(field.isPrimaryKey == true) && (operation == 'update')", ng-keyup="expandTextarea($event)") {{getAttr(newDoc, field.prefix.concat([field.field]))}}
+
+    textarea.value(ng-switch-when="array") {{getAttr(newDoc, field.prefix.concat([field.field]))}}
+
+    select.value(ng-switch-when="boolean")
+        option(ng-selected="getAttr(newDoc, field.prefix.concat([field.field])) == true") true
+        option(ng-selected="getAttr(newDoc, field.prefix.concat([field.field])) == false") false
+
+    div.nested_field(ng-switch-when="object", ng-show="field.nested != null")
+        ng-include(src="'/partials/doc_form_field'", onload="newDocFields = deepCopy(field.nested)")

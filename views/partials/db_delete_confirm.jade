@@ -1,0 +1,9 @@
+div.section
+    h1 Delete a database
+
+    div.content
+        p Are you sure you want to delete the database 
+            strong {{database}}
+
+        button.float.btn(ng-click='home()') No thanks
+        button.float.btn(ng-click='deleteDb()') Yes, delete

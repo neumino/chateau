@@ -1,0 +1,16 @@
+div.table_view(ng-switch on="status")
+    div.section
+        h1 Add a document in {{table}}
+
+        div.content
+            div(ng-switch-when="loading")
+                div Loading
+            div(ng-switch-when="ready")
+
+                div.update_form_container
+                    div.doc_form_container(ng-include src="'partials/doc_form_field'")
+
+                    div.button_container
+                        button.float.btn(ng-click='cancel()') Cancel
+                        button.float.btn(ng-click='insertDoc()') Insert
+
