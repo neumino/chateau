@@ -101,9 +101,9 @@ exports.table = function (req, res) {
     var db = req.query.db;
     var table = req.query.table;
     var skip = parseInt(req.query.skip) || 0;
-    var limit = parseInt(req.query.limit) || 10;
+    var limit = parseInt(req.query.limit) || 100;
     var sample = req.query.sample || false;
-    var sample_size = 20; // TODO magic number.
+    var sample_size = 100; // TODO magic number.
 
     // Get primary key
     // TODO Skip info() if sample === true
