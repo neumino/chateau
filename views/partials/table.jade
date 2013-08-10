@@ -1,6 +1,7 @@
 div.table_view(ng-switch on="status")
     div.actions(ng-switch on="display == -1")
         a(href="doc/add/{{db}}/{{table}}") Add a document
+        a.meta_action(href="/delete/table/{{db}}/{{table}}") Delete this table
 
     div.alert.hidden
         a.close(href="#", ng-click="hide($event)") ×
