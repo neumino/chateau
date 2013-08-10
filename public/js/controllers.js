@@ -207,11 +207,12 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
 
                 $scope.documents = data.documents;
 
-                $scope.status = 'list'
                 $scope.primaryKey = data.primaryKey;
 
                 $scope.order = $routeParams.order || $scope.primaryKey;
                 $scope.more_data = data.more_data;
+
+                $scope.status = 'list'
             }
         })
     $scope.stopPropagation = function(event) {

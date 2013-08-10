@@ -11,7 +11,7 @@ div.home(ng-switch on="status")
         h1 Error
         div.content Sorry, an error occurred, please try again.
     div(ng-switch-when="loading")
-        div Loading
+        img(src="images/ajax-loader.gif")
     div(ng-switch-when="empty")
         div No database found
     div(ng-switch-when="list")

@@ -4,7 +4,7 @@ div.table_view(ng-switch on="status")
 
         div.content
             div(ng-switch-when="loading")
-                div Loading
+                img(src="images/ajax-loader.gif")
             div(ng-switch-when="ready")
 
                 div.update_form_container

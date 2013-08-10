@@ -2,7 +2,7 @@ div.section(ng-switch on="status")
     h1 Add a table
 
     div.content(ng-switch-when="loading")
-        p Loading... 
+        img(src="images/ajax-loader.gif")
 
     div(ng-switch-when="error")
         div.content Sorry, an error occurred, please try again.
