@@ -39,6 +39,7 @@ function IndexCtrl($scope, $http, $routeParams) {
         event.stopPropagation();
     }
 }
+
 function AddDbCtrl($scope, $http, $location) {
     //TODO Give focus
     $scope.form = {}
@@ -147,14 +148,14 @@ function DeleteTableCtrl($scope, $http, $location, $routeParams, $window) {
 
 function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
     $scope.newType = 'undefined'; // Just to remove the empty select option
-    $scope.deepCopy = deepCopy;
+    $scope.deepCopy = h.deepCopy;
     $scope.goBack = function($event) {
         $event.preventDefault();
         $event.stopPropagation();
-        goBack($window);
+        h.goBack($window);
     }
     $scope.max = Math.max
-    $scope.getValidTypes = getValidTypes;
+    $scope.getValidTypes = h.getValidTypes;
     $scope.status = 'loading';
     $scope.skip= parseInt($routeParams.skip) || 0;
     $scope.limit= parseInt($routeParams.limit) || 100;
@@ -262,16 +263,16 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
 
     // Keep it cool, it's not a real deep copy
 
-    $scope.deepCopy = deepCopy;
+    $scope.deepCopy = h.deepCopy;
     $scope.changeNewDocFieldType = function(field) {
-        changeNewDocFieldType(field, this.newType, $scope);
+        h.changeNewDocFieldType(field, this.newType, $scope);
     }
     $scope.updateDoc = function() {
         var data = {
             db: $scope.db,
             table: $scope.table,
             primaryKey: $scope.primaryKey,
-            doc: $scope.retrieveDoc()
+            doc: h.retrieveDoc()
         }
         $http.post('/api/doc/update/', data).
             success(function(data) {
@@ -279,16 +280,15 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
             });
     }
 
-    $scope.retrieveDoc = retrieveDoc;
     $scope.pushScope = function(doc, fields) {
         if (fields == null) {
             fields = $scope.nestedFields
         }
         //TODO Make a deep copy!!!
-        $scope.newDoc = deepCopy(doc);
-        $scope.newDocFields = deepCopy(fields);
+        $scope.newDoc = h.deepCopy(doc);
+        $scope.newDocFields = h.deepCopy(fields);
     }
-    $scope.addField = addField;
+    $scope.addField = h.addField;
     $scope.cancel = function() {
         $scope.display = null;
         $scope.operation = null;
@@ -304,25 +304,25 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
                     try{
                     switch($scope.flattenedTypes[i]) {
                         case 'undefined':
-                            setValue($scope.newDoc, $scope.raw_fields[i], undefined)
+                            h.setValue($scope.newDoc, $scope.raw_fields[i], undefined)
                             break;
                         case 'null':
-                            setValue($scope.newDoc, $scope.raw_fields[i], null)
+                            h.setValue($scope.newDoc, $scope.raw_fields[i], null)
                             break;
                         case 'boolean':
-                            setValue($scope.newDoc, $scope.raw_fields[i], true)
+                            h.setValue($scope.newDoc, $scope.raw_fields[i], true)
                             break;
                         case 'string':
-                            setValue($scope.newDoc, $scope.raw_fields[i], '')
+                            h.setValue($scope.newDoc, $scope.raw_fields[i], '')
                             break;
                         case 'number':
-                            setValue($scope.newDoc, $scope.raw_fields[i], 0)
+                            h.setValue($scope.newDoc, $scope.raw_fields[i], 0)
                             break;
                         case 'array':
-                            setValue($scope.newDoc, $scope.raw_fields[i], [])
+                            h.setValue($scope.newDoc, $scope.raw_fields[i], [])
                             break;
                         case 'object':
-                            setValue($scope.newDoc, $scope.raw_fields[i], {})
+                            h.setValue($scope.newDoc, $scope.raw_fields[i], {})
                             break;
                     }
                     }
@@ -366,7 +366,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
         }
         return result;
     }
-    $scope.computeType = computeType;
+    $scope.computeType = h.computeType;
     $scope.formatValue = function(data) {
         if (Object.prototype.toString.call(data) === '[object Object]') {
             return 'object'
@@ -376,7 +376,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
     $scope.join = function(data) {
         return data.join('.')
     }
-    $scope.getAttr = getAttr;
+    $scope.getAttr = h.getAttr;
     var stringify = function(value) {
         if (value === null) {
             return 'null'
@@ -403,15 +403,16 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
 }
 
 function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
-    $scope.newType = 'undefined'; // Just to remove the empty select option
-    $scope.addField = addField;
-    $scope.getValidTypes = getValidTypes;
-    $scope.computeType = computeType;
+    // Add some functions in the scope
+    $scope.addField = h.addField;
+    $scope.getValidTypes = h.getValidTypes;
+    $scope.computeType = h.computeType;
     $scope.changeNewDocFieldType = function(field) {
-        changeNewDocFieldType(field, this.newType, $scope);
+        h.changeNewDocFieldType(field, this.newType, $scope);
     }
-    $scope.getAttr = getAttr;
-    $scope.deepCopy = deepCopy;
+    $scope.getAttr = h.getAttr;
+    $scope.deepCopy = h.deepCopy;
+    $scope.newType = 'undefined'; // Just to remove the empty select option
 
     $scope.status = 'loading';
     $scope.db = $routeParams.db;
@@ -455,25 +456,25 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
                         try{ //TODO Do we still need this try/catch?
                             switch($scope.flattenedTypes[i]) {
                                 case 'undefined':
-                                    setValue($scope.newDoc, $scope.raw_fields[i], undefined)
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], undefined)
                                     break;
                                 case 'null':
-                                    setValue($scope.newDoc, $scope.raw_fields[i], null)
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], null)
                                     break;
                                 case 'boolean':
-                                    setValue($scope.newDoc, $scope.raw_fields[i], true)
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], true)
                                     break;
                                 case 'string':
-                                    setValue($scope.newDoc, $scope.raw_fields[i], '')
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], '')
                                     break;
                                 case 'number':
-                                    setValue($scope.newDoc, $scope.raw_fields[i], 0)
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], 0)
                                     break;
                                 case 'array':
-                                    setValue($scope.newDoc, $scope.raw_fields[i], [])
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], [])
                                     break;
                                 case 'object':
-                                    setValue($scope.newDoc, $scope.raw_fields[i], {})
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], {})
                                     break;
                             }
                         }
@@ -489,7 +490,7 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
                     }
                 }
             }
-            $scope.newDocFields = deepCopy($scope.nestedFields);
+            $scope.newDocFields = h.deepCopy($scope.nestedFields);
         })
 
     $scope.pushScope = function(doc, fields) {
@@ -497,15 +498,15 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
             fields = $scope.nestedFields
         }
         //TODO Make a deep copy!!!
-        $scope.newDoc = deepCopy(doc);
-        $scope.newDocFields = deepCopy(fields);
+        $scope.newDoc = h.deepCopy(doc);
+        $scope.newDocFields = h.deepCopy(fields);
     }
 
     $scope.insertDoc = function() {
         var data = {
             db: $scope.db,
             table: $scope.table,
-            doc: $scope.retrieveDoc()
+            doc: h.retrieveDoc()
         }
         $http.post('/api/doc/insert/', data).
             success(function(data) {
@@ -513,13 +514,11 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
                 $route.reload();
             });
     }
-
-    $scope.retrieveDoc = retrieveDoc; 
-
 }
 
 // Helpers
-function deepCopy(value) {
+var h = {};
+h.deepCopy = function(value) {
     if (typeof value === 'string') {
         return value
     }
@@ -535,7 +534,7 @@ function deepCopy(value) {
     else if (Object.prototype.toString.call(value) === '[object Array]') {
         var result = [];
         for(var i=0; i<value.length; i++) {
-            result.push(deepCopy(value[i]))
+            result.push(h.deepCopy(value[i]))
         }
         return result
     }
@@ -543,13 +542,13 @@ function deepCopy(value) {
         var result = {}
         for(var key in value) {
             if (value.hasOwnProperty(key)) {
-                result[key] = deepCopy(value[key])
+                result[key] = h.deepCopy(value[key])
             }
         }
         return result
     }
 }
-function getAttr(data, fields) {
+h.getAttr = function(data, fields) {
     var value = data;
     for(var i=0; i<fields.length; i++) {
         if (typeof value == 'object') {
@@ -564,36 +563,36 @@ function getAttr(data, fields) {
     }
     return value
 }
-function changeNewDocFieldType(field, newType, $scope) {
+h.changeNewDocFieldType = function(field, newType, $scope) {
     if (field[field.length-1] === null) {
-        setValue($scope.newDoc, field, undefined)
+        h.setValue($scope.newDoc, field, undefined)
     }
     switch(newType) {
         case 'undefined':
-            setValue($scope.newDoc, field, undefined)
+            h.setValue($scope.newDoc, field, undefined)
             break;
         case 'null':
-            setValue($scope.newDoc, field, null)
+            h.setValue($scope.newDoc, field, null)
             break;
         case 'boolean':
-            setValue($scope.newDoc, field, true)
+            h.setValue($scope.newDoc, field, true)
             break;
         case 'string':
-            setValue($scope.newDoc, field, '')
+            h.setValue($scope.newDoc, field, '')
             break;
         case 'number':
-            setValue($scope.newDoc, field, 0)
+            h.setValue($scope.newDoc, field, 0)
             break;
         case 'array':
-            setValue($scope.newDoc, field, [])
+            h.setValue($scope.newDoc, field, [])
             break;
         case 'object':
-            setValue($scope.newDoc, field, {})
+            h.setValue($scope.newDoc, field, {})
             break;
     }
 }
 
-function setValue(doc, fields, value) {
+h.setValue = function(doc, fields, value) {
     var pathToValue = doc;
     for(var i=0; i<fields.length-1; i++) {
         pathToValue = pathToValue[fields[i]]
@@ -605,7 +604,7 @@ function setValue(doc, fields, value) {
         pathToValue[fields[fields.length-1]] = value
     }
 }
-function computeType(value) {
+h.computeType = function(value) {
     if (value === undefined) {
         return 'undefined'
     } else if (value === null) { 
@@ -621,7 +620,7 @@ function computeType(value) {
     }
     return 'object'
 }
-function getValidTypes(isPrimaryKey) {
+h.getValidTypes = function(isPrimaryKey) {
 
     if (isPrimaryKey === true) {
         return ['undefined', 'string', 'number']
@@ -631,42 +630,42 @@ function getValidTypes(isPrimaryKey) {
     }
 }
 
-function retrieveDoc() {
+h.retrieveDoc = function() {
     var newDoc = {}
     $('.field').each( function(index, field) {
         var type = $(field).find('select.type').val();
         var fieldPath = $(field).children('.field_and_type_container').data('fields')
         if (type === 'undefined') {
-            setValue(newDoc, fieldPath, undefined)
+            h.setValue(newDoc, fieldPath, undefined)
         }
         else if (type === 'null') {
-            setValue(newDoc, fieldPath, null)
+            h.setValue(newDoc, fieldPath, null)
         }
         else if (type === 'boolean') {
             var value = $(field).find('.value').val() === 'true' ? true: false;
-            setValue(newDoc, fieldPath, value)
+            h.setValue(newDoc, fieldPath, value)
         }
         else if (type === 'string') {
-            setValue(newDoc, fieldPath, $(field).find('.value').val())
+            h.setValue(newDoc, fieldPath, $(field).find('.value').val())
         }
         else if (type === 'number') {
-            setValue(newDoc, fieldPath, parseFloat($(field).find('.value').val()))
+            h.setValue(newDoc, fieldPath, parseFloat($(field).find('.value').val()))
         }
         else if (type === 'array') {
-            setValue(newDoc, fieldPath, JSON.parse($(field).find('.value').val()))
+            h.setValue(newDoc, fieldPath, JSON.parse($(field).find('.value').val()))
         }
         else if (type === 'object') {
-            setValue(newDoc, fieldPath, {})
+            h.setValue(newDoc, fieldPath, {})
         }
     })
     return newDoc;
 }
 
-function goBack($window) {
+h.goBack = function($window) {
     $window.history.back();
 }
 
-function addField(field) {
+h.addField = function(field) {
     // AngularJS return undefined and not the empty string.
     if (this.newField === undefined) {
         this.error = true;
