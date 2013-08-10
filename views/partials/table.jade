@@ -17,6 +17,8 @@ div.table_view(ng-switch on="status")
                     p No documents were returned.
                     p
                         a(href="#", ng-click="goBack($event)") Go back
+                        |  or 
+                        a(href="doc/add/{{db}}/{{table}}") add a document
 
     div(ng-switch-when="list")
         table.results.table.table-bordered
