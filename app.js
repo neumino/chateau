@@ -18,15 +18,8 @@ app.configure(function(){
     app.use(express.methodOverride());
     app.use(express.static(__dirname + '/public'));
     app.use(app.router);
-});
 
-
-app.configure('development', function(){
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
-
-app.configure('production', function(){
-    app.use(express.errorHandler());
 });
 
 // Home 
@@ -59,5 +52,5 @@ app.get('*', routes.index);
 
 // Start server
 app.listen(config.expressPort, config.network, function(){
-    console.log("Express server listening on port %d in %s mode", config.expressPort, app.settings.env);
+    console.log("Express server listening on port %d", config.expressPort);
 });
