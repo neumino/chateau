@@ -8,6 +8,11 @@ div.table_view(ng-switch on="status")
 
     div(ng-switch-when="loading")
         div Loading
+
+    div.section(ng-switch-when="error")
+        h1 Error
+        div.content Sorry, an error occurred, please try again.
+
     div(ng-switch-when="empty")
         div.table_view(ng-switch on="status")
             div.section

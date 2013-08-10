@@ -10,8 +10,14 @@ function IndexCtrl($scope, $http, $routeParams) {
     // Get data
     $http.get('/api/databases/tables', {params: {db:$routeParams.db}}).
         success(function(data) {
-            $scope.status = (data.databases.length === 0) ? 'empty': 'list';
-            $scope.databases = data.databases;
+            if (data.error != null) {
+                $scope.status = 'error';
+                h.handleError(data.error);
+            }
+            else {
+                $scope.status = (data.databases.length === 0) ? 'empty': 'list';
+                $scope.databases = data.databases;
+            }
         });
 
     if ($routeParams.msg != null) {
@@ -48,12 +54,11 @@ function AddDbCtrl($scope, $http, $location) {
         $http.post('/api/database/add', $scope.form).
         success(function(data) {
             if (data.error != null) {
-                //TODO Handle
-                console.log(data.error);
+                h.handleError(data.error);
             }
             else if ((data.result != null) && (data.result.created != 1)) {
-                //TODO Handle
-                console.log(data.result);
+                var error = new Error("The database could not be created")
+                h.handleError(error);
             }
             else {
                 $location.path('/msg/1');
@@ -67,14 +72,20 @@ function AddTableCtrl($scope, $http, $location) {
     $scope.status = 'loading';
     $http.get('/api/databases').
         success(function(data) {
-            $scope.databases = data.databases;
-
-            if (data.databases.length === 0) {
-                $scope.status = 'empty';
+            if (data.error != null) {
+                $scope.status = 'error';
+                h.handleError(data.error);
             }
             else {
-                $scope.status = 'ready';
-                $scope.form.database = data.databases[0];
+                $scope.databases = data.databases;
+
+                if (data.databases.length === 0) {
+                    $scope.status = 'empty';
+                }
+                else {
+                    $scope.status = 'ready';
+                    $scope.form.database = data.databases[0];
+                }
             }
         })
  
@@ -85,8 +96,7 @@ function AddTableCtrl($scope, $http, $location) {
         $http.post('/api/table/add', $scope.form).
         success(function(data) {
             if (data.error != null) {
-                //TODO Handle
-                console.log(data.error);
+                h.handleError(data.error);
             }
             else if ((data.result != null) && (data.result.created != 1)) {
                 //TODO Handle
@@ -107,8 +117,7 @@ function DeleteDbCtrl($scope, $http, $location, $routeParams, $window) {
         $http.post('/api/database/delete', {database: $scope.database}).
         success(function(data) {
             if (data.error != null) {
-                //TODO Handle
-                console.log(data.error);
+                h.handleError(data.error);
             }
             else if ((data.result != null) && (data.result.dropped != 1)) {
                 //TODO Handle
@@ -135,8 +144,7 @@ function DeleteTableCtrl($scope, $http, $location, $routeParams, $window) {
         $http.post('/api/table/delete', {database: $scope.database, table: $scope.table}).
         success(function(data) {
             if (data.error != null) {
-                //TODO Handle
-                console.log(data.error);
+                h.handleError(data.error);
             }
             else if ((data.result != null) && (data.result.dropped != 1)) {
                 //TODO Handle
@@ -178,7 +186,11 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
 
     $http.get('/api/table', {params: {db: $scope.db, table: $scope.table, skip: $scope.skip, limit: $scope.limit, order: $routeParams.order}}).
         success(function(data) {
-            if (data.noDoc === true) {
+            if (data.error != null) {
+                $scope.status = 'error';
+                h.handleError(data.error);
+            }
+            else if (data.noDoc === true) {
                 $scope.status = 'empty'
             }
             else {
@@ -240,8 +252,12 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
         }
         $http.post('/api/doc/delete', data).
             success(function(data) {
-                // TODO Add a feedback
-                $route.reload();
+                if (data.error != null) {
+                    h.handleError(data.error);
+                }
+                else {
+                    $route.reload();
+                }
             })
     }
 
@@ -283,7 +299,12 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
         }
         $http.post('/api/doc/update/', data).
             success(function(data) {
-                $route.reload();
+                if (data.error != null) {
+                    h.handleError(data.error);
+                }
+                else {
+                    $route.reload();
+                }
             });
     }
 
@@ -434,70 +455,75 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
 
     $http.get('/api/table', {params: {db: $scope.db, table: $scope.table, sample: true}}).
         success(function(data) {
-            $scope.status = 'ready';
-
-            $scope.flattenedTypes = data.flattenedTypes;
-            $scope.nestedFields = data.nestedFields;
-
-            $scope.fields = []
-            for(var i=0; i<data.flattened_fields.length; i++) {
-                $scope.fields.push(data.flattened_fields[i].join('.'))
+            if (data.error != null) {
+                h.handleError(data.error);
             }
+            else {
+                $scope.status = 'ready';
 
-            $scope.documents = data.documents;
+                $scope.flattenedTypes = data.flattenedTypes;
+                $scope.nestedFields = data.nestedFields;
 
+                $scope.fields = []
+                for(var i=0; i<data.flattened_fields.length; i++) {
+                    $scope.fields.push(data.flattened_fields[i].join('.'))
+                }
 
-            $scope.raw_fields = data.flattened_fields;
-
-            $scope.newDoc = {};
-            for(var i=0; i<$scope.raw_fields.length;i++) {
-                for(var j=0; j<$scope.raw_fields[i].length; j++) {
-                    if (j === $scope.raw_fields[i].length-1) {
-                        if (i === 0) { // Then j === 0 too since it's the primary key
-                            // We set the primary key to undefined so RethinkDB will generate a UUID
-                            $scope.flattenedTypes[i] = 'undefined'
-                            continue;
-                        }
+                $scope.documents = data.documents;
 
 
-                        try{ //TODO Do we still need this try/catch?
-                            switch($scope.flattenedTypes[i]) {
-                                case 'undefined':
-                                    h.setValue($scope.newDoc, $scope.raw_fields[i], undefined)
-                                    break;
-                                case 'null':
-                                    h.setValue($scope.newDoc, $scope.raw_fields[i], null)
-                                    break;
-                                case 'boolean':
-                                    h.setValue($scope.newDoc, $scope.raw_fields[i], true)
-                                    break;
-                                case 'string':
-                                    h.setValue($scope.newDoc, $scope.raw_fields[i], '')
-                                    break;
-                                case 'number':
-                                    h.setValue($scope.newDoc, $scope.raw_fields[i], 0)
-                                    break;
-                                case 'array':
-                                    h.setValue($scope.newDoc, $scope.raw_fields[i], [])
-                                    break;
-                                case 'object':
-                                    h.setValue($scope.newDoc, $scope.raw_fields[i], {})
-                                    break;
+                $scope.raw_fields = data.flattened_fields;
+
+                $scope.newDoc = {};
+                for(var i=0; i<$scope.raw_fields.length;i++) {
+                    for(var j=0; j<$scope.raw_fields[i].length; j++) {
+                        if (j === $scope.raw_fields[i].length-1) {
+                            if (i === 0) { // Then j === 0 too since it's the primary key
+                                // We set the primary key to undefined so RethinkDB will generate a UUID
+                                $scope.flattenedTypes[i] = 'undefined'
+                                continue;
                             }
-                        }
-                        catch(err) {
-                            console.log(err);
-                        }
 
-                    }
-                    else {
-                        if ($scope.newDoc[$scope.raw_fields[i][j]] === undefined) {
-                            $scope.newDoc[$scope.raw_fields[i][j]] = {}
+
+                            try{ //TODO Do we still need this try/catch?
+                                switch($scope.flattenedTypes[i]) {
+                                    case 'undefined':
+                                        h.setValue($scope.newDoc, $scope.raw_fields[i], undefined)
+                                        break;
+                                    case 'null':
+                                        h.setValue($scope.newDoc, $scope.raw_fields[i], null)
+                                        break;
+                                    case 'boolean':
+                                        h.setValue($scope.newDoc, $scope.raw_fields[i], true)
+                                        break;
+                                    case 'string':
+                                        h.setValue($scope.newDoc, $scope.raw_fields[i], '')
+                                        break;
+                                    case 'number':
+                                        h.setValue($scope.newDoc, $scope.raw_fields[i], 0)
+                                        break;
+                                    case 'array':
+                                        h.setValue($scope.newDoc, $scope.raw_fields[i], [])
+                                        break;
+                                    case 'object':
+                                        h.setValue($scope.newDoc, $scope.raw_fields[i], {})
+                                        break;
+                                }
+                            }
+                            catch(err) {
+                                console.log(err);
+                            }
+
+                        }
+                        else {
+                            if ($scope.newDoc[$scope.raw_fields[i][j]] === undefined) {
+                                $scope.newDoc[$scope.raw_fields[i][j]] = {}
+                            }
                         }
                     }
                 }
+                $scope.newDocFields = h.deepCopy($scope.nestedFields);
             }
-            $scope.newDocFields = h.deepCopy($scope.nestedFields);
         })
 
     $scope.pushScope = function(doc, fields) {
@@ -517,8 +543,13 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
         }
         $http.post('/api/doc/insert/', data).
             success(function(data) {
-                $location.path('/table/'+$scope.db+'/'+$scope.table);
-                $route.reload();
+                if (data.error != null) {
+                    h.handleError(data.error);
+                }
+                else {
+                    $location.path('/table/'+$scope.db+'/'+$scope.table);
+                    $route.reload();
+                }
             });
     }
 }
@@ -698,5 +729,17 @@ h.addField = function(field) {
             delete this.error;
         }
     }
+}
+h.handleError = function(error) {
+    console.log('Error:')
+    console.log(error);
+    var newError = $("<div>", {class: "alert"});
+
+    newError.html('Error:'+error.message);
+    $('#error').append(newError);
+    newError.fadeIn('fast')
+    setTimeout( function() {
+        newError.fadeOut('fast', function() { $(this).remove() })
+    }, 2000)
 }
 

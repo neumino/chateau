@@ -3,22 +3,33 @@ var r = require('rethinkdb'),
     config = require('../config');
 
 var connection = null;
-r.connect({
-    host: config.host,
-    port: config.port,
-    authKey: config.authKey
-}, function(error, conn) {
-    // Throws, if we don't have a connection, we won't do anything...
-    if (error) throw error
-    connection = conn;
-});
+function connect() {
+    r.connect({
+        host: config.host,
+        port: config.port,
+        authKey: config.authKey
+    }, function(error, conn) {
+        // Throws, if we don't have a connection, we won't do anything...
+        if (error) throw error
+        connection = conn;
+    });
+}
+connect();
 
+function handleError(error) {
+    if (config.debug === true) {
+        console.log(error);
+    }
 
+    if ((error.name === 'RqlDriverError') && (error.msg === 'Connection is closed.')) {
+        connect()
+    }
+}
 
 exports.databasesAndTables = function (req, res) {
     if (req.query.db != null) {
         r.db(req.query.db).tableList().run( connection, function(error, tables) {
-            if (error) console.log(error);
+            if (error) handleError(error);
             res.json({
                 error: error,
                 databases: [{
@@ -27,7 +38,6 @@ exports.databasesAndTables = function (req, res) {
                 }]
             });
         })
-
     }
     else {
         r.dbList().forEach(function(db) {
@@ -39,7 +49,7 @@ exports.databasesAndTables = function (req, res) {
             })
         })('x').default([]) // If ('x') throws, it means there is no database
         .orderBy('database').run( connection, function(error, databases) {
-            if (error) console.log(error);
+            if (error) handleError(error);
             res.json({
                 error: error,
                 databases: databases
@@ -49,7 +59,7 @@ exports.databasesAndTables = function (req, res) {
 }
 exports.databaseAdd = function (req, res) {
     r.dbCreate(req.body.name).run( connection, function(error, result) {
-        if (error) console.log(error);
+        if (error) handleError(error);
         res.json({
             error: error,
             result: result
@@ -58,7 +68,7 @@ exports.databaseAdd = function (req, res) {
 }
 exports.databases = function (req, res) {
     r.dbList().run( connection, function(error, databases) {
-        if (error) console.log(error);
+        if (error) handleError(error);
         res.json({
             error: error,
             databases: databases
@@ -69,7 +79,7 @@ exports.tableAdd = function (req, res) {
     var d = req.body;
     var pk = d.primaryKey || 'id'
     r.db(d.database).tableCreate(d.table, {primaryKey: pk}).run( connection, function(error, result) {
-        if (error) console.log(error);
+        if (error) handleError(error);
         res.json({
             error: error,
             result: result
@@ -79,7 +89,7 @@ exports.tableAdd = function (req, res) {
 exports.databaseDelete = function (req, res) {
     var d = req.body;
     r.dbDrop(d.database).run( connection, function(error, result) {
-        if (error) console.log(error);
+        if (error) handleError(error);
         res.json({
             error: error,
             result: result
@@ -89,7 +99,7 @@ exports.databaseDelete = function (req, res) {
 exports.tableDelete = function (req, res) {
     var d = req.body;
     r.db(d.database).tableDrop(d.table).run( connection, function(error, result) {
-        if (error) console.log(error);
+        if (error) handleError(error);
         res.json({
             error: error,
             result: result
@@ -109,84 +119,92 @@ exports.table = function (req, res) {
     // Get primary key
     // TODO Skip info() if sample === true
     r.db(db).table(table).info().run( connection, function(error, info) {
-        var primaryKey = info.primary_key
-        var order = req.params.order || primaryKey;
-
-        // Get documents
-        var query = r.db(db).table(table);
-        if (sample !== false) {
-            query = query.sample(sample_size).orderBy(r.desc(order))
+        if (error) {
+            handleError(error);
+            res.json({
+                error: error
+            });
         }
         else {
-            query = query.orderBy(order).skip(skip).limit(limit+1)
-        }
-        query.run( connection, function(error, cursor) {
-            if (error) console.log(error);
-            cursor.toArray( function(error, documents) {
-                var noDoc = false;
-                if (error) console.log(error);
+            var primaryKey = info.primary_key
+            var order = req.params.order || primaryKey;
 
-                if (documents.length === 0) {
-                    noDoc = true;
-                    var doc = {};
-                    doc[info.primary_key] = '';
-                    documents = [doc];
-                }
-                //TODO Check that documents is well defined
+            // Get documents
+            var query = r.db(db).table(table);
+            if (sample !== false) {
+                query = query.sample(sample_size).orderBy(r.desc(order))
+            }
+            else {
+                query = query.orderBy(order).skip(skip).limit(limit+1)
+            }
+            query.run( connection, function(error, cursor) {
+                if (error) handleError(error);
+                cursor.toArray( function(error, documents) {
+                    var noDoc = false;
+                    if (error) handleError(error);
 
-                // Is there more data?
-                var more_data = documents.length > limit;
-                if (more_data === true) {
-                    documents = documents.slice(0, limit)
-                }
-
-                // Clean, prepare docs
-                var keys= {};
-                for(var i=0; i<documents.length; i++) {
-                    // For each docs, we update keys
-                    buildMapKeys({ keys: keys, value: documents[i]})
-                }
-
-                // Compute the occurence ( = num primitives or average of all fields for objects)
-                computeOccurrenceKeys({ keys: keys, documents: documents});
-
-                // Compute the most frequent type (so we can suggest a schema)
-                buildMostFrequentType(keys);
-
-                // Tag the primary key
-                for(var key in keys['keys']) {
-                    if (key === primaryKey) {
-                        keys['keys'][key].occurrenceRebalanced = Infinity;
-                        break;
+                    if (documents.length === 0) {
+                        noDoc = true;
+                        var doc = {};
+                        doc[info.primary_key] = '';
+                        documents = [doc];
                     }
-                }
-                
-                // Sort keys by occurence
-                sort_keys(keys);
+                    //TODO Check that documents is well defined
 
-                // Flatten the keys so {obj: key: 1} => obj.key
-                var flattenedKeys = flattenKeys(keys, [], documents.length);
+                    // Is there more data?
+                    var more_data = documents.length > limit;
+                    if (more_data === true) {
+                        documents = documents.slice(0, limit)
+                    }
 
-                // Flatten types (used when the user wants to create a new document
-                var flattenedTypes = flattenTypes(flattenedKeys, keys);
-                
-                // Nested fields
-                var nestedFields = nestedKeys(keys);
-                nestedFields[0].isPrimaryKey = true // The first key is alweays the primary key
+                    // Clean, prepare docs
+                    var keys= {};
+                    for(var i=0; i<documents.length; i++) {
+                        // For each docs, we update keys
+                        buildMapKeys({ keys: keys, value: documents[i]})
+                    }
 
-                // We do not flatten documents because undefined is not a valid JSON type
-                res.json({
-                    error: error,
-                    flattened_fields: flattenedKeys,
-                    nestedFields: nestedFields,
-                    flattenedTypes: flattenedTypes,
-                    documents: (noDoc === true) ? []: documents,
-                    noDoc: noDoc,
-                    primaryKey: primaryKey,
-                    more_data: (more_data) ? '1': '0'
-                });
+                    // Compute the occurence ( = num primitives or average of all fields for objects)
+                    computeOccurrenceKeys({ keys: keys, documents: documents});
+
+                    // Compute the most frequent type (so we can suggest a schema)
+                    buildMostFrequentType(keys);
+
+                    // Tag the primary key
+                    for(var key in keys['keys']) {
+                        if (key === primaryKey) {
+                            keys['keys'][key].occurrenceRebalanced = Infinity;
+                            break;
+                        }
+                    }
+                    
+                    // Sort keys by occurence
+                    sort_keys(keys);
+
+                    // Flatten the keys so {obj: key: 1} => obj.key
+                    var flattenedKeys = flattenKeys(keys, [], documents.length);
+
+                    // Flatten types (used when the user wants to create a new document
+                    var flattenedTypes = flattenTypes(flattenedKeys, keys);
+                    
+                    // Nested fields
+                    var nestedFields = nestedKeys(keys);
+                    nestedFields[0].isPrimaryKey = true // The first key is alweays the primary key
+
+                    // We do not flatten documents because undefined is not a valid JSON type
+                    res.json({
+                        error: error,
+                        flattened_fields: flattenedKeys,
+                        nestedFields: nestedFields,
+                        flattenedTypes: flattenedTypes,
+                        documents: (noDoc === true) ? []: documents,
+                        noDoc: noDoc,
+                        primaryKey: primaryKey,
+                        more_data: (more_data) ? '1': '0'
+                    });
+                })
             })
-        })
+        }
     })
 }
 
@@ -195,7 +213,7 @@ exports.docDelete = function (req, res) {
     var table = req.body.table;
     var id = req.body.id;
     r.db(db).table(table).get(id).delete().run( connection, function(error, result) {
-        if (error) console.log(error);
+        if (error) handleError(error);
         res.json({
             error: error,
             result: result
@@ -210,6 +228,7 @@ exports.docUpdate = function (req, res) {
     var doc = req.body.doc;
 
     r.db(db).table(table).get(doc[primaryKey]).replace(doc).run( connection, function(error, result) {
+        if (error) handleError(error);
         res.json({
             error: error,
             result: result
@@ -223,6 +242,7 @@ exports.docInsert = function (req, res) {
     var doc = req.body.doc;
 
     r.db(db).table(table).insert(doc).run( connection, function(error, result) {
+        if (error) handleError(error);
         res.json({
             error: error,
             result: result
@@ -276,8 +296,6 @@ function buildMapKeys(args) {
     else {
         keys['type'][type]++
     }
-
-
 }
 function computeType(value) {
     //TODO Add the empty string type
@@ -459,213 +477,3 @@ function flattenTypes(flattenedKeys, keys) {
     return types;
 }
 
-
-// Things related to post
-
-// Retrieves a liist of posts with its author and its comments
-exports.posts = function (req, res) {
-    // We order by date (desc) and joined the author and comments
-    Post.orderBy('-date').getJoin().run(function(error, posts) {
-        // Convert dates to a human readable format
-        if ((posts != null) && (Array.isArray(posts))) {
-            for(var i=0; i< posts.length; i++) {
-                var fullDate = new Date(posts[i].date);
-                posts[i].date = fullDate.getMonth()+'/'+
-                    fullDate.getDate()+'/'+
-                    fullDate.getFullYear();
-            }
-        }
-        // Send back the data
-        res.json({
-            error: error,
-            posts: posts
-        });
-       
-    })
-};
-
-// Retrieves one post with all its data (author and comments)
-exports.post = function (req, res) {
-    var id = req.params.id;
-    // Get one post and its author and comments
-    Post.get(id).getJoin().run(function(error, post) {
-        // Convert dates to a human readable format
-        var fullDate;
-        if ((post != null) && (Array.isArray(post.comments))) {
-            for(var i=0; i< post.comments.length; i++) {
-                fullDate = new Date(post.comments[i].date);
-                post.comments[i].date = fullDate.getMonth()+'/'+
-                    fullDate.getDate()+'/'+
-                    fullDate.getFullYear();
-            }
-        }
-        if (post != null) {
-            fullDate = new Date(post.date);
-            post.date = fullDate.getMonth()+'/'+
-                fullDate.getDate()+'/'+
-                fullDate.getFullYear();
-        }
-
-        // Send back the data 
-        res.json({
-            error: error,
-            post: post
-        });
-    })
-};
-
-// Retrieves a post and all authors available
-exports.postAndAuthors = function (req, res) {
-    var id = req.params.id;
-    // Retrieve a post and all the authors that exist
-    // This currently cannot be done in one query with Thinky -- the feature is on the roadmap
-
-    // Get the post
-    Post.get(id).run(function(error_post, post) {
-        // Get all authors
-        Author.run(function(error_author, authors) {
-            // Send back everything
-            res.json({
-                error_post: error_post,
-                error_author: error_author,
-                post: post,
-                authors: authors
-            });
-        })
-    })
-};
-
-// Saves a post in the database
-exports.addPost = function (req, res) {
-    // Create a new post
-    var newPost = new Post(req.body);
-
-    // Save it
-    newPost.save(function(error, result) {
-        res.json({
-            error: error,
-            result: result
-        });
-    });
-};
-
-// Deletes a post from the database
-exports.deletePost = function (req, res) {
-    var id = req.params.id;
-
-    // Deletes the post
-    Post.get(id).delete( function(error, result) {
-        res.json({
-            error: error,
-            result: result
-        });
-
-    });
-};
-
-// Updates a post in the database
-exports.editPost = function (req, res) {
-    var newPost = new Post(req.body);
-
-    // Updates the post
-    newPost.update( function(error, post) {
-        res.json({
-            error: error,
-            post: post
-        });
-    });
-};
-
-
-// Things related to authors
-
-// Retrieves all authors
-exports.authors = function (req, res) {
-    // Get all authors
-    Author.orderBy('name').run(function(error, authors) {
-        res.json({
-            error: error,
-            authors: authors
-        });
-    })
-};
-
-// Retrieves one author
-exports.author = function (req, res) {
-    var id = req.params.id;
-    // Get an author
-    // Instead of calling .get() then .run() we can just pass a callback to get.
-    Author.get(id, function(error, author) {
-        res.json({
-            error: error,
-            author: author
-        });
-    })
-};
-
-// Saves an author in the database
-exports.addAuthor = function (req, res) {
-    // Creates an author based on req.body
-    var newAuthor = new Author(req.body);
-
-    // Saves it
-    newAuthor.save(function(error, result) {
-        res.json({
-            error: error,
-            result: result
-        });
-    });
-};
-// Deletes an author
-exports.deleteAuthor = function (req, res) {
-    var id = req.params.id;
-    // Deletes an author
-    Author.get(id).delete( function(error, result) {
-        res.json({
-            error: error,
-            result: result
-        })
-
-    });
-};
-// Edits an author
-exports.editAuthor = function (req, res) {
-    // Create the author based on req.body
-    var newAuthor = new Author(req.body);
-
-    // Update an author
-    newAuthor.update( function(error, author) {
-        res.json({
-            error: error,
-            author: author
-        })
-    });
-};
-
-
-// Things related to comments
-exports.addComment = function (req, res) {
-    // Creates a comment based on req.body
-    var newComment = new Comment(req.body);
-
-    // Saves it
-    newComment.save(function(error, result) {
-        res.json({
-            error: error,
-            result: result
-        });
-    });
-};
-
-
-// Deletes comment
-exports.deleteComment = function (req, res) {
-    var id = req.params.id;
-    // Deletes a comment
-    Comment.get(id).delete( function(error, result) {
-        res.json({
-            error: error,
-            result: result
-        })
-    });
-};

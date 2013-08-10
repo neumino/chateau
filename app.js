@@ -53,27 +53,6 @@ app.post('/api/doc/delete', api.docDelete);
 app.post('/api/doc/update', api.docUpdate);
 app.post('/api/doc/insert', api.docInsert);
 
-
-
-// Post API
-app.get('/api/posts', api.posts);
-app.get('/api/post/:id', api.post);
-app.get('/api/post_and_authors/:id', api.postAndAuthors);
-app.post('/api/post', api.addPost);
-app.delete('/api/post/:id', api.deletePost);
-app.put('/api/post/:id', api.editPost);
-
-// Author API
-app.get('/api/authors', api.authors);
-app.get('/api/author/:id', api.author);
-app.post('/api/author', api.addAuthor);
-app.delete('/api/author/:id', api.deleteAuthor);
-app.put('/api/author/:id', api.editAuthor);
-
-// Comment API
-app.post('/api/comment', api.addComment);
-app.delete('/api/comment/:id', api.deleteComment);
-
 // Redirect all others to the index
 // A 404 page is probably a better move
 app.get('*', routes.index);

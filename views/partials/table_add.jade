@@ -4,6 +4,10 @@ div.section(ng-switch on="status")
     div.content(ng-switch-when="loading")
         p Loading... 
 
+    div(ng-switch-when="error")
+        div.content Sorry, an error occurred, please try again.
+
+
     div.content(ng-switch-when="empty")
         p No database found.
         p Please 
