@@ -58,6 +58,6 @@ app.post('/api/doc/insert', api.docInsert);
 app.get('*', routes.index);
 
 // Start server
-app.listen(config.expressPort, function(){
+app.listen(config.expressPort, config.network, function(){
     console.log("Express server listening on port %d in %s mode", config.expressPort, app.settings.env);
 });
