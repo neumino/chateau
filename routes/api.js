@@ -34,10 +34,11 @@ exports.databasesAndTables = function (req, res) {
             return r.expr({
                 x: [{
                     database:db,
-                    tables: r.db(db).tableList()
+                    tables: r.db(db).tableList() // Add orderBy(r.row) when RethinkDB 1.8 is available
                 }]
             })
-        })('x').orderBy('').run( connection, function(error, databases) {
+        })('x').default([]) // If ('x') throws, it means there is no database
+        .orderBy('database').run( connection, function(error, databases) {
             if (error) console.log(error);
             res.json({
                 error: error,

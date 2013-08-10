@@ -1,7 +1,16 @@
-div.section
+div.section(ng-switch on="status")
     h1 Add a table
 
-    div.content
+    div.content(ng-switch-when="loading")
+        p Loading... 
+
+    div.content(ng-switch-when="empty")
+        p No database found.
+        p Please 
+            a(href="/add/db") create one
+            |  before creating a table.
+
+    div.content(ng-switch-when="ready")
         label(for='database') Database : 
         select(ng-model="form.database", name="database", ng-options="database for database in databases", ng-disabled="authors.length == 0")
 

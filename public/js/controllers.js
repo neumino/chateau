@@ -1,4 +1,3 @@
-'use strict';
 
 // TODO Handle errors in all ajax requests
 
@@ -41,8 +40,8 @@ function IndexCtrl($scope, $http, $routeParams) {
 }
 
 function AddDbCtrl($scope, $http, $location) {
-    //TODO Give focus
     $scope.form = {}
+    $('.name').focus();
 
     // Add an author
     $scope.createDb = function () {
@@ -64,11 +63,19 @@ function AddDbCtrl($scope, $http, $location) {
 }
 function AddTableCtrl($scope, $http, $location) {
     //TODO Give focus
-    $scope.form = {}
-
+    $scope.form = {};
+    $scope.status = 'loading';
     $http.get('/api/databases').
         success(function(data) {
             $scope.databases = data.databases;
+
+            if (data.databases.length === 0) {
+                $scope.status = 'empty';
+            }
+            else {
+                $scope.status = 'ready';
+                $scope.form.database = data.databases[0];
+            }
         })
  
     // Add an author
@@ -668,16 +675,28 @@ h.goBack = function($window) {
 h.addField = function(field) {
     // AngularJS return undefined and not the empty string.
     if (this.newField === undefined) {
-        this.error = true;
+        this.error = 'undefined';
     }
     else {
-        field.push({
-            field: this.newField,
-            prefix: field[0].prefix
-        })
-        // Reset the new field
-        this.newField = undefined;
-        this.error = false;
+        // Prevent duplicate fields
+        var foundDuplicate = false;
+        for(var i=0; i<field.length; i++) {
+            if (this.newField === field[i].field) {
+                this.error = 'duplicate'
+                foundDuplicate = true;
+                break;
+            }
+        }
+        // Good to go, let's add the field
+        if (foundDuplicate === false) {
+            field.push({
+                field: this.newField,
+                prefix: field[0].prefix
+            })
+            // Reset the new field
+            this.newField = undefined;
+            delete this.error;
+        }
     }
 }
 

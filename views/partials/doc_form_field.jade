@@ -12,8 +12,10 @@ div.field(ng-repeat="field in newDocFields")
 
 div.newFieldContainer
     input.newField(type="text", placeholder="New field name", ng-model="newField")
-    button.btn.add_field(ng-click="addField(newDocFields)")
+    button.btn.add_field(ng-click="addField(newDocFields, newDocFields)")
         i.icon-plus-sign
         | Add field
 
-    div.alert.empty_field(ng-model="error", ng-show="error == true") The field name cannot be the empty string.
+    div.alert.empty_field(ng-model="error", ng-show="error != undefined")
+        p(ng-show="error == 'undefined'") The field name cannot be the empty string.
+        p(ng-show="error == 'duplicate'") You cannot create two fields with the same name.
