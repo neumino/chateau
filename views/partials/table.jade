@@ -33,11 +33,40 @@ div.table_view(ng-switch on="status")
                     div #
                 th(ng-repeat="field in fields", class="col-{{$index}}")
                     div.expand(ng-mousedown="resize($index, $event)")
-                        div.field_container(ng-mousedown="stopPropagation($event)") {{field}}
+                        div.field_container(ng-mousedown="stopPropagation($event)")
+                            span.field_span{{field}}
+                            div.center_edit_container
+                                a(ng-click="renameFieldConfirm($index)")
+                                    i.icon-edit.center_edit
+                                a(ng-click="deleteFieldConfirm($index)")
+                                    i.icon-trash.center_edit
+
+             tr(ng-show="changeField == true")
+                th.op(colspan="{{fields.length+1}}", ng-switch on="operation")
+                    div.confirm_delete.alert.no_border_top(ng-switch-when="delete")
+                        h3.alert_title Delete a field
+                        p Are you sure you want to delete the field
+                            em  {{fieldToChange}}
+                            |  for
+                            strong  all
+                            |  documents ?
+                        div.button_container
+                            button.float.btn(ng-click='cancel()') Cancel
+                            button.float.btn(ng-click='deleteDoc($index)') Delete
+                    div.update_form_container.alert.no_border_top(ng-switch-when="rename")
+                        h3.alert_title Rename a field
+                        div.doc_form_container
+                        input(name="newFieldName", ng-model="newFieldName")
+
+                        div.button_container
+                            button.float.btn(ng-click='cancel()') Cancel
+                            button.float.btn(ng-click='updateDoc()') Update
+
+                                   
             tbody(ng-repeat="document in flattened_docs", ng-switch on="display == $index")
                 tr.doc(class="doc-{{$index}}")
                     td.index_cell
-                        span.index {{$index+skip}}
+                        span.to_hide {{$index+skip}}
                         a(ng-click="updateTrigger($index)")
                             i.icon-edit.float_edit
                         a(ng-click="deleteTrigger($index)")

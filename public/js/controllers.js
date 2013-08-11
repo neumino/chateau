@@ -215,6 +215,38 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
                 $scope.status = 'list'
             }
         })
+
+    $scope.renameFieldConfirm = function(index) {
+        $scope.operation = 'rename';
+        $scope.changeField = true;
+        $scope.fieldToChangeStr = $scope.raw_fields[index].join('.')
+        $scope.fieldToChange = $scope.raw_fields[index].join('.')
+
+    }
+    $scope.deleteFieldConfirm = function(index) {
+        $scope.operation = 'delete';
+        $scope.changeField = true;
+        $scope.fieldToChange = $scope.raw_fields[index].join('.')
+    }
+    $scope.deleteField = function(index) {
+        var data = {
+            db: $scope.db,
+            table: $scope.table,
+            field: $scope.raw_fields[index]
+        }
+        $http.post('/api/field/delete', data).
+            success(function(data) {
+                if (data.error != null) {
+                    h.handleError(data.error);
+                }
+                else {
+                    $route.reload();
+                }
+            })
+    }
+
+
+
     $scope.stopPropagation = function(event) {
         event.stopPropagation();
     }
@@ -322,6 +354,8 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
         $scope.display = null;
         $scope.operation = null;
         $scope.newDoc = null;
+        $scope.operation = null;
+        $scope.changeField = null; 
     }
 
     $scope.addDoc = function(event) {

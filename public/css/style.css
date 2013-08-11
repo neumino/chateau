@@ -242,6 +242,7 @@ header a:hover {
 .table_view th{
     padding: 0px;
 }
+
 .table_view th.pound_key{
     padding: 7px 14px;
     font-weight: bold;
@@ -272,9 +273,40 @@ header a:hover {
 .table_view tr:hover .float_edit{
     display: inline-block;
 }
-.table_view tr:hover span.index{
+.table_view tr:hover span.to_hide{
     display: none;
 }
+.table_view th .expand{
+    position: relative;
+    width: 100%;
+}
+.table_view th .center_edit_container{
+    position: absolute;
+    width: 50px;
+    overflow: auto;
+    left: 50%;
+    margin-left: -25px;
+    margin-top: 2px;
+}
+.table_view th .center_edit{
+    display: none;
+    opacity: 0.3;
+    padding: 0px;
+    cursor: pointer;
+}
+.table_view th .center_edit:hover{
+    opacity: 1;
+}
+.table_view th:hover .center_edit{
+    display: inline-block;
+    margin: 0px 3px;
+}
+.table_view th:hover span.field_span{
+    visibility: hidden;
+    height: 0px;
+}
+
+
 .table_view i.float_edit{
     display: none;
     margin-left: 5px;
@@ -300,11 +332,13 @@ header a:hover {
     overflow: hidden;
 }
 
-.table_view tr td.op{
+.table_view tr .op{
     border-left: none;
     border-right: none;
     padding: 0px;
+    font-weight: normal;
 }
+
 .table_view div.confirm_delete, .update_form_container{
     margin: 0px 10px 20px 10px; 
     overflow: auto;

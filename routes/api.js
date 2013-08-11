@@ -254,6 +254,74 @@ exports.docInsert = function (req, res) {
     })
 }
 
+exports.fieldUpdate = function (req, res) {
+    var db = req.body.db;
+    var table = req.body.table;
+    var field = req.body.field;
+    var newName = req.body.newNae;
+    var fieldObject = {};
+
+    var ref = fieldObject;
+    for(var i=0; i<field.length; i++) {
+        if (i === field.length-1) {
+            ref[field[i]] = true;
+        }
+        else {
+            ref[field[i]] = {};
+            ref = ref[field[i]];
+        }
+    }
+    r.db(db).table(table).replace(function(doc) {
+            var fieldObject = {}
+            var ref = fieldObject;
+            for(var i=0; i<field.length; i++) {
+                if (i === field.length-1) {
+                    ref[field[i]] = true;
+                }
+                else {
+                    ref[field[i]] = {};
+                    ref = ref[field[i]];
+                }
+            }
+                   
+            return doc.merge().without(fieldObject)
+        }).run( connection, function(error, result) {
+            if (error) handleError(error);
+            res.json({
+                error: error,
+                result: result
+            });
+        })
+}
+
+
+exports.fieldDelete = function (req, res) {
+    var db = req.body.db;
+    var table = req.body.table;
+    var field = req.body.field;
+    var fieldObject = {};
+
+    var ref = fieldObject;
+    for(var i=0; i<field.length; i++) {
+        if (i === field.length-1) {
+            ref[field[i]] = true;
+        }
+        else {
+            ref[field[i]] = {};
+            ref = ref[field[i]];
+        }
+    }
+    r.db(db).table(table).replace(function(doc) {
+            return doc.without(fieldObject)
+        }).run( connection, function(error, result) {
+            if (error) handleError(error);
+            res.json({
+                error: error,
+                result: result
+            });
+        })
+}
+
 
 
 
