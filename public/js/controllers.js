@@ -268,21 +268,9 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
         }
         // TODO expand textarea
     }
-    $scope.expandTextareaFromEvent = function(event) {
-        expandTextarea(event.target)
-    }
-    function expandTextarea(element) {
-        $(element).height(0)
-        var height = $(element)[0].scrollHeight
-        if (height < 20) {
-            height = 28
-        }
-        $(element).height(height-8)
-    }
-
-    // Keep it cool, it's not a real deep copy
 
     $scope.deepCopy = h.deepCopy;
+
     $scope.changeNewDocFieldType = function(field) {
         h.changeNewDocFieldType(field, this.newType, $scope);
     }
@@ -609,6 +597,8 @@ function ImportTableCtrl($scope, $http, $location, $routeParams) {
 
 // Helpers
 var h = {};
+
+// Keep it cool, it's not a real deep copy
 h.deepCopy = function(value) {
     if (typeof value === 'string') {
         return value
