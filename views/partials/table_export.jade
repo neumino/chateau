@@ -1,0 +1,12 @@
+div.section
+    h1 Export the table {{db}}.{{table}}
+
+    div.content
+        p Are you sure you want to export the table 
+            strong {{table}}
+            |  in 
+            strong {{database}}
+
+
+        button.float.btn(ng-click='cancel()') No thanks
+        button.float.btn(ng-click='export()') Yes, export
