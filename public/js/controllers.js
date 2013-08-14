@@ -89,18 +89,15 @@ function AddTableCtrl($scope, $http, $location) {
             }
         })
  
-    // Add an author
+    // Create a table
     $scope.createTable = function () {
-        // Test
-
         $http.post('/api/table/add', $scope.form).
         success(function(data) {
             if (data.error != null) {
                 h.handleError(data.error);
             }
             else if ((data.result != null) && (data.result.created != 1)) {
-                //TODO Handle
-                console.log(data.result);
+                h.handleError(new Error("Table not created, reason unknown"));
             }
             else {
                 $location.path('/msg/2');
@@ -120,8 +117,7 @@ function DeleteDbCtrl($scope, $http, $location, $routeParams, $window) {
                 h.handleError(data.error);
             }
             else if ((data.result != null) && (data.result.dropped != 1)) {
-                //TODO Handle
-                console.log(data.result);
+                h.handleError(new Error("Database not deleted, reason unknown"));
             }
             else {
                 $location.path('/msg/3');
@@ -147,8 +143,7 @@ function DeleteTableCtrl($scope, $http, $location, $routeParams, $window) {
                 h.handleError(data.error);
             }
             else if ((data.result != null) && (data.result.dropped != 1)) {
-                //TODO Handle
-                console.log(data.result);
+                h.handleError(new Error("Table not deleted, reason unknown"));
             }
             else {
                 $location.path('/msg/4');
@@ -554,6 +549,63 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
             });
     }
 }
+
+function ExportTableCtrl($scope, $http, $location, $routeParams) {
+    $scope.db = $routeParams.db;
+    $scope.table = $routeParams.table;
+
+    $scope.export = function() {
+        window.open('/api/export/table?db='+$scope.db+'&table='+$scope.table);
+    }
+    $scope.cancel = function() {
+        $location.path('/table/'+$scope.db+'/'+$scope.table);
+    }
+}
+function ImportTableCtrl($scope, $http, $location, $routeParams) {
+    $scope.db = $routeParams.db;
+    $scope.table = $routeParams.table;
+
+    $scope.fileName = null;
+    $scope.selectFile = function() {
+        $('.real_file').click()
+    }
+    $scope.import = function() {
+        if ($scope.file != null) {
+            $scope.error = null;
+            $http({
+                method: 'POST',
+                url: "/api/import/table",
+                headers: { 'Content-Type': false },
+                transformRequest: function (data) {
+                    var formData = new FormData();
+                    formData.append("db", $scope.db);
+                    formData.append("table", $scope.table);
+                    formData.append("file", $scope.file);
+                    return formData;
+                }
+            }).
+            success(function (data, status, headers, config) {
+                if (data.error.length === 0) {
+                    $location.path('/table/'+$scope.db+'/'+$scope.table);
+                }
+                // TODO Handle error
+            })
+        }
+        else {
+            $scope.error = 'empty'
+        }
+    }
+    $scope.setFile = function(element) {
+        $scope.$apply(function(scope) {
+            $scope.fileName = element.files[0].name
+            $scope.file = element.files[0]
+        });
+    };
+    $scope.cancel = function() {
+        $location.path('/table/'+$scope.db+'/'+$scope.table);
+    }
+}
+ 
 
 // Helpers
 var h = {};
