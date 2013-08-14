@@ -30,6 +30,8 @@ node app.js
 - Browse the documents in a table
 - Single update
 - Add a document // schema provided
+- Import/export JSON files
+
 
 ### Contribute
 - Feedback is always welcome!
