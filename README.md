@@ -16,6 +16,7 @@ npm install
 ```
 
 ### Configure
+Rename the file `config.template.js` to `config.js`
 Update the file `config.js` if you are not using the default RethinkDB parameters.
 
 ### Run
