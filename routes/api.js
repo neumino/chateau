@@ -466,6 +466,46 @@ exports.fieldDelete = function (req, res) {
         })
 }
 
+exports.fieldRename = function (req, res) {
+    var db = req.body.db;
+    var table = req.body.table;
+    var field = req.body.field;
+    var newName = req.body.newName;
+    var fieldObject = {};
+
+    r.db(db).table(table).replace(function(doc) {
+            // Generate doc with doc(...) value
+            var addFieldObject = {};
+            var removeFieldObject = {};
+            var refAdd = addFieldObject;
+            var refRemove = removeFieldObject;
+            var value = doc;
+
+            for(var i=0; i<field.length; i++) {
+                if (i === field.length-1) {
+                    refRemove[field[i]] = true;
+                    refAdd[newName] = value(field[i]);
+                }
+                else {
+                    refAdd[field[i]] = {};
+                    refAdd = refAdd[field[i]];
+
+                    refRemove[field[i]] = {};
+                    refRemove = refRemove[field[i]];
+
+                    value = value(field[i]);
+                }
+            }
+            return doc.merge(addFieldObject).without(removeFieldObject)
+        }).run( connection, function(error, result) {
+            if (error) handleError(error);
+            res.json({
+                error: error,
+                result: result
+            });
+        })
+}
+
 
 
 

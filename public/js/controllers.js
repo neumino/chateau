@@ -215,19 +215,38 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
         $scope.operation = 'rename';
         $scope.changeField = true;
         $scope.fieldToChangeStr = $scope.raw_fields[index].join('.')
-        $scope.fieldToChange = $scope.raw_fields[index].join('.')
+        $scope.fieldToChange = $scope.raw_fields[index]
 
     }
-    $scope.deleteFieldConfirm = function(index) {
-        $scope.operation = 'delete';
-        $scope.changeField = true;
-        $scope.fieldToChange = $scope.raw_fields[index].join('.')
-    }
-    $scope.deleteField = function(index) {
+    $scope.renameField = function() {
         var data = {
             db: $scope.db,
             table: $scope.table,
-            field: $scope.raw_fields[index]
+            field: $scope.fieldToChange,
+            newName: this.newFieldName
+        }
+        $http.post('/api/field/rename', data).
+            success(function(data) {
+                if (data.error != null) {
+                    h.handleError(data.error);
+                }
+                else {
+                    $route.reload();
+                }
+            })
+    }
+
+    $scope.deleteFieldConfirm = function(index) {
+        $scope.operation = 'delete';
+        $scope.changeField = true;
+        $scope.fieldToChangeStr = $scope.raw_fields[index].join('.')
+        $scope.fieldToChange = $scope.raw_fields[index]
+    }
+    $scope.deleteField = function() {
+        var data = {
+            db: $scope.db,
+            table: $scope.table,
+            field: $scope.fieldToChange
         }
         $http.post('/api/field/delete', data).
             success(function(data) {

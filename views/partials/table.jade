@@ -33,7 +33,7 @@ div.table_view(ng-switch on="status")
             tr.fields
                 th.pound_key
                     div #
-                th(ng-repeat="field in fields", class="col-{{$index}}")
+                th(ng-repeat="field in fields", class="col-{{$index}}", ng-class="{can_be_updated: $index!=0}")
                     div.expand(ng-mousedown="resize($index, $event)")
                         div.field_container(ng-mousedown="stopPropagation($event)")
                             span.field_span{{field}}
@@ -48,21 +48,21 @@ div.table_view(ng-switch on="status")
                     div.confirm_delete.alert.no_border_top(ng-switch-when="delete")
                         h3.alert_title Delete a field
                         p Are you sure you want to delete the field
-                            em  {{fieldToChange}}
+                            em  {{fieldToChangeStr}}
                             |  for
                             strong  all
                             |  documents ?
                         div.button_container
                             button.float.btn(ng-click='cancel()') Cancel
-                            button.float.btn(ng-click='deleteDoc($index)') Delete
+                            button.float.btn(ng-click='deleteField()') Delete
                     div.update_form_container.alert.no_border_top(ng-switch-when="rename")
-                        h3.alert_title Rename a field
+                        h3.alert_title Rename the field {{fieldToChangeStr}}
                         div.doc_form_container
-                        input(name="newFieldName", ng-model="newFieldName")
+                        input(type="text", name="newFieldName", ng-model="newFieldName")
 
                         div.button_container
                             button.float.btn(ng-click='cancel()') Cancel
-                            button.float.btn(ng-click='updateDoc()') Update
+                            button.float.btn(ng-click='renameField()') Update
 
                                    
             tbody(ng-repeat="document in flattened_docs", ng-switch on="display == $index")
