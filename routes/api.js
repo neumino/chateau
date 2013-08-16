@@ -246,8 +246,8 @@ exports.exportTable = function (req, res) {
                 else {
                     stream.emit('data', ','+JSON.stringify(data))
                 }
+                fetchNext(cursor)
             })
-            fetchNext(cursor)
         }
         else {
             stream.emit('data', ']')
