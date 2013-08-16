@@ -1,3 +1,4 @@
+// Global styles
 html, body {
     padding: 0px;
     margin: 0px;
@@ -30,8 +31,17 @@ a:hover{
     float: left;
     margin-right: 20px;
 }
+.resizing {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 
 
+// Main template
 #wrapper {
     min-height: 100%;
     height: 100%;
@@ -41,14 +51,6 @@ a:hover{
     padding: 0px;
 }
 
-.resizing {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
 header {
     width: auto;
     height: 30px;
@@ -126,6 +128,31 @@ header a:hover {
 .main_padding {
     padding: 20px 30px 30px 40px;
 }
+#error{
+    position: fixed;
+    bottom: 0px;
+    left: 50%;
+    margin: 0px 0px 20px 0px;
+    text-align: center;
+}
+#error .alert{
+    display: none;
+    width: auto;
+    position: relative;
+    left: -50%;
+    padding: 8px 20px;
+    color: #000;
+    background: #fafafa;
+    border-color: #ddd;
+}
+h3.alert_title{
+    color: #444;
+    font-size: 14px;
+    margin: 0px 0px 5px 0px;
+}
+
+
+// Shared styles
 .actions{
     text-align: left;
     width: 100%;
@@ -135,8 +162,12 @@ header a:hover {
     margin: 0px 20px 0px 10px;
     font-size: 0.9em;
 }
+.clear_both{
+    clear: both;
+}
 
 
+// Home
 .home ul.database{
     list-style: none;
     margin: 0px;
@@ -203,6 +234,7 @@ header a:hover {
     padding: 3px 10px;
 }
 
+// Section view
 .section{
     margin-top: 15px;
 }
@@ -218,6 +250,8 @@ header a:hover {
     border-bottom: 1px solid #f4f4f4;
 }
 
+
+// Table view
 .table_view table.results{
     width: auto;
     table-layout: fixed;
@@ -251,8 +285,6 @@ header a:hover {
 .table_view th.pound_key div{
     width: 38px;
 }
-
-
 .table_view th div.expand{
     cursor:e-resize; 
     padding: 0px 5px 0px 0px;
@@ -276,6 +308,7 @@ header a:hover {
 .table_view tr:hover span.to_hide{
     display: none;
 }
+
 .table_view th .expand{
     position: relative;
     width: 100%;
@@ -305,8 +338,6 @@ header a:hover {
     visibility: hidden;
     height: 0px;
 }
-
-
 .table_view i.float_edit{
     display: none;
     margin-left: 5px;
@@ -316,7 +347,6 @@ header a:hover {
     opacity: 1;
     cursor: pointer;
 }
-
 
 .table_view td{
     height: 20px;
@@ -351,6 +381,7 @@ header a:hover {
 
 }
 
+// Colors for type
 .table_view .value_td .undefined {
   color: #ccc;
 }
@@ -370,8 +401,11 @@ header a:hover {
   color: #ccc;
   font-style:italic
 }
+.table_view .value_td .date {
+  color: #000;
+}
 
-
+// Alert on the table are gray
 .table_view .alert{
     color: #000;
     background: #fafafa;
@@ -380,6 +414,8 @@ header a:hover {
 .table_view .no_border_top{
     border-top: none;
 }
+
+// Form for new doc/update
 .table_view .doc_form_container input, .table_view .doc_form_container textarea{
     width: 400px;
 }
@@ -390,7 +426,6 @@ header a:hover {
     height: 20px;
     overflow: hidden;
 }
-
 .table_view .doc_form_container select.type{
     float: right;
     width: 200px;
@@ -401,7 +436,6 @@ header a:hover {
     width: 414px;
     margin: 10px 0px 10px 0px;
 }
-
 .table_view .doc_form_container p{
     margin: 0px;
 }
@@ -438,16 +472,6 @@ header a:hover {
     border-radius: 4px;
 
 }
-h3.alert_title{
-    color: #444;
-    font-size: 14px;
-    margin: 0px 0px 5px 0px;
-}
-
-.link_previous_next{
-    float: left;
-    padding: 0px 10px;
-}
 .empty_field.alert{
     width: 363px;
     margin: 5px 0px;
@@ -456,26 +480,15 @@ h3.alert_title{
     border-color: #fbeed5;
 }
 
-#error{
-    position: fixed;
-    bottom: 0px;
-    left: 50%;
-    margin: 0px 0px 20px 0px;
-    text-align: center;
-}
-#error .alert{
-    display: none;
-    width: auto;
-    position: relative;
-    left: -50%;
-    padding: 8px 20px;
-    color: #000;
-    background: #fafafa;
-    border-color: #ddd;
-
+.link_previous_next{
+    float: left;
+    padding: 0px 10px;
 }
 
 
+
+
+// Import view
 .real_file{
     display: none;
 }
@@ -484,6 +497,4 @@ h3.alert_title{
     width: 280px;
     margin: 0px 10px 0px 0px;
 }
-.clear_both{
-    clear: both;
-}
+
