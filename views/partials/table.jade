@@ -75,8 +75,8 @@ div.table_view(ng-switch on="status")
                             i.icon-trash.float_edit
                     td.value_td(ng-repeat="field in document", class="col-{{$index}}")
                         div.value_container(class="{{field.type}}") {{formatValue(field.value)}}
-                tr
-                    td.op(ng-switch-when="true", colspan="{{document.length+1}}", class="op-{{$index}}", ng-switch on="operation")
+                tr(ng-switch-when="true")
+                    td.op(colspan="{{document.length+1}}", class="op-{{$index}}", ng-switch on="operation")
                         div.confirm_delete.alert.no_border_top(ng-switch-when="delete")
                             h3.alert_title Delete a document
                             p Are you sure you want to delete the document above?
