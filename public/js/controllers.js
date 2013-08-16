@@ -51,19 +51,25 @@ function AddDbCtrl($scope, $http, $location) {
 
     // Add an author
     $scope.createDb = function () {
-        $http.post('/api/database/add', $scope.form).
-        success(function(data) {
-            if (data.error != null) {
-                h.handleError(data.error);
-            }
-            else if ((data.result != null) && (data.result.created != 1)) {
-                var error = new Error("The database could not be created")
-                h.handleError(error);
-            }
-            else {
-                $location.path('/msg/1');
-            }
-        });
+        if ($scope.form.name == null) {
+            $scope.error = true;
+        }
+        else {
+            $scope.error = false;
+            $http.post('/api/database/add', $scope.form).
+            success(function(data) {
+                if (data.error != null) {
+                    h.handleError(data.error);
+                }
+                else if ((data.result != null) && (data.result.created != 1)) {
+                    var error = new Error("The database could not be created")
+                    h.handleError(error);
+                }
+                else {
+                    $location.path('/msg/1');
+                }
+            });
+        }
     };
 }
 function AddTableCtrl($scope, $http, $location) {

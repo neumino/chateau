@@ -5,4 +5,6 @@ div.section
         label(for='name') Database name: 
         input.name.form-control(ng-model='form.name', name='name', type='text')
 
+        div.alert.empty_field(ng-model="error", ng-show="error != undefined") The database name cannot be empty.
+
         button.submit_post.btn(ng-click='createDb()') Create
