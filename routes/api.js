@@ -1,6 +1,10 @@
+//
 // Import
 var r = require('rethinkdb'),
-    config = require('../config');
+    config = require('../config'),
+    Stream = require('stream'),
+    fs = require('fs');
+
 
 var connection = null;
 function connect() {
@@ -11,7 +15,10 @@ function connect() {
     }, function(error, conn) {
         // Throws, if we don't have a connection, we won't do anything...
         if (error) throw error
-        connection = conn;
+        connection = {
+            connection: conn,
+            timeFormat: 'raw'
+        }
     });
 }
 connect();
@@ -167,7 +174,6 @@ exports.table = function (req, res) {
                         // For each docs, we update keys
                         buildMapKeys({ keys: keys, value: documents[i]})
                     }
-
                     // Compute the occurence ( = num primitives or average of all fields for objects)
                     computeOccurrenceKeys({ keys: keys, documents: documents});
 
@@ -184,6 +190,7 @@ exports.table = function (req, res) {
                     
                     // Sort keys by occurence
                     sort_keys(keys);
+
 
                     // Flatten the keys so {obj: key: 1} => obj.key
                     var flattenedKeys = flattenKeys(keys, [], documents.length);
@@ -212,6 +219,144 @@ exports.table = function (req, res) {
     })
 }
 
+exports.exportTable = function (req, res) {
+    var db = req.query.db;
+    var table = req.query.table;
+
+    var stream = new Stream();
+    var init = true;
+    stream.on('data', function(data) {
+        res.write(data)
+    })
+    stream.on('close', function() {
+        res.end()
+    })
+    res.attachment(db+'.'+table+'_'+(new Date()).toISOString()+'.json')
+
+
+
+    stream.emit('data', '[')
+    var fetchNext = function(cursor) {
+        if (cursor.hasNext() === true) {
+            cursor.next( function(error, data) {
+                if (init === true) {
+                    stream.emit('data', JSON.stringify(data))
+                    init = false;
+                }
+                else {
+                    stream.emit('data', ','+JSON.stringify(data))
+                }
+                fetchNext(cursor)
+            })
+        }
+        else {
+            stream.emit('data', ']')
+            stream.emit('close')
+        }
+    }
+   
+    r.db(db).table(table).run( connection, function(error, cursor) {
+        if (error) handleError(error);
+        fetchNext(cursor)
+    })
+}
+exports.importTable = function (req, res) {
+    var db = req.body.db;
+    var table = req.body.table;
+
+    var stream = fs.createReadStream(req.files.file.path, {
+            flags: 'r',
+            encoding: 'utf-8',
+            fd: null
+        });
+
+    var parsingString = false; // Are we parsing a string?
+    var delimiter = null; // Char delimiter for an started string
+    var level = 0; // Level (we count the nested level)
+    var bufferStr = ''; // Current string to parse as JSON
+    var bufferAr = []; // Data to insert
+    var queriesToDo = 0; // Queries to do
+    var queriesDone = 0; // Queries done
+    var doneParsing = false; // Done parsing?
+    var errors = [] // Errors
+
+    stream.addListener('readable', function() {
+        var chunk;
+        while (null !== (chunk = stream.read())) {
+            for(var i=0; i<chunk.length; i++) {
+                var char = chunk[i];
+
+                if (char === "'") {
+                    if (parsingString === false) {
+                        parsingString = true;
+                        delimiter = char;
+                    }
+                    else if ((bufferStr.length > 0) && (char === delimiter) && (bufferStr[bufferStr.length-1] !== "\\")) {
+                        parsingString = false;
+                    }
+
+                }
+                else if (char === '"') {
+                    if (parsingString === false) {
+                        parsingString = true;
+                        delimiter = char;
+                    }
+                    else if ((bufferStr.length > 0) && (char === delimiter) && (bufferStr[bufferStr.length-1] !== "\\")) {
+                        parsingString = false;
+                    }
+                }
+
+                if ((parsingString === false) && ((level === 1) && (char === ','))) {
+                    bufferAr.push(JSON.parse(bufferStr))
+                    if (bufferAr.length > 500) {
+                        queriesToDo++;
+                        r.db(db).table(table).insert(bufferAr).run( connection, function(error, result) {
+                            if (error) errors.push(error)
+                            queriesDone++;
+                            if ((doneParsing === true) && (queriesDone === queriesToDo)) {
+                                res.json({
+                                    error: errors
+                                })
+                            }
+                        })
+                        bufferAr = [];
+                    }
+                    bufferStr = '';
+                }
+                else {
+                    if (level !== 0) {
+                        bufferStr += char;
+                    }
+
+                    if ((parsingString === false) && ((char === '{') || (char === '['))) {
+                        level++;
+                    }
+                    else if ((parsingString === false) && ((char === '}') || (char === ']'))) {
+                        level--;
+                    }
+
+                }
+            }
+        }
+        doneParsing = true;
+        if (bufferAr.length > 0) {
+            queriesToDo++;
+            r.db(db).table(table).insert(bufferAr).run( connection, function(error, result) {
+                if (error) errors.push(error)
+                queriesDone++;
+                if ((doneParsing === true) && (queriesDone === queriesToDo)) {
+                    res.json({
+                        error: errors
+                    })
+                }
+            })
+            bufferAr = [];
+        }
+
+    })
+}
+
+
 exports.docDelete = function (req, res) {
     var db = req.body.db;
     var table = req.body.table;
@@ -230,7 +375,6 @@ exports.docUpdate = function (req, res) {
     var db = req.body.db;
     var table = req.body.table;
     var doc = req.body.doc;
-
     r.db(db).table(table).get(doc[primaryKey]).replace(doc).run( connection, function(error, result) {
         if (error) handleError(error);
         res.json({
@@ -332,21 +476,31 @@ function buildMapKeys(args) {
     var value = args.value
 
     if (Object.prototype.toString.call(value) === '[object Object]') {
-        for(var key in value) {
-            //TODO add hasOwnProperty?
-            // Init object
-            if (keys['keys'] == null) { keys['keys'] = {} }
-            if (keys['keys'][key] == null) { keys['keys'][key] = {} }
-
-            buildMapKeys({ keys: keys['keys'][key], value: value[key] })
-        }
-
-        // Increment count
-        if (keys['object_count'] != null) {
-            keys['object_count']++
+        if ((value.$reql_type$ === 'TIME') && (value.epoch_time != null)) {
+            if (keys['primitiveValueCount'] != null) {
+                keys['primitiveValueCount']++
+            }
+            else {
+                keys['primitiveValueCount'] = 1
+            }
         }
         else {
-            keys['object_count'] = 1
+            for(var key in value) {
+                //TODO add hasOwnProperty?
+                // Init object
+                if (keys['keys'] == null) { keys['keys'] = {} }
+                if (keys['keys'][key] == null) { keys['keys'][key] = {} }
+
+                buildMapKeys({ keys: keys['keys'][key], value: value[key] })
+            }
+
+            // Increment count
+            if (keys['object_count'] != null) {
+                keys['object_count']++
+            }
+            else {
+                keys['object_count'] = 1
+            }
         }
     }
     else {
@@ -383,6 +537,8 @@ function computeType(value) {
         return 'number'
     } else if (Object.prototype.toString.call(value) === '[object Array]') {
         return 'array'
+    } else if ((typeof value === 'object') && (value.$reql_type$ === 'TIME')) {
+        return 'date'
     }
     return 'object';
 }

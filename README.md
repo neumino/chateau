@@ -16,6 +16,7 @@ npm install
 ```
 
 ### Configure
+Copy the file `config.template.js` and name it `config.js`
 Update the file `config.js` if you are not using the default RethinkDB parameters.
 
 ### Run
@@ -30,6 +31,7 @@ node app.js
 - Browse the documents in a table
 - Single update
 - Add a document // schema provided
+- Import/export JSON files
 
 ### Contribute
 - Feedback is always welcome!

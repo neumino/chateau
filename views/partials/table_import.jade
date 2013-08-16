@@ -1,0 +1,14 @@
+div.section(ng-controller="ImportTableCtrl")
+    h1 Import in {{db}}.{{table}}
+
+    div.content
+        p JSON file
+
+        input.readonly_input(type="text", readonly, value="{{fileName}}")
+        button.fake_file.btn(type="button", ng-click="selectFile()") Choose a file
+        input.real_file(type="file", onchange="angular.element(this).scope().setFile(this);")
+
+        div.alert.empty_field.clear_both(ng-model="error", ng-show="error != undefined") You have to select a file.
+        div.clear_both
+            button.float.btn(ng-click='cancel()') Cancel
+            button.float.btn(ng-click='import()') Import file

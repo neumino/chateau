@@ -44,6 +44,14 @@ angular.module('chateau', ['chateau.filters', 'chateau.services', 'chateau.direc
         templateUrl: 'partials/doc_add',
         controller: AddDocCtrl 
       }).
+      when('/export/:db/:table', {
+        templateUrl: 'partials/table_export',
+        controller: ExportTableCtrl
+      }).
+      when('/import/:db/:table', {
+        templateUrl: 'partials/table_import',
+        controller: ImportTableCtrl
+      }).
       otherwise({
         redirectTo: '/'
       });

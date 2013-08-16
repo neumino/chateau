@@ -41,6 +41,8 @@ app.post('/api/table/delete', api.tableDelete);
 
 app.get('/api/table', api.table);
 app.get('/api/table/:order/:skip/:limit', api.table);
+app.get('/api/export/table', api.exportTable);
+app.post('/api/import/table', api.importTable);
 
 app.post('/api/doc/delete', api.docDelete);
 app.post('/api/doc/update', api.docUpdate);
