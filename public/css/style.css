@@ -1,4 +1,4 @@
-// Global styles
+/* Global styles */
 html, body {
     padding: 0px;
     margin: 0px;
@@ -41,7 +41,7 @@ a:hover{
 }
 
 
-// Main template
+/* Main template */
 #wrapper {
     min-height: 100%;
     height: 100%;
@@ -152,7 +152,7 @@ h3.alert_title{
 }
 
 
-// Shared styles
+/* Shared styles */
 .actions{
     text-align: left;
     width: 100%;
@@ -167,7 +167,7 @@ h3.alert_title{
 }
 
 
-// Home
+/* Home */
 .home ul.database{
     list-style: none;
     margin: 0px;
@@ -234,7 +234,7 @@ h3.alert_title{
     padding: 3px 10px;
 }
 
-// Section view
+/* Section view */
 .section{
     margin-top: 15px;
 }
@@ -251,7 +251,7 @@ h3.alert_title{
 }
 
 
-// Table view
+/* Table view */
 .table_view table.results{
     width: auto;
     table-layout: fixed;
@@ -381,7 +381,7 @@ h3.alert_title{
 
 }
 
-// Colors for type
+/* Colors for type */
 .table_view .value_td .undefined {
   color: #ccc;
 }
@@ -405,7 +405,7 @@ h3.alert_title{
   color: #000;
 }
 
-// Alert on the table are gray
+/* Alert on the table are gray */
 .table_view .alert{
     color: #000;
     background: #fafafa;
@@ -415,7 +415,7 @@ h3.alert_title{
     border-top: none;
 }
 
-// Form for new doc/update
+/* Form for new doc/update */
 .table_view .doc_form_container input, .table_view .doc_form_container textarea{
     width: 400px;
 }
@@ -488,7 +488,7 @@ h3.alert_title{
 
 
 
-// Import view
+/* Import view */
 .real_file{
     display: none;
 }
