@@ -7,6 +7,8 @@ div.value_wrap(ng-switch on="computeType(getAttr(newDoc, field.prefix.concat([fi
     textarea.value(ng-switch-when="string", ng-disabled="(field.isPrimaryKey == true) && (operation == 'update')",
         ng-auto-expand) {{getAttr(newDoc, field.prefix.concat([field.field]))}}
 
+    input.value(ng-switch-when="date", ng-disabled="(field.isPrimaryKey == true) && (operation == 'update')", type="text", value="{{getAttr(newDoc, field.prefix.concat([field.field]))}}" )
+
     textarea.value(ng-switch-when="array") {{getAttr(newDoc, field.prefix.concat([field.field]))}}
 
     select.value(ng-switch-when="boolean")

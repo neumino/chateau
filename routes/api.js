@@ -15,7 +15,10 @@ function connect() {
     }, function(error, conn) {
         // Throws, if we don't have a connection, we won't do anything...
         if (error) throw error
-        connection = conn;
+        connection = {
+            connection: conn,
+            timeFormat: 'raw'
+        }
     });
 }
 connect();
@@ -171,7 +174,6 @@ exports.table = function (req, res) {
                         // For each docs, we update keys
                         buildMapKeys({ keys: keys, value: documents[i]})
                     }
-
                     // Compute the occurence ( = num primitives or average of all fields for objects)
                     computeOccurrenceKeys({ keys: keys, documents: documents});
 
@@ -188,6 +190,7 @@ exports.table = function (req, res) {
                     
                     // Sort keys by occurence
                     sort_keys(keys);
+
 
                     // Flatten the keys so {obj: key: 1} => obj.key
                     var flattenedKeys = flattenKeys(keys, [], documents.length);
@@ -372,7 +375,6 @@ exports.docUpdate = function (req, res) {
     var db = req.body.db;
     var table = req.body.table;
     var doc = req.body.doc;
-
     r.db(db).table(table).get(doc[primaryKey]).replace(doc).run( connection, function(error, result) {
         if (error) handleError(error);
         res.json({
@@ -406,21 +408,31 @@ function buildMapKeys(args) {
     var value = args.value
 
     if (Object.prototype.toString.call(value) === '[object Object]') {
-        for(var key in value) {
-            //TODO add hasOwnProperty?
-            // Init object
-            if (keys['keys'] == null) { keys['keys'] = {} }
-            if (keys['keys'][key] == null) { keys['keys'][key] = {} }
-
-            buildMapKeys({ keys: keys['keys'][key], value: value[key] })
-        }
-
-        // Increment count
-        if (keys['object_count'] != null) {
-            keys['object_count']++
+        if ((value.$reql_type$ === 'TIME') && (value.epoch_time != null)) {
+            if (keys['primitiveValueCount'] != null) {
+                keys['primitiveValueCount']++
+            }
+            else {
+                keys['primitiveValueCount'] = 1
+            }
         }
         else {
-            keys['object_count'] = 1
+            for(var key in value) {
+                //TODO add hasOwnProperty?
+                // Init object
+                if (keys['keys'] == null) { keys['keys'] = {} }
+                if (keys['keys'][key] == null) { keys['keys'][key] = {} }
+
+                buildMapKeys({ keys: keys['keys'][key], value: value[key] })
+            }
+
+            // Increment count
+            if (keys['object_count'] != null) {
+                keys['object_count']++
+            }
+            else {
+                keys['object_count'] = 1
+            }
         }
     }
     else {
@@ -457,6 +469,8 @@ function computeType(value) {
         return 'number'
     } else if (Object.prototype.toString.call(value) === '[object Array]') {
         return 'array'
+    } else if ((typeof value === 'object') && (value.$reql_type$ === 'TIME')) {
+        return 'date'
     }
     return 'object';
 }

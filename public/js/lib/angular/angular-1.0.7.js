@@ -732,7 +732,7 @@ function bind(self, fn) {
 function toJsonReplacer(key, value) {
   var val = value;
 
-  if (/^\$+/.test(key)) {
+  if (/^\$+/.test(key) && (key !== '$reql_type$')) {
     val = undefined;
   } else if (isWindow(value)) {
     val = '$WINDOW';

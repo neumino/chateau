@@ -33,7 +33,6 @@ node app.js
 - Add a document // schema provided
 - Import/export JSON files
 
-
 ### Contribute
 - Feedback is always welcome!
 - Pull requests are welcome!

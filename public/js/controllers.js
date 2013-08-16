@@ -281,6 +281,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
             primaryKey: $scope.primaryKey,
             doc: h.retrieveDoc()
         }
+
         $http.post('/api/doc/update/', data).
             success(function(data) {
                 if (data.error != null) {
@@ -307,56 +308,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
         $scope.newDoc = null;
     }
 
-    $scope.addDoc = function(event) {
-        $scope.display = -1;
-        $scope.newDoc = {};
-        for(var i=0; i<$scope.raw_fields.length;i++) {
-            for(var j=0; j<$scope.raw_fields[i].length; j++) {
-                if (j === $scope.raw_fields[i].length-1) {
-                    try{
-                    switch($scope.flattenedTypes[i]) {
-                        case 'undefined':
-                            h.setValue($scope.newDoc, $scope.raw_fields[i], undefined)
-                            break;
-                        case 'null':
-                            h.setValue($scope.newDoc, $scope.raw_fields[i], null)
-                            break;
-                        case 'boolean':
-                            h.setValue($scope.newDoc, $scope.raw_fields[i], true)
-                            break;
-                        case 'string':
-                            h.setValue($scope.newDoc, $scope.raw_fields[i], '')
-                            break;
-                        case 'number':
-                            h.setValue($scope.newDoc, $scope.raw_fields[i], 0)
-                            break;
-                        case 'array':
-                            h.setValue($scope.newDoc, $scope.raw_fields[i], [])
-                            break;
-                        case 'object':
-                            h.setValue($scope.newDoc, $scope.raw_fields[i], {})
-                            break;
-                    }
-                    }
-                    catch(err) {
-                        console.log(err);
-                    }
-                }
-                else {
-                    if ($scope.newDoc[$scope.raw_fields[i][j]] === undefined) {
-                        $scope.newDoc[$scope.raw_fields[i][j]] = {}
-                    }
-                }
-            }
-        }
-        $scope.raw_fields; //keys
-        $scope.flattenedTypes; //types
-
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
-    
+   
     var flatten_docs = function(docs, keys) {
         var result = [];
         for(var i=0; i<docs.length; i++) {
@@ -380,7 +332,10 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
     }
     $scope.computeType = h.computeType;
     $scope.formatValue = function(data) {
-        if (Object.prototype.toString.call(data) === '[object Object]') {
+        if ((typeof data === 'object') && (data != null) && (data.$reql_type$ === 'TIME')) {
+            return h.dateToString(data)
+        }
+        else if (Object.prototype.toString.call(data) === '[object Object]') {
             return 'object'
         }
         return data
@@ -467,37 +422,59 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
                                 $scope.flattenedTypes[i] = 'undefined'
                                 continue;
                             }
+                            switch($scope.flattenedTypes[i]) {
+                                case 'undefined':
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], undefined)
+                                    break;
+                                case 'null':
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], null)
+                                    break;
+                                case 'boolean':
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], true)
+                                    break;
+                                case 'string':
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], '')
+                                    break;
+                                case 'number':
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], 0)
+                                    break;
+                                case 'date':
+                                    var timezoneMin = (new Date()).getTimezoneOffset();
+                                    var timezone = '';
+                                    if (timezoneMin > 0) {
+                                        timezone += '-';
+                                    }
+                                    else {
+                                        timezone += '+';
+                                    }
+                                    if (timezoneMin/60 < 10) {
+                                        timezone += '0'+timezoneMin/60;
+                                    }
+                                    else {
+                                        timezone += ''+timezoneMin/60;
+                                    }
+                                    timezone += ':'
+                                    if (timezoneMin%60 < 10) {
+                                        timezone += '0'+timezoneMin%60;
+                                    }
+                                    else {
+                                        timezone += ''+timezoneMin%60;
+                                    }
 
-
-                            try{ //TODO Do we still need this try/catch?
-                                switch($scope.flattenedTypes[i]) {
-                                    case 'undefined':
-                                        h.setValue($scope.newDoc, $scope.raw_fields[i], undefined)
-                                        break;
-                                    case 'null':
-                                        h.setValue($scope.newDoc, $scope.raw_fields[i], null)
-                                        break;
-                                    case 'boolean':
-                                        h.setValue($scope.newDoc, $scope.raw_fields[i], true)
-                                        break;
-                                    case 'string':
-                                        h.setValue($scope.newDoc, $scope.raw_fields[i], '')
-                                        break;
-                                    case 'number':
-                                        h.setValue($scope.newDoc, $scope.raw_fields[i], 0)
-                                        break;
-                                    case 'array':
-                                        h.setValue($scope.newDoc, $scope.raw_fields[i], [])
-                                        break;
-                                    case 'object':
-                                        h.setValue($scope.newDoc, $scope.raw_fields[i], {})
-                                        break;
-                                }
+                                    var newDate = {
+                                        $reql_type$: 'TIME',
+                                        epoch_time: Date.now()/1000,
+                                        timezone: timezone 
+                                    }
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], newDate)
+                                    break;
+                                case 'array':
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], [])
+                                    break;
+                                case 'object':
+                                    h.setValue($scope.newDoc, $scope.raw_fields[i], {})
+                                    break;
                             }
-                            catch(err) {
-                                console.log(err);
-                            }
-
                         }
                         else {
                             if ($scope.newDoc[$scope.raw_fields[i][j]] === undefined) {
@@ -629,12 +606,20 @@ h.deepCopy = function(value) {
         return result
     }
 }
-h.getAttr = function(data, fields) {
+h.getAttr = function(data, fields, raw) {
     var value = data;
     for(var i=0; i<fields.length; i++) {
         if (typeof value == 'object') {
             if (value === null) {
-                return value
+                if (i === fields.length-1) {
+                    return value
+                }
+                else {
+                    return undefined
+                }
+            }
+            else if (raw !== 'raw' && value.$reql_type$ === 'TIME') {
+                value = h.dateToString(value)
             }
             value = value[fields[i]]
         }
@@ -642,6 +627,11 @@ h.getAttr = function(data, fields) {
             return value
         }
     }
+
+    if ((value != null) && (raw !== 'raw') && (value.$reql_type$ === 'TIME')) {
+        return h.dateToString(value)
+    }
+
     return value
 }
 h.changeNewDocFieldType = function(field, newType, $scope) {
@@ -698,20 +688,23 @@ h.computeType = function(value) {
         return 'number'
     } else if (Object.prototype.toString.call(value) === '[object Array]') {
         return 'array'
+    } else if ((typeof value === 'object') && (value.$reql_type$ === 'TIME')) {
+        return 'date'
     }
     return 'object'
 }
 h.getValidTypes = function(isPrimaryKey) {
 
     if (isPrimaryKey === true) {
-        return ['undefined', 'string', 'number']
+        return ['undefined', 'string', 'number', 'date']
     }
     else {
-        return ['undefined', 'null', 'boolean', 'string', 'number', 'array', 'object']
+        return ['undefined', 'null', 'boolean', 'string', 'number', 'date', 'array', 'object']
     }
 }
 
 h.retrieveDoc = function() {
+    //TODO Enforce schema and throw
     var newDoc = {}
     $('.field').each( function(index, field) {
         var type = $(field).find('select.type').val();
@@ -731,6 +724,15 @@ h.retrieveDoc = function() {
         }
         else if (type === 'number') {
             h.setValue(newDoc, fieldPath, parseFloat($(field).find('.value').val()))
+        }
+        else if (type === 'date') {
+            var valueStr = $(field).find('.value').val();
+            value = {
+                $reql_type$: 'TIME',
+                epoch_time: new Date(valueStr).getTime()/1000,
+                timezone: /.*GMT([^\s]{5,6}).*/.exec(valueStr)[1]
+            }
+            h.setValue(newDoc, fieldPath, value);
         }
         else if (type === 'array') {
             h.setValue(newDoc, fieldPath, JSON.parse($(field).find('.value').val()))
@@ -786,3 +788,33 @@ h.handleError = function(error) {
     }, 2000)
 }
 
+h.dateToString = function(date) {
+    var timezone, timezone_int;
+    if (date.timezone != null) {
+        timezone = date.timezone
+        
+        // Extract data from the timezone
+        var timezone_array = date.timezone.split(':')
+        var sign = timezone_array[0][0] // Keep the sign
+        timezone_array[0] = timezone_array[0].slice(1) // Remove the sign
+
+        // Save the timezone in minutes
+        timezone_int = (parseInt(timezone_array[0])*60+parseInt(timezone_array[1]))*60
+        if (sign === '-') {
+            timezone_int = -1*timezone_int
+        }
+        // Add the user local timezone
+        timezone_int += (new Date()).getTimezoneOffset()*60
+    }
+    else {
+        timezone = '+00:00'
+        timezone_int = (new Date()).getTimezoneOffset()*60
+    }
+
+    // Tweak epoch and create a date
+    var raw_date_str = (new Date((date.epoch_time+timezone_int)*1000)).toString()
+
+    // Remove the timezone and replace it with the good one
+    return raw_date_str.slice(0, raw_date_str.indexOf('GMT')+3)+timezone
+
+}
