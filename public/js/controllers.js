@@ -236,11 +236,17 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
         })
 
     $scope.renameFieldConfirm = function(index) {
-        $scope.operation = 'rename';
-        $scope.changeField = true;
-        $scope.fieldToChangeStr = $scope.raw_fields[index].join('.')
-        $scope.fieldToChange = $scope.raw_fields[index]
-        setTimeout(function() { $('.newFieldName').focus() }, 0)
+        if (($scope.operation === 'rename') && ($scope.changeField === true)) {
+            $scope.operation = null;
+            $scope.changeField = false;
+        }
+        else {
+            $scope.operation = 'rename';
+            $scope.changeField = true;
+            $scope.fieldToChangeStr = $scope.raw_fields[index].join('.')
+            $scope.fieldToChange = $scope.raw_fields[index]
+            setTimeout(function() { $('.newFieldName').focus() }, 0)
+        }
     }
     $scope.renameField = function() {
         var data = {
@@ -261,10 +267,16 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
     }
 
     $scope.deleteFieldConfirm = function(index) {
-        $scope.operation = 'delete';
-        $scope.changeField = true;
-        $scope.fieldToChangeStr = $scope.raw_fields[index].join('.')
-        $scope.fieldToChange = $scope.raw_fields[index]
+        if (($scope.operation === 'delete') && ($scope.changeField === true)) {
+            $scope.operation = null;
+            $scope.changeField = false;
+        }
+        else {
+            $scope.operation = 'delete';
+            $scope.changeField = true;
+            $scope.fieldToChangeStr = $scope.raw_fields[index].join('.')
+            $scope.fieldToChange = $scope.raw_fields[index]
+        }
     }
     $scope.deleteField = function() {
         var data = {
