@@ -58,7 +58,7 @@ div.table_view(ng-switch on="status")
                     div.update_form_container.alert.no_border_top(ng-switch-when="rename")
                         h3.alert_title Rename the field {{fieldToChangeStr}}
                         div.doc_form_container
-                        input(type="text", name="newFieldName", ng-model="newFieldName")
+                        input(type="text", name="newFieldName", class="newFieldName", ng-model="newFieldName", ng-enter="renameField")
 
                         div.button_container
                             button.float.btn(ng-click='cancel()') Cancel

@@ -32,4 +32,18 @@ angular.module('chateau.directives', [])
 
             }
         };
-    });
+    })
+    .directive('ngEnter', function() {
+        return {
+            restrict: 'A',
+            scope: false,
+            link: function( scope, elem, attrs) {
+                elem.bind('keypress', function($event) {
+                    if (event.which === 13) {
+                        scope[attrs['ngEnter']]()
+                    }
+                });
+
+            }
+        };
+    })

@@ -222,7 +222,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
         $scope.changeField = true;
         $scope.fieldToChangeStr = $scope.raw_fields[index].join('.')
         $scope.fieldToChange = $scope.raw_fields[index]
-
+        setTimeout(function() { $('.newFieldName').focus() }, 0)
     }
     $scope.renameField = function() {
         var data = {
