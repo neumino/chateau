@@ -3,7 +3,7 @@ div.section
 
     div.content
         label(for='name') Database name: 
-        input.name.form-control(ng-model='form.name', name='name', type='text', ng-enter="createDb")
+        input.name.form-control(ng-model='form.name', name='name', type='text', ng-enter="createDb", ng-auto-focus)
 
         div.alert.empty_field(ng-model="error", ng-show="error != undefined") The database name cannot be empty.
 

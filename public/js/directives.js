@@ -43,7 +43,15 @@ angular.module('chateau.directives', [])
                         scope[attrs['ngEnter']]()
                     }
                 });
-
             }
         };
     })
+    .directive('ngAutoFocus', function() {
+        return {
+            restrict: 'A',
+            scope: false,
+            link: function(scope, elem, attrs) {
+                $(elem).focus()
+            }
+        }
+    });

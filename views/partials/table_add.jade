@@ -19,7 +19,7 @@ div.section(ng-switch on="status")
         select(ng-model="form.database", name="database", ng-options="database for database in databases", ng-disabled="authors.length == 0")
 
         label(for='table') Table name : 
-        input.form-control(ng-model='form.table', name='table', type='text', ng-enter="createTable")
+        input.form-control.name(ng-model='form.table', name='table', type='text', ng-enter="createTable", ng-auto-focus)
 
         label(for='primaryKey') Primary key : 
         input.form-control(ng-model='form.primaryKey', name='primaryKey', type='text', placeholder="default value: id", ng-enter="createTable")

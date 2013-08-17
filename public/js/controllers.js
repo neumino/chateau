@@ -47,7 +47,6 @@ function IndexCtrl($scope, $http, $routeParams) {
 
 function AddDbCtrl($scope, $http, $location) {
     $scope.form = {}
-    $('.name').focus();
 
     // Add an author
     $scope.createDb = function () {
@@ -73,7 +72,6 @@ function AddDbCtrl($scope, $http, $location) {
     };
 }
 function AddTableCtrl($scope, $http, $location) {
-    //TODO Give focus
     $scope.form = {};
     $scope.status = 'loading';
     $http.get('/api/databases').
