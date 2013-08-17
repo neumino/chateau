@@ -627,6 +627,33 @@ function ImportTableCtrl($scope, $http, $location, $routeParams) {
         $location.path('/table/'+$scope.db+'/'+$scope.table);
     }
 }
+function EmptyTableCtrl($scope, $http, $location, $routeParams, $window) {
+    //TODO Give focus
+    $scope.db = $routeParams.db
+    $scope.table = $routeParams.table
+
+    // Delete a table
+    $scope.emptyTable = function () {
+        $http.post('/api/table/empty', {database: $scope.db, table: $scope.table}).
+        success(function(data) {
+            if (data.error != null) {
+                h.handleError(data.error);
+            }
+            else if ((data.result != null) && (data.result.errors != 0)) {
+                h.handleError(new Error("Some documents have not been deleted."));
+            }
+            else {
+                $location.path('/table/'+$scope.db+'/'+$scope.table);
+            }
+        });
+    };
+
+    $scope.home = function() {
+        $window.history.back();
+    }
+}
+
+
  
 
 // Helpers

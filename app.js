@@ -38,9 +38,10 @@ app.post('/api/table/add', api.tableAdd);
 app.post('/api/database/delete', api.databaseDelete);
 // Delete a table 
 app.post('/api/table/delete', api.tableDelete);
+app.post('/api/table/empty', api.tableEmpty);
 
 app.get('/api/table', api.table);
-app.get('/api/table/:order/:skip/:limit', api.table);
+app.get('/api/table/list/:order/:skip/:limit', api.table);
 app.get('/api/export/table', api.exportTable);
 app.post('/api/import/table', api.importTable);
 

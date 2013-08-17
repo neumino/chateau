@@ -117,6 +117,16 @@ exports.tableDelete = function (req, res) {
         });
     })
 }
+exports.tableEmpty = function (req, res) {
+    var d = req.body;
+    r.db(d.database).table(d.table).delete().run( connection, function(error, result) {
+        if (error) handleError(error);
+        res.json({
+            error: error,
+            result: result
+        });
+    })
+}
 
 
 exports.table = function (req, res) {

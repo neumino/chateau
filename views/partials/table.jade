@@ -3,6 +3,7 @@ div.table_view(ng-switch on="status")
         a(href="doc/add/{{db}}/{{table}}") Add a document
         a.meta_action(href="/export/{{db}}/{{table}}") Export
         a.meta_action(href="/import/{{db}}/{{table}}") Import
+        a.meta_action(href="/empty/{{db}}/{{table}}") Empty
         a.meta_action(href="/delete/table/{{db}}/{{table}}") Delete this table
 
     div.alert.hidden

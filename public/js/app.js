@@ -52,6 +52,10 @@ angular.module('chateau', ['chateau.filters', 'chateau.services', 'chateau.direc
         templateUrl: 'partials/table_import',
         controller: ImportTableCtrl
       }).
+      when('/empty/:db/:table', {
+        templateUrl: 'partials/table_empty',
+        controller: EmptyTableCtrl
+      }).
       otherwise({
         redirectTo: '/'
       });
