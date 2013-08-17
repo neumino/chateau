@@ -1,0 +1,11 @@
+div.section
+    h1 Empty a table
+
+    div.content
+        p Are you sure you want to delete all the documents in 
+            strong {{table}}
+            |  in 
+            strong {{db}}
+
+        button.float.btn(ng-click='home()') No thanks
+        button.float.btn(ng-click='emptyTable()') Yes, delete
