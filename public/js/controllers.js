@@ -2,13 +2,24 @@
 // TODO Handle errors in all ajax requests
 
 /* Controllers */
+function mainCtrl($scope, sharedHeader) {
+    $scope.db = null;
+    $scope.table = null;
 
+    $scope.$on('pathUpdated', function() {
+        $scope.db = sharedHeader.db;
+        $scope.table = sharedHeader.table;
+    });        
+}
 // Controller for the list of posts
-function IndexCtrl($scope, $http, $routeParams) {
+function IndexCtrl($scope, $http, $routeParams, sharedHeader) {
+    $scope.db = $routeParams.db
+    sharedHeader.updatePath($scope);
+
     $scope.status = 'loading';
 
     // Get data
-    $http.get('/api/databases/tables', {params: {db:$routeParams.db}}).
+    $http.get('/api/databases/tables', {params: {db:$scope.db}}).
         success(function(data) {
             if (data.error != null) {
                 $scope.status = 'error';
@@ -45,7 +56,9 @@ function IndexCtrl($scope, $http, $routeParams) {
     }
 }
 
-function AddDbCtrl($scope, $http, $location) {
+function AddDbCtrl($scope, $http, $location, sharedHeader) {
+    sharedHeader.updatePath($scope);
+
     $scope.form = {}
 
     // Add an author
@@ -71,7 +84,9 @@ function AddDbCtrl($scope, $http, $location) {
         }
     };
 }
-function AddTableCtrl($scope, $http, $location) {
+function AddTableCtrl($scope, $http, $location, sharedHeader) {
+    sharedHeader.updatePath($scope);
+
     $scope.form = {};
     $scope.status = 'loading';
     $http.get('/api/databases').
@@ -109,13 +124,14 @@ function AddTableCtrl($scope, $http, $location) {
         });
     };
 }
-function DeleteDbCtrl($scope, $http, $location, $routeParams, $window) {
+function DeleteDbCtrl($scope, $http, $location, $routeParams, $window, sharedHeader) {
     //TODO Give focus
-    $scope.database = $routeParams.database
+    $scope.db = $routeParams.db;
+    sharedHeader.updatePath($scope);
 
     // Delete a database 
     $scope.deleteDb = function () {
-        $http.post('/api/database/delete', {database: $scope.database}).
+        $http.post('/api/database/delete', {database: $scope.db}).
         success(function(data) {
             if (data.error != null) {
                 h.handleError(data.error);
@@ -134,14 +150,16 @@ function DeleteDbCtrl($scope, $http, $location, $routeParams, $window) {
     }
 }
 
-function DeleteTableCtrl($scope, $http, $location, $routeParams, $window) {
+function DeleteTableCtrl($scope, $http, $location, $routeParams, $window, sharedHeader) {
     //TODO Give focus
-    $scope.database = $routeParams.database
+    $scope.db = $routeParams.db
     $scope.table = $routeParams.table
+
+    sharedHeader.updatePath($scope);
 
     // Delete a table
     $scope.deleteTable = function () {
-        $http.post('/api/table/delete', {database: $scope.database, table: $scope.table}).
+        $http.post('/api/table/delete', {database: $scope.db, table: $scope.table}).
         success(function(data) {
             if (data.error != null) {
                 h.handleError(data.error);
@@ -160,7 +178,7 @@ function DeleteTableCtrl($scope, $http, $location, $routeParams, $window) {
     }
 }
 
-function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
+function TableCtrl($scope, $http, $location, $routeParams, $window, $route, sharedHeader) {
     $scope.newType = 'undefined'; // Just to remove the empty select option
     $scope.deepCopy = h.deepCopy;
     $scope.goBack = function($event) {
@@ -176,6 +194,8 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
 
     $scope.db = $routeParams.db;
     $scope.table = $routeParams.table;
+    sharedHeader.updatePath($scope);
+
     if (($scope.db == '') && ($scope.table === '')) {
         $location.path('/');
     }
@@ -426,7 +446,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route) {
 
 }
 
-function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
+function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route, sharedHeader) {
     // Add some functions in the scope
     $scope.addField = h.addField;
     $scope.getValidTypes = h.getValidTypes;
@@ -441,6 +461,8 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
     $scope.status = 'loading';
     $scope.db = $routeParams.db;
     $scope.table = $routeParams.table;
+
+    sharedHeader.updatePath($scope);
 
     if (($scope.db == '') && ($scope.table === '')) {
         $location.path('/');
@@ -572,9 +594,10 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route) {
     }
 }
 
-function ExportTableCtrl($scope, $http, $location, $routeParams) {
+function ExportTableCtrl($scope, $http, $location, $routeParams, sharedHeader) {
     $scope.db = $routeParams.db;
     $scope.table = $routeParams.table;
+    sharedHeader.updatePath($scope);
 
     $scope.export = function() {
         window.open('/api/export/table?db='+$scope.db+'&table='+$scope.table);
@@ -583,9 +606,10 @@ function ExportTableCtrl($scope, $http, $location, $routeParams) {
         $location.path('/table/'+$scope.db+'/'+$scope.table);
     }
 }
-function ImportTableCtrl($scope, $http, $location, $routeParams) {
+function ImportTableCtrl($scope, $http, $location, $routeParams, sharedHeader) {
     $scope.db = $routeParams.db;
     $scope.table = $routeParams.table;
+    sharedHeader.updatePath($scope);
 
     $scope.fileName = null;
     $scope.selectFile = function() {
@@ -627,10 +651,11 @@ function ImportTableCtrl($scope, $http, $location, $routeParams) {
         $location.path('/table/'+$scope.db+'/'+$scope.table);
     }
 }
-function EmptyTableCtrl($scope, $http, $location, $routeParams, $window) {
+function EmptyTableCtrl($scope, $http, $location, $routeParams, $window, sharedHeader) {
     //TODO Give focus
     $scope.db = $routeParams.db
     $scope.table = $routeParams.table
+    sharedHeader.updatePath($scope);
 
     // Delete a table
     $scope.emptyTable = function () {

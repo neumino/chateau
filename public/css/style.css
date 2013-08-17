@@ -56,6 +56,7 @@ header {
     height: 30px;
     margin: 0px;
     padding: 12px 0px 0px 40px;
+    color: #eee;
     background: #202223 url("/images/logo.png") 5px 5px no-repeat;
 }
 header a {

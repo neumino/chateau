@@ -2,16 +2,20 @@
 
 /* Services */
 angular.module('chateau.services', [])
-    .service('sharedProperties', function () {
-        var property = 'First';
+    .factory('sharedHeader', function($rootScope) {
+        var sharedService = {};
 
-        return {
-            getProperty: function () {
-            return property;
-            },
-            setProperty: function(value) {
-                property = value;
-            }
+        sharedService.updatePath = function(scope) {
+            this.db = scope.db;
+            this.table = scope.table;
+            this.broadcastItem();
         };
+
+        sharedService.broadcastItem = function() {
+            $rootScope.$broadcast('pathUpdated');
+        };
+
+        return sharedService;
     });
+
 

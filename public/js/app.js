@@ -20,11 +20,11 @@ angular.module('chateau', ['chateau.filters', 'chateau.services', 'chateau.direc
         templateUrl: 'partials/table_add',
         controller: AddTableCtrl
       }).
-      when('/delete/db/:database', {
+      when('/delete/db/:db', {
         templateUrl: 'partials/db_delete_confirm',
         controller: DeleteDbCtrl
       }).
-      when('/delete/table/:database/:table', {
+      when('/delete/table/:db/:table', {
         templateUrl: 'partials/table_delete_confirm',
         controller: DeleteTableCtrl
       }).
