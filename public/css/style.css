@@ -322,10 +322,9 @@ h3.alert_title{
 
 .table_view th .center_edit_container{
     position: absolute;
-    width: 50px;
     overflow: auto;
     left: 50%;
-    margin: 2px 5px 0px -20px;
+    margin: 2px 0px 0px -20px;
 }
 .table_view th .center_edit{
     display: none;
