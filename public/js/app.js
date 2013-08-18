@@ -16,7 +16,7 @@ angular.module('chateau', ['chateau.filters', 'chateau.services', 'chateau.direc
         templateUrl: 'partials/db_add',
         controller: AddDbCtrl
       }).
-      when('/add/table', {
+      when('/add/table/:db', {
         templateUrl: 'partials/table_add',
         controller: AddTableCtrl
       }).

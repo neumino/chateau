@@ -1,7 +1,7 @@
 div.home(ng-switch on="status")
     div.actions
         a(href="/add/db") Add a database
-        a(href="/add/table") Add a table
+        a(href="/add/table/{{db}}") Add a table
 
     div.alert.hidden
         a.close(href="#", ng-click="hide($event)") ×

@@ -16,7 +16,8 @@ div.section(ng-switch on="status")
 
     div.content(ng-switch-when="ready")
         label(for='db') Database : 
-        select(ng-model="form.db", name="db", ng-options="db for db in dbs")
+        select(ng-model="form.db", name="db")
+            option(ng-repeat="dbName in dbs", ng-selected="dbName == db") {{dbName}}
 
         label(for='table') Table name : 
         input.form-control.name(ng-model='form.table', name='table', type='text', ng-enter="createTable", ng-auto-focus)

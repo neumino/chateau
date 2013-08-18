@@ -86,9 +86,10 @@ function AddDbCtrl($scope, $http, $location, sharedHeader) {
         }
     };
 }
-function AddTableCtrl($scope, $http, $location, sharedHeader, $route) {
+function AddTableCtrl($scope, $http, $location, sharedHeader, $route, $routeParams) {
     sharedHeader.updatePath($scope);
     $scope.refresh = h.refresh($route);
+    $scope.db = $routeParams.db;
 
     $scope.form = {};
     $scope.status = 'loading';
@@ -106,7 +107,7 @@ function AddTableCtrl($scope, $http, $location, sharedHeader, $route) {
                 }
                 else {
                     $scope.status = 'ready';
-                    $scope.form.db = data.dbs[0];
+                    $scope.form.db = $scope.db;
                 }
             }
         })
