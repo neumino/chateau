@@ -4,8 +4,8 @@ div.section(ng-switch on="status")
     div.content(ng-switch-when="loading")
         img(src="images/ajax-loader.gif")
 
-    div(ng-switch-when="error")
-        div.content Sorry, an error occurred, please try again.
+    div.content(ng-switch-when="error")
+        div Sorry, an error occurred, please <a href="#" ng-click="refresh($event)">try again</a>.
 
 
     div.content(ng-switch-when="empty")

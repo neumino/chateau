@@ -12,7 +12,9 @@ function mainCtrl($scope, sharedHeader) {
     });        
 }
 // Controller for the list of posts
-function IndexCtrl($scope, $http, $routeParams, sharedHeader) {
+function IndexCtrl($scope, $http, $routeParams, $route, sharedHeader) {
+    $scope.refresh = h.refresh($route);
+
     $scope.db = $routeParams.db
     sharedHeader.updatePath($scope);
 
@@ -84,8 +86,9 @@ function AddDbCtrl($scope, $http, $location, sharedHeader) {
         }
     };
 }
-function AddTableCtrl($scope, $http, $location, sharedHeader) {
+function AddTableCtrl($scope, $http, $location, sharedHeader, $route) {
     sharedHeader.updatePath($scope);
+    $scope.refresh = h.refresh($route);
 
     $scope.form = {};
     $scope.status = 'loading';
@@ -186,6 +189,8 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
         $event.stopPropagation();
         h.goBack($window);
     }
+    $scope.refresh = h.refresh($route);
+
     $scope.max = Math.max
     $scope.getValidTypes = h.getValidTypes;
     $scope.status = 'loading';
@@ -473,6 +478,7 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route, sha
     $scope.status = 'loading';
     $scope.db = $routeParams.db;
     $scope.table = $routeParams.table;
+    $scope.refresh = h.refresh($route);
 
     sharedHeader.updatePath($scope);
 
@@ -487,6 +493,7 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route, sha
         success(function(data) {
             if (data.error != null) {
                 h.handleError(data.error);
+                $scope.status = 'error';
             }
             else {
                 $scope.status = 'ready';
@@ -938,4 +945,12 @@ h.dateToString = function(date) {
     // Remove the timezone and replace it with the good one
     return raw_date_str.slice(0, raw_date_str.indexOf('GMT')+3)+timezone
 
+}
+
+h.refresh = function(route) {
+    return function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        route.reload();
+    }
 }

@@ -15,7 +15,7 @@ div.table_view(ng-switch on="status")
 
     div.section(ng-switch-when="error")
         h1 Error
-        div.content Sorry, an error occurred, please try again.
+        div.content Sorry, an error occurred, please <a href="#" ng-click="refresh($event)">try again</a>.
 
     div(ng-switch-when="empty")
         div.table_view(ng-switch on="status")

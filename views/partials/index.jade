@@ -9,7 +9,7 @@ div.home(ng-switch on="status")
 
     div.section(ng-switch-when="error")
         h1 Error
-        div.content Sorry, an error occurred, please try again.
+        div.content Sorry, an error occurred, please <a href="#" ng-click="refresh($event)">try again</a>.
     div(ng-switch-when="loading")
         img(src="images/ajax-loader.gif")
     div(ng-switch-when="empty")

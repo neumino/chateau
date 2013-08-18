@@ -51,16 +51,12 @@ exports.databasesAndTables = function (req, res) {
             return r.expr({
                 x: [{
                     database:db,
-                    tables: r.db(db).tableList() // TODO Add orderBy(r.row) when RethinkDB 1.8 is available
+                    tables: r.db(db).tableList().orderBy(function(table) { return table })
                 }]
             })
         })('x').default([]) // If ('x') throws, it means there is no database
         .orderBy('database').run( connection, function(error, databases) {
             if (error) handleError(error);
-            // TODO Let ReQL order the tables when the feature will be available
-            for(var i=0; i<databases.length; i++) {
-                databases[i].tables.sort();
-            }
             res.json({
                 error: error,
                 databases: databases
