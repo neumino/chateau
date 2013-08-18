@@ -40,6 +40,7 @@ node app.js
 - Add/Delete databases
 - Add/Delete tables
 - Browse the documents in a table
+- Order by any fields (see [docs/README.md](https://github.com/neumino/chateau/blob/master/doc/README.md) for the limitations) 
 - Delete/Update a document (hover on a field to display options)
 - Add a document // schema provided
 - Import/export (JSON only)

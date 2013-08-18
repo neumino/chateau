@@ -321,10 +321,9 @@ h3.alert_title{
 }
 
 .table_view th .center_edit_container{
-    position: absolute;
-    overflow: auto;
+    text-align: center;
     left: 50%;
-    margin: 2px 0px 0px -20px;
+    margin: 2px auto 0px auto;
 }
 .table_view th .center_edit{
     display: none;
@@ -335,17 +334,40 @@ h3.alert_title{
 .table_view th .center_edit:hover{
     opacity: 1;
 }
-.table_view th.can_be_updated:hover .center_edit, .table_view th.can_be_updated.resizing .center_edit{
+.table_view th:hover .center_edit,
+.table_view th.resizing .center_edit{
     display: inline-block;
     margin: 0px 3px;
 }
+.table_view th.cannot_be_updated:hover .center_edit.icon-trash,
+.table_view th.cannot_be_updated:hover .center_edit.icon-edit,
+.table_view th.cannot_be_updated.resizing .center_edit.icon-trash,
+.table_view th.cannot_be_updated.resizing .center_edit.icon-edit{
+
+    display: none;
+}
+
+.table_view table.order_only_with_index th .center_edit.icon-arrow-up,
+.table_view table.order_only_with_index th .center_edit.icon-arrow-down{
+    display: none;
+}
+.table_view table.order_only_with_index th.has_index:hover .center_edit.icon-arrow-up,
+.table_view table.order_only_with_index th.has_index:hover .center_edit.icon-arrow-down,
+.table_view table.order_only_with_index th.has_index.resizing .center_edit.icon-arrow-up,
+.table_view table.order_only_with_index th.has_index.resizing .center_edit.icon-arrow-down{
+    display: inline-block;
+}
+
+
 .table_view th span.field_span{
     margin: 0px;
 }
-.table_view th.can_be_updated:hover span.field_span, .table_view th.can_be_updated.resizing span.field_span{
+.table_view th:hover span.field_span,
+.table_view th.resizing span.field_span{
     visibility: hidden;
     height: 0px;
 }
+
 .table_view i.float_edit{
     display: none;
     margin-left: 5px;
@@ -362,7 +384,7 @@ h3.alert_title{
 }
 .table_view td .value_container{
     height: 20px;
-    min-width: 20px;
+    min-width: 83px;
     max-width: 200px;
     text-align: right;
     word-break: break-all;

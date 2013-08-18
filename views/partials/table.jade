@@ -31,7 +31,7 @@ div.table_view(ng-switch on="status")
 
     div(ng-switch-when="list")
         div.link_previous_next(ng-switch on="skip > 0")
-            p(ng-switch-when="true") <a href="/table/{{db}}/{{table}}/{{order}}/{{max(skip-limit, 0)}}/{{limit}}">«« Previous</a>
+            p(ng-switch-when="true") <a href="/table/{{db}}/{{table}}/{{max(skip-limit, 0)}}/{{limit}}/{{order}}/{{ascDescValue}}">«« Previous</a>
             p(ng-switch-default) «« Previous
         div.link_previous_next ||
 
@@ -41,22 +41,28 @@ div.table_view(ng-switch on="status")
             
         div.link_previous_next ||
         div.link_previous_next(ng-switch on="more_data")
-            p(ng-switch-when="1") <a href="/table/{{db}}/{{table}}/{{order}}/{{skip+limit}}/{{limit}}">Next »»</a>
+            p(ng-switch-when="1") <a href="/table/{{db}}/{{table}}/{{skip+limit}}/{{limit}}/{{order}}/{{ascDescValue}}">Next »»</a>
             p(ng-switch-default) Next »»
 
-        table.results.table.table-bordered
+        table.results.table.table-bordered(ng-class="{order_only_with_index: orderOnlyWithIndex==true}")
             tr.fields
                 th.pound_key
                     div #
-                th(ng-repeat="field in fields", class="col-{{$index}}", ng-class="{can_be_updated: $index!=0}")
+                th(ng-repeat="field in fields", class="col-{{$index}}", ng-class="{cannot_be_updated: $index==0, has_index: field.has_index == true}")
                     div.expand(ng-mousedown="resize($index, $event)")
                         div.field_container(ng-mousedown="stopPropagation($event)")
-                            span.field_span{{field}}
+                            span.field_span{{field.name}}
                             div.center_edit_container
                                 a(ng-click="renameFieldConfirm($index)")
                                     i.icon-edit.center_edit
                                 a(ng-click="deleteFieldConfirm($index)")
                                     i.icon-trash.center_edit
+                                a(href="table/{{db}}/{{table}}/0/{{limit}}/{{field.name}}/asc")
+                                    i.icon-arrow-up.center_edit
+                                a(href="table/{{db}}/{{table}}/0/{{limit}}/{{field.name}}/desc")
+                                    i.icon-arrow-down.center_edit
+
+
 
              tr(ng-show="changeField == true")
                 th.op(colspan="{{fields.length+1}}", ng-switch on="operation")
@@ -108,7 +114,7 @@ div.table_view(ng-switch on="status")
 
 
         div.link_previous_next(ng-switch on="skip > 0")
-            p(ng-switch-when="true") <a href="/table/{{db}}/{{table}}/{{order}}/{{max(skip-limit, 0)}}/{{limit}}">«« Previous</a>
+            p(ng-switch-when="true") <a href="/table/{{db}}/{{table}}/{{max(skip-limit, 0)}}/{{limit}}/{{order}}/{{ascDescValue}}">«« Previous</a>
             p(ng-switch-default) «« Previous
         div.link_previous_next ||
 
@@ -118,7 +124,7 @@ div.table_view(ng-switch on="status")
             
         div.link_previous_next ||
         div.link_previous_next(ng-switch on="more_data")
-            p(ng-switch-when="1") <a href="/table/{{db}}/{{table}}/{{order}}/{{skip+limit}}/{{limit}}">Next »»</a>
+            p(ng-switch-when="1") <a href="/table/{{db}}/{{table}}/{{skip+limit}}/{{limit}}/{{order}}/{{ascDescValue}}">Next »»</a>
             p(ng-switch-default) Next »»
 
 

@@ -195,6 +195,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
     $scope.max = Math.max
     $scope.getValidTypes = h.getValidTypes;
     $scope.status = 'loading';
+    $scope.ascDescValue = $routeParams.ascDescValue || 'asc'
     $scope.skip= parseInt($routeParams.skip) || 0;
     $scope.limit= parseInt($routeParams.limit) || 100;
 
@@ -202,6 +203,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
     $scope.table = $routeParams.table;
     $scope.moreThanMillion = false;
     sharedHeader.updatePath($scope);
+    $scope.orderOnlyWithIndex = false;
 
     if (($scope.db == '') && ($scope.table === '')) {
         $location.path('/');
@@ -210,7 +212,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
         $location.path('/db/'+$scope.db);
     }
 
-    $http.get('/api/table', {params: {db: $scope.db, table: $scope.table, skip: $scope.skip, limit: $scope.limit, order: $routeParams.order}}).
+    $http.get('/api/table', {params: {db: $scope.db, table: $scope.table, skip: $scope.skip, limit: $scope.limit, order: $routeParams.order, ascDescValue: $scope.ascDescValue}}).
         success(function(data) {
             if (data.error != null) {
                 $scope.status = 'error';
@@ -227,7 +229,11 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
 
                 $scope.fields = []
                 for(var i=0; i<data.flattened_fields.length; i++) {
-                    $scope.fields.push(data.flattened_fields[i].join('.'))
+                    var name = data.flattened_fields[i].join(',');
+                    $scope.fields.push({
+                        name: name,
+                        has_index: data.indexes[name] === true
+                    })
                 }
                 $scope.flattened_docs = flatten_docs(data.documents, data.flattened_fields)
 
@@ -244,6 +250,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
                     pages.push(i);
                 }
                 if (data.count === maxCount+$scope.skip) {
+                    $scope.orderOnlyWithIndex = true;
                     pages.push('...');
                 }
                 $scope.pages = pages;
@@ -256,7 +263,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
         if (page === '...') {
             page = $scope.pages[$scope.pages.length-2]+1
         }
-        $location.path('/table/'+$scope.db+'/'+$scope.table+'/'+$scope.order+'/'+((page-1)*$scope.limit)+'/'+$scope.limit);
+        $location.path('/table/'+$scope.db+'/'+$scope.table+'/'+((page-1)*$scope.limit)+'/'+$scope.limit+'/'+$scope.order+'/'+$scope.ascDescValue);
     }
     $scope.renameFieldConfirm = function(index) {
         if (($scope.operation === 'rename') && ($scope.changeField === true)) {
@@ -331,8 +338,8 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
         var original_width = $(event.target).parent().width()-padding;
         $('body').addClass('resizing');
         var onmousemove_fn = function(event) {
-            var newWidth = Math.max(10, original_width-start_x+event.pageX)
-            var newWidthValue = Math.max(10+padding, original_width-start_x+event.pageX)
+            var newWidth = Math.max(50, original_width-start_x+event.pageX)
+            var newWidthValue = Math.max(50+padding, original_width-start_x+event.pageX)
             $('.col-'+col).css('min-width', newWidth);
             $('.col-'+col).css('width', newWidth);
             $('.col-'+col+' > div.value_container').css('min-width', newWidthValue);

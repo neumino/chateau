@@ -36,7 +36,7 @@ angular.module('chateau', ['chateau.filters', 'chateau.services', 'chateau.direc
         templateUrl: 'partials/table',
         controller: TableCtrl
       }).
-      when('/table/:db/:table/:order/:skip/:limit', {
+      when('/table/:db/:table/:skip/:limit/:order/:ascDescValue', {
         templateUrl: 'partials/table',
         controller: TableCtrl
       }).

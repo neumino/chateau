@@ -126,6 +126,7 @@ exports.tableEmpty = function (req, res) {
 
 
 exports.table = function (req, res) {
+    // TODO clean code -- scope variables
     var db = req.query.db;
     var table = req.query.table;
     var skip = parseInt(req.query.skip) || 0;
@@ -134,6 +135,7 @@ exports.table = function (req, res) {
     var sample_size = 100; // TODO magic number.
     var maxCount = 9901; // We don't count more than one million
     var primaryKey;
+    var indexes = {};
     var count;
     var query = r.db(db).table(table);
     if (sample === true) {
@@ -149,12 +151,16 @@ exports.table = function (req, res) {
                 });
             }
             else {
-                primaryKey = info.primary_key
-                var order = req.params.order || primaryKey;
+                primaryKey = info.primary_key;
+                indexes[primaryKey] = true;
+                for(var i=0; i<info.indexes.length; i++) {
+                    indexes[info.indexes[i]] = true;
+                }
+                var order = req.query.order || primaryKey;
+                var ascDescValue = req.query.ascDescValue || 'asc';
 
                 // Get documents
-                query.skip(skip).limit(maxCount).count().run( connection, function(error, countResult) {
-                    count = countResult;
+                query.skip(skip).limit(maxCount).count().run( connection, function(error, countResult) { count = countResult;
                     if (error) {
                         if (error) handleError(error);
                         res.json({
@@ -176,12 +182,38 @@ exports.table = function (req, res) {
                             documents: [],
                             noDoc: true,
                             primaryKey: primaryKey,
+                            indexes: indexes,
                             more_data: "0",
                             count: skip
                         })
                     }
                     else {
-                        query = query.orderBy({index: order}).skip(skip).limit(limit+1).run( connection, buildKeysResponse);
+                        var errorFound = false;
+                        if (indexes[order] != null) {
+                            if (ascDescValue === 'asc') {
+                                query = query.orderBy({index: order});
+                            }
+                            else {
+                                query = query.orderBy({index: r.desc(order)});
+                            }
+                        }
+                        else {
+                            if (count === maxCount) {
+                                errorFound = true;
+                                res.json({
+                                    error: {
+                                        message: "The table has more than "+(maxCount-1)+" elements and no index was found for "+order+"."
+                                    }
+                                })
+                            }
+                            else if (ascDescValue === 'asc') {
+                                query = query.orderBy(order);
+                            }
+                            else {
+                                query = query.orderBy(r.desc(order));
+                            }
+                        }
+                        if (errorFound === false) query.skip(skip).limit(limit+1).run( connection, buildKeysResponse);
                     }
                 })
             }
@@ -210,6 +242,7 @@ exports.table = function (req, res) {
                     documents: [],
                     noDoc: true,
                     primaryKey: primaryKey,
+                    indexes: indexes,
                     more_data: "0",
                     count: skip
                 })
@@ -257,7 +290,7 @@ exports.table = function (req, res) {
                     nestedFields: nestedFields,
                     flattenedTypes: flattenedTypes,
                     documents: (noDoc === true) ? []: documents,
-                    primaryKey: primaryKey,
+                    primaryKey: primaryKey
                 });
             }
             else {
@@ -275,6 +308,7 @@ exports.table = function (req, res) {
                     flattenedTypes: flattenedTypes,
                     documents: (noDoc === true) ? []: documents,
                     primaryKey: primaryKey,
+                    indexes: indexes,
                     more_data: (more_data) ? '1': '0',
                     count: count+skip
                 });

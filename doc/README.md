@@ -34,11 +34,17 @@ node app.js
 - Add/Delete databases
 - Add/Delete tables
 - Browse the documents in a table
+- Order by any fields
 - Delete/Update a document (hover on a field to display options)
 - Add a document // schema provided
 - Import/export (JSON only)
 - Empty a table
 - Rename/delete a field for a table (hover above a field name for the options)
+
+
+### Limitations
+- You can order a table with more than 99000 documents only if an index exists (primary key or secondary index).
+- Chateau considers than an index that has the same name as a field is the corresponding index (a dot is used for nested fields).
 
 
 ### Note about dates
