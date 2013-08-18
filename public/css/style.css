@@ -70,6 +70,9 @@ header a:hover {
     text-decoration: underline;
     color: #fff;
 }
+header span{
+    padding: 0px 4px;
+}
 .nav {
     float: left;
     width: 60px;
