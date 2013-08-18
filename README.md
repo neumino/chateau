@@ -17,7 +17,18 @@ npm install
 
 ### Configure
 Copy the file `config.template.js` and name it `config.js`
-Update the file `config.js` if you are not using the default RethinkDB parameters.
+
+```
+// RethinkDB settings
+exports.host = 'localhost';    // RethinkDB host
+exports.port = 28015;          // RethinkDB driver port
+exports.authKey = '';          // Authentification key (leave an empty string if you did not set one)
+
+// Express settings
+exports.expressPort = 3000;    // Port used by express
+exports.debug = true;          // Debug mode
+exports.network = '127.0.0.1'  // Network the node app will run on
+```
 
 ### Run
 Start the server
@@ -29,9 +40,14 @@ node app.js
 - Add/Delete databases
 - Add/Delete tables
 - Browse the documents in a table
-- Single update
+- Delete/Update a document (hover on a field to display options)
 - Add a document // schema provided
-- Import/export JSON files
+- Import/export (JSON only)
+- Empty a table
+- Rename/delete a field for a table (hover above a field name for the options)
+
+### Documentation
+See [docs/README.md](https://github.com/neumino/chateau/blob/master/doc/README.md) (draft).
 
 ### Contribute
 - Feedback is always welcome!
