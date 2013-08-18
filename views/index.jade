@@ -13,9 +13,9 @@ html(ng-app="chateau")
             header(ng-controller="mainCtrl")
                 a(href="/") Chateau
                 span(ng-show="db != null")  > 
-                a(href="/db/{{db}}") {{db}}
+                a(href="/db/{{db}}", ng-show="db != null") {{db}}
                 span(ng-show="table != null")  > 
-                a(href="/table/{{db}}/{{table}}") {{table}}
+                a(href="/table/{{db}}/{{table}}", ng-show="table != null") {{table}}
 
             div.nav
                 ul.nav_list
