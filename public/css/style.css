@@ -392,7 +392,7 @@ h3.alert_title{
     overflow: hidden;
 }
 
-.table_view tr .op{
+.table_view tr .op:last-child{
     border-left: none;
     border-right: none;
     padding: 0px;
