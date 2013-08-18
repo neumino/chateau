@@ -54,4 +54,16 @@ angular.module('chateau.directives', [])
                 $(elem).focus()
             }
         }
+    })
+    .directive('ngForceLoad', function($location, $route) {
+        return {
+            retrict: 'A',
+            link: function( $scope, elem, attrs) {
+                elem.bind('click', function($event) {
+                    if (elem.attr('href') === $location.path()) {
+                        $route.reload()
+                    }
+                })
+            }
+        }
     });
