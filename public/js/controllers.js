@@ -324,6 +324,8 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
         event.stopPropagation();
     }
     $scope.resize = function(col, event) {
+        var thElement = $(event.target).parent(); // th element
+        thElement.addClass('resizing'); // Display icons so when the users move to the right, it doesn't switch back the th content to the field name
         var padding = 28;
         var start_x = event.pageX;
         var original_width = $(event.target).parent().width()-padding;
@@ -342,6 +344,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
         $(document).on('mouseup', function() {
             $(document).off('mousemove', onmousemove_fn);
             $('body').removeClass('resizing');
+            thElement.removeClass('resizing');
         });
     }
 
