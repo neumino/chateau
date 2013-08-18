@@ -499,7 +499,7 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route, sha
     }
     $scope.getAttr = h.getAttr;
     $scope.deepCopy = h.deepCopy;
-    $scope.newType = 'undefined'; // Just to remove the empty select option
+
 
     $scope.status = 'loading';
     $scope.db = $routeParams.db;
