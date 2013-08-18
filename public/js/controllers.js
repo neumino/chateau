@@ -28,8 +28,8 @@ function IndexCtrl($scope, $http, $routeParams, $route, sharedHeader) {
                 h.handleError(data.error);
             }
             else {
-                $scope.status = (data.databases.length === 0) ? 'empty': 'list';
-                $scope.databases = data.databases;
+                $scope.status = (data.dbs.length === 0) ? 'empty': 'list';
+                $scope.dbs = data.dbs;
             }
         });
 
@@ -99,14 +99,14 @@ function AddTableCtrl($scope, $http, $location, sharedHeader, $route) {
                 h.handleError(data.error);
             }
             else {
-                $scope.databases = data.databases;
+                $scope.dbs = data.dbs;
 
-                if (data.databases.length === 0) {
+                if (data.dbs.length === 0) {
                     $scope.status = 'empty';
                 }
                 else {
                     $scope.status = 'ready';
-                    $scope.form.database = data.databases[0];
+                    $scope.form.db = data.dbs[0];
                 }
             }
         })
@@ -134,7 +134,7 @@ function DeleteDbCtrl($scope, $http, $location, $routeParams, $window, sharedHea
 
     // Delete a database 
     $scope.deleteDb = function () {
-        $http.post('/api/database/delete', {database: $scope.db}).
+        $http.post('/api/database/delete', {db: $scope.db}).
         success(function(data) {
             if (data.error != null) {
                 h.handleError(data.error);
@@ -162,7 +162,7 @@ function DeleteTableCtrl($scope, $http, $location, $routeParams, $window, shared
 
     // Delete a table
     $scope.deleteTable = function () {
-        $http.post('/api/table/delete', {database: $scope.db, table: $scope.table}).
+        $http.post('/api/table/delete', {db: $scope.db, table: $scope.table}).
         success(function(data) {
             if (data.error != null) {
                 h.handleError(data.error);
@@ -678,7 +678,7 @@ function EmptyTableCtrl($scope, $http, $location, $routeParams, $window, sharedH
 
     // Delete a table
     $scope.emptyTable = function () {
-        $http.post('/api/table/empty', {database: $scope.db, table: $scope.table}).
+        $http.post('/api/table/empty', {db: $scope.db, table: $scope.table}).
         success(function(data) {
             if (data.error != null) {
                 h.handleError(data.error);

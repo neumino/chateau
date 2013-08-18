@@ -15,8 +15,8 @@ div.section(ng-switch on="status")
             |  before creating a table.
 
     div.content(ng-switch-when="ready")
-        label(for='database') Database : 
-        select(ng-model="form.database", name="database", ng-options="database for database in databases", ng-disabled="authors.length == 0")
+        label(for='db') Database : 
+        select(ng-model="form.db", name="db", ng-options="db for db in dbs", ng-disabled="authors.length == 0")
 
         label(for='table') Table name : 
         input.form-control.name(ng-model='form.table', name='table', type='text', ng-enter="createTable", ng-auto-focus)

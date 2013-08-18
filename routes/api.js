@@ -39,8 +39,8 @@ exports.databasesAndTables = function (req, res) {
             if (error) handleError(error);
             res.json({
                 error: error,
-                databases: [{
-                    database: req.query.db,
+                dbs: [{
+                    db: req.query.db,
                     tables: tables
                 }]
             });
@@ -50,16 +50,16 @@ exports.databasesAndTables = function (req, res) {
         r.dbList().forEach(function(db) {
             return r.expr({
                 x: [{
-                    database:db,
+                    db: db,
                     tables: r.db(db).tableList().orderBy(function(table) { return table })
                 }]
             })
         })('x').default([]) // If ('x') throws, it means there is no database
-        .orderBy('database').run( connection, function(error, databases) {
+        .orderBy('database').run( connection, function(error, dbs) {
             if (error) handleError(error);
             res.json({
                 error: error,
-                databases: databases
+                dbs:dbs 
             });
         })
     }
@@ -74,18 +74,18 @@ exports.databaseAdd = function (req, res) {
     })
 }
 exports.databases = function (req, res) {
-    r.dbList().run( connection, function(error, databases) {
+    r.dbList().run( connection, function(error, dbs) {
         if (error) handleError(error);
         res.json({
             error: error,
-            databases: databases
+            dbs: dbs 
         });
     })
 }
 exports.tableAdd = function (req, res) {
     var d = req.body;
     var pk = d.primaryKey || 'id'
-    r.db(d.database).tableCreate(d.table, {primaryKey: pk}).run( connection, function(error, result) {
+    r.db(d.db).tableCreate(d.table, {primaryKey: pk}).run( connection, function(error, result) {
         if (error) handleError(error);
         res.json({
             error: error,
@@ -95,7 +95,7 @@ exports.tableAdd = function (req, res) {
 }
 exports.databaseDelete = function (req, res) {
     var d = req.body;
-    r.dbDrop(d.database).run( connection, function(error, result) {
+    r.dbDrop(d.db).run( connection, function(error, result) {
         if (error) handleError(error);
         res.json({
             error: error,
@@ -105,7 +105,7 @@ exports.databaseDelete = function (req, res) {
 }
 exports.tableDelete = function (req, res) {
     var d = req.body;
-    r.db(d.database).tableDrop(d.table).run( connection, function(error, result) {
+    r.db(d.db).tableDrop(d.table).run( connection, function(error, result) {
         if (error) handleError(error);
         res.json({
             error: error,
@@ -115,7 +115,7 @@ exports.tableDelete = function (req, res) {
 }
 exports.tableEmpty = function (req, res) {
     var d = req.body;
-    r.db(d.database).table(d.table).delete().run( connection, function(error, result) {
+    r.db(d.db).table(d.table).delete().run( connection, function(error, result) {
         if (error) handleError(error);
         res.json({
             error: error,
