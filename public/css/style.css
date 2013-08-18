@@ -288,11 +288,15 @@ h3.alert_title{
 }
 .table_view th div.expand{
     cursor:e-resize; 
-    padding: 0px 5px 0px 0px;
+    height: 34px;
+    overflow: hidden;
 }
 .table_view th .field_container{
     padding: 7px 12px 7px 14px;
     cursor: default;
+    margin-right: 5px;
+    height: 34px;
+    overflow: hidden;
 }
 .table_view tr.doc{
     height: 20px;
@@ -314,13 +318,13 @@ h3.alert_title{
     position: relative;
     width: 100%;
 }
+
 .table_view th .center_edit_container{
     position: absolute;
     width: 50px;
     overflow: auto;
     left: 50%;
-    margin-left: -25px;
-    margin-top: 2px;
+    margin: 2px 5px 0px -20px;
 }
 .table_view th .center_edit{
     display: none;
@@ -334,6 +338,9 @@ h3.alert_title{
 .table_view th.can_be_updated:hover .center_edit{
     display: inline-block;
     margin: 0px 3px;
+}
+.table_view th span.field_span{
+    margin: 0px;
 }
 .table_view th.can_be_updated:hover span.field_span{
     visibility: hidden;

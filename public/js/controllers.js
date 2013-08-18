@@ -309,16 +309,21 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
         var padding = 28;
         var start_x = event.pageX;
         var original_width = $(event.target).parent().width()-padding;
-        $('table.results').addClass('resizing');
+        $('body').addClass('resizing');
         var onmousemove_fn = function(event) {
-            var new_width = Math.max(5, original_width-start_x+event.pageX)
-            $('.col-'+col).css('min-width', new_width);
-            $('.col-'+col+' > div.value_container').css('min-width', new_width);
+            var newWidth = Math.max(10, original_width-start_x+event.pageX)
+            var newWidthValue = Math.max(10+padding, original_width-start_x+event.pageX)
+            $('.col-'+col).css('min-width', newWidth);
+            $('.col-'+col).css('width', newWidth);
+            $('.col-'+col+' > div.value_container').css('min-width', newWidthValue);
+            $('.col-'+col+' > div.value_container').css('width', newWidthValue);
+            $('.col-'+col+' > div > div.field_container').css('min-width', newWidthValue-5);
+            $('.col-'+col+' > div > div.field_container').css('width', newWidthValue-5);
         }
         $(document).on('mousemove', onmousemove_fn);
         $(document).on('mouseup', function() {
             $(document).off('mousemove', onmousemove_fn);
-            $('table.results').removeClass('resizing');
+            $('body').removeClass('resizing');
         });
     }
 
