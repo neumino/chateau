@@ -258,6 +258,7 @@ h3.alert_title{
     table-layout: fixed;
     white-space: nowrap;
     border-right: none;
+    clear: both;
 }
 .table_view table.results.resizing{
     -webkit-user-select: none;  
@@ -480,7 +481,7 @@ h3.alert_title{
     border-radius: 4px;
 
 }
-.empty_field.alert{
+.table_view.empty_field.alert{
     width: 363px;
     margin: 5px 0px;
     background: #fcf8e3;
@@ -488,9 +489,14 @@ h3.alert_title{
     border-color: #fbeed5;
 }
 
-.link_previous_next{
+.table_view .link_previous_next{
     float: left;
     padding: 0px 10px;
+    line-height: 30px;
+}
+.table_view select.page{
+    width: auto;
+    margin: 0px 0px 0px 5px;
 }
 
 

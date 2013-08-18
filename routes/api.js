@@ -132,99 +132,156 @@ exports.table = function (req, res) {
     var limit = parseInt(req.query.limit) || 100;
     var sample = req.query.sample || false;
     var sample_size = 100; // TODO magic number.
-
-    // Get primary key
-    // TODO Skip info() if sample === true
-    r.db(db).table(table).info().run( connection, function(error, info) {
-        if (error) {
-            handleError(error);
-            res.json({
-                error: error
-            });
-        }
-        else {
-            var primaryKey = info.primary_key
-            var order = req.params.order || primaryKey;
-
-            // Get documents
-            var query = r.db(db).table(table);
-            if (sample !== false) {
-                query = query.sample(sample_size).orderBy(r.desc(order))
+    var maxCount = 9901; // We don't count more than one million
+    var primaryKey;
+    var count;
+    var query = r.db(db).table(table);
+    if (sample === true) {
+        query = query.sample(sample_size).run( connection, buildKeysResponse);
+    }
+    else {
+        // Get primary key
+        r.db(db).table(table).info().run( connection, function(error, info) {
+            if (error) {
+                handleError(error);
+                res.json({
+                    error: error
+                });
             }
             else {
-                query = query.orderBy(order).skip(skip).limit(limit+1)
-            }
-            query.run( connection, function(error, cursor) {
-                if (error) handleError(error);
-                cursor.toArray( function(error, documents) {
-                    var noDoc = false;
-                    if (error) handleError(error);
+                primaryKey = info.primary_key
+                var order = req.params.order || primaryKey;
 
-                    if (documents.length === 0) {
-                        noDoc = true;
-                        var doc = {};
-                        doc[info.primary_key] = '';
-                        documents = [doc];
+                // Get documents
+                query.skip(skip).limit(maxCount).count().run( connection, function(error, countResult) {
+                    count = countResult;
+                    if (error) {
+                        if (error) handleError(error);
+                        res.json({
+                            error: error
+                        })
                     }
-                    //TODO Check that documents is well defined
-
-                    // Is there more data?
-                    var more_data = documents.length > limit;
-                    if (more_data === true) {
-                        documents = documents.slice(0, limit)
+                    else if (count === 0) {
+                        res.json({
+                            error: null,
+                            flattened_fields: [
+                                [primaryKey]
+                            ],
+                            nestedFields: [{
+                                field: primaryKey,
+                                prefix: [],
+                                isPrimaryKey: true
+                            }],
+                            flattenedTypes: ["string"],
+                            documents: [],
+                            noDoc: true,
+                            primaryKey: primaryKey,
+                            more_data: "0",
+                            count: skip
+                        })
                     }
-
-                    // Clean, prepare docs
-                    var keys= {};
-                    for(var i=0; i<documents.length; i++) {
-                        // For each docs, we update keys
-                        buildMapKeys({ keys: keys, value: documents[i]})
+                    else {
+                        query = query.orderBy({index: order}).skip(skip).limit(limit+1).run( connection, buildKeysResponse);
                     }
-                    // Compute the occurence ( = num primitives or average of all fields for objects)
-                    computeOccurrenceKeys({ keys: keys, documents: documents});
-
-                    // Compute the most frequent type (so we can suggest a schema)
-                    buildMostFrequentType(keys);
-
-                    // Tag the primary key
-                    for(var key in keys['keys']) {
-                        if (key === primaryKey) {
-                            keys['keys'][key].occurrenceRebalanced = Infinity;
-                            break;
-                        }
-                    }
-                    
-                    // Sort keys by occurence
-                    sort_keys(keys);
-
-
-                    // Flatten the keys so {obj: key: 1} => obj.key
-                    var flattenedKeys = flattenKeys(keys, [], documents.length);
-
-                    // Flatten types (used when the user wants to create a new document
-                    var flattenedTypes = flattenTypes(flattenedKeys, keys);
-                    
-                    // Nested fields
-                    var nestedFields = nestedKeys(keys);
-                    nestedFields[0].isPrimaryKey = true // The first key is alweays the primary key
-
-                    // We do not flatten documents because undefined is not a valid JSON type
-                    res.json({
-                        error: error,
-                        flattened_fields: flattenedKeys,
-                        nestedFields: nestedFields,
-                        flattenedTypes: flattenedTypes,
-                        documents: (noDoc === true) ? []: documents,
-                        noDoc: noDoc,
-                        primaryKey: primaryKey,
-                        more_data: (more_data) ? '1': '0'
-                    });
                 })
-            })
-        }
-    })
-}
+            }
+        })
+    }
 
+    // Callback that is going to compute the schema
+    var buildKeysResponse = function(error, cursor) {
+        if (error) handleError(error);
+        cursor.toArray( function(error, documents) {
+            var noDoc = false;
+            if (error) handleError(error);
+
+            if (documents.length === 0) {
+                res.json({
+                    error: null,
+                    flattened_fields: [
+                        [primaryKey]
+                    ],
+                    nestedFields: [{
+                        field: primaryKey,
+                        prefix: [],
+                        isPrimaryKey: true
+                    }],
+                    flattenedTypes: ["string"],
+                    documents: [],
+                    noDoc: true,
+                    primaryKey: primaryKey,
+                    more_data: "0",
+                    count: skip
+                })
+            }
+
+
+            // Clean, prepare docs
+            var keys= {};
+            for(var i=0; i<documents.length; i++) {
+                // For each docs, we update keys
+                buildMapKeys({ keys: keys, value: documents[i]})
+            }
+            // Compute the occurence ( = num primitives or average of all fields for objects)
+            computeOccurrenceKeys({ keys: keys, documents: documents});
+
+            // Compute the most frequent type (so we can suggest a schema)
+            buildMostFrequentType(keys);
+
+            // Tag the primary key
+            for(var key in keys['keys']) {
+                if (key === primaryKey) {
+                    keys['keys'][key].occurrenceRebalanced = Infinity;
+                    break;
+                }
+            }
+            
+            // Sort keys by occurence
+            sort_keys(keys);
+
+
+            // Flatten the keys so {obj: key: 1} => obj.key
+            var flattenedKeys = flattenKeys(keys, [], documents.length);
+
+            // Flatten types (used when the user wants to create a new document
+            var flattenedTypes = flattenTypes(flattenedKeys, keys);
+            
+            // Nested fields
+            var nestedFields = nestedKeys(keys);
+            nestedFields[0].isPrimaryKey = true // The first key is alweays the primary key
+
+            if (sample === true) {
+                res.json({
+                    error: error,
+                    flattened_fields: flattenedKeys,
+                    nestedFields: nestedFields,
+                    flattenedTypes: flattenedTypes,
+                    documents: (noDoc === true) ? []: documents,
+                    primaryKey: primaryKey,
+                });
+            }
+            else {
+                // Is there more data?
+                var more_data = documents.length > limit;
+                if (more_data === true) {
+                    documents = documents.slice(0, limit)
+                }
+
+                // We do not flatten documents because undefined is not a valid JSON type
+                res.json({
+                    error: error,
+                    flattened_fields: flattenedKeys,
+                    nestedFields: nestedFields,
+                    flattenedTypes: flattenedTypes,
+                    documents: (noDoc === true) ? []: documents,
+                    primaryKey: primaryKey,
+                    more_data: (more_data) ? '1': '0',
+                    count: count+skip
+                });
+            }
+        })
+    }
+}
 exports.exportTable = function (req, res) {
     var db = req.query.db;
     var table = req.query.table;

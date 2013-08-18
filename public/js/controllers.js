@@ -182,6 +182,7 @@ function DeleteTableCtrl($scope, $http, $location, $routeParams, $window, shared
 }
 
 function TableCtrl($scope, $http, $location, $routeParams, $window, $route, sharedHeader) {
+    var maxCount = 9901;
     $scope.newType = 'undefined'; // Just to remove the empty select option
     $scope.deepCopy = h.deepCopy;
     $scope.goBack = function($event) {
@@ -199,6 +200,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
 
     $scope.db = $routeParams.db;
     $scope.table = $routeParams.table;
+    $scope.moreThanMillion = false;
     sharedHeader.updatePath($scope);
 
     if (($scope.db == '') && ($scope.table === '')) {
@@ -214,7 +216,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
                 $scope.status = 'error';
                 h.handleError(data.error);
             }
-            else if (data.noDoc === true) {
+            else if (data.documents.length === 0) {
                 $scope.status = 'empty'
             }
             else {
@@ -236,10 +238,26 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
                 $scope.order = $routeParams.order || $scope.primaryKey;
                 $scope.more_data = data.more_data;
 
-                $scope.status = 'list'
+                $scope.status = 'list';
+                var pages = [];
+                for(var i=1; i<Math.ceil(Math.min(data.count, maxCount-1+$scope.skip)/$scope.limit)+1; i++) {
+                    pages.push(i);
+                }
+                if (data.count === maxCount+$scope.skip) {
+                    pages.push('...');
+                }
+                $scope.pages = pages;
+                $scope.page = pages[Math.floor($scope.skip/$scope.limit)];
+
+                $scope.count = data.count;
             }
         })
-
+    $scope.jump = function(page) {
+        if (page === '...') {
+            page = $scope.pages[$scope.pages.length-2]+1
+        }
+        $location.path('/table/'+$scope.db+'/'+$scope.table+'/'+$scope.order+'/'+((page-1)*$scope.limit)+'/'+$scope.limit);
+    }
     $scope.renameFieldConfirm = function(index) {
         if (($scope.operation === 'rename') && ($scope.changeField === true)) {
             $scope.operation = null;

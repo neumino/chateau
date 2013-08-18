@@ -30,6 +30,20 @@ div.table_view(ng-switch on="status")
                         a(href="doc/add/{{db}}/{{table}}") add a document
 
     div(ng-switch-when="list")
+        div.link_previous_next(ng-switch on="skip > 0")
+            p(ng-switch-when="true") <a href="/table/{{db}}/{{table}}/{{order}}/{{max(skip-limit, 0)}}/{{limit}}">«« Previous</a>
+            p(ng-switch-default) «« Previous
+        div.link_previous_next ||
+
+        div.link_previous_next
+            div page  
+                select.page(ng-change="jump(page)", ng-model="page", name="page", ng-options="page for page in pages")
+            
+        div.link_previous_next ||
+        div.link_previous_next(ng-switch on="more_data")
+            p(ng-switch-when="1") <a href="/table/{{db}}/{{table}}/{{order}}/{{skip+limit}}/{{limit}}">Next »»</a>
+            p(ng-switch-default) Next »»
+
         table.results.table.table-bordered
             tr.fields
                 th.pound_key
@@ -97,6 +111,14 @@ div.table_view(ng-switch on="status")
             p(ng-switch-when="true") <a href="/table/{{db}}/{{table}}/{{order}}/{{max(skip-limit, 0)}}/{{limit}}">«« Previous</a>
             p(ng-switch-default) «« Previous
         div.link_previous_next ||
+
+        div.link_previous_next
+            div page  
+                select.page(ng-change="jump(page)", ng-model="page", name="page", ng-options="page for page in pages")
+            
+        div.link_previous_next ||
         div.link_previous_next(ng-switch on="more_data")
             p(ng-switch-when="1") <a href="/table/{{db}}/{{table}}/{{order}}/{{skip+limit}}/{{limit}}">Next »»</a>
             p(ng-switch-default) Next »»
+
+
