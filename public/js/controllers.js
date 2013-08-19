@@ -223,6 +223,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
                 $scope.status = 'empty'
             }
             else {
+                console.log(data);
                 // Save what we are going to display
                 $scope.raw_fields = data.flattened_fields;
                 $scope.flattenedTypes = data.flattenedTypes;
@@ -230,7 +231,7 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
 
                 $scope.fields = []
                 for(var i=0; i<data.flattened_fields.length; i++) {
-                    var name = data.flattened_fields[i].join(',');
+                    var name = data.flattened_fields[i].join('.');
                     $scope.fields.push({
                         name: name,
                         has_index: data.indexes[name] === true
@@ -731,7 +732,40 @@ function EmptyTableCtrl($scope, $http, $location, $routeParams, $window, sharedH
     }
 }
 
+function AddFieldCtrl($scope, $http, $location, $routeParams, $window, sharedHeader) {
+    $scope.db = $routeParams.db
+    $scope.table = $routeParams.table
+    sharedHeader.updatePath($scope);
 
+    $scope.types = ['string', 'number', 'boolean', 'date', 'null', 'arbitrary value', 'function'];
+    $scope.form = {}
+    $scope.form.type = $scope.types[0];
+    $scope.dateDefault = (new Date()).toString()
+
+    $scope.addField = function() {
+        var data = {};
+        data.type = $scope.form.type;
+        if ((data.type !== 'function') && (($scope.form.name == null) || ($scope.form.name === ""))) {
+            $scope.error = 'emptyName';
+        }
+        else {
+            data.name = $scope.form.name;
+            data.value = $('.value').val();
+            data.db = $scope.db;
+            data.table = $scope.table;
+            $http.post('/api/field/add', data).
+            success(function(data) {
+                if (data.error != null) {
+                    h.handleError(data.error);
+                }
+                else {
+                    $location.path('/table/'+$scope.db+'/'+$scope.table);
+                }
+            });
+
+        }
+    }
+}
  
 
 // Helpers

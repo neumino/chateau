@@ -448,18 +448,24 @@ h3.alert_title{
     border-top: none;
 }
 
-/* Form for new doc/update */
-.table_view .doc_form_container input, .table_view .doc_form_container textarea{
+/* Form for new doc/update/new field*/
+.table_view .doc_form_container input,
+.table_view .doc_form_container textarea,
+.add_field_view input,
+.add_field_view textarea {
     width: 400px;
 }
-.table_view .doc_form_container select{
+.table_view .doc_form_container select,
+.add_field_view select{
     width: 414px;
 }
-.table_view .doc_form_container textarea{
+.table_view .doc_form_container textarea,
+.add_field_view textarea{
     height: 20px;
     overflow: hidden;
 }
-.table_view .doc_form_container select.type{
+.table_view .doc_form_container select.type,
+.add_field_view select.type{
     float: right;
     width: 200px;
     margin: 0px;
@@ -505,12 +511,16 @@ h3.alert_title{
     border-radius: 4px;
 
 }
-.table_view.empty_field.alert{
+.table_view.empty_field.alert,
+.add_field_view .empty_field.alert{
     width: 363px;
     margin: 5px 0px;
     background: #fcf8e3;
     color: #c09853;
     border-color: #fbeed5;
+}
+.add_field_view .empty_field.alert p{
+    margin: 0px;
 }
 
 .table_view .link_previous_next{

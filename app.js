@@ -51,6 +51,7 @@ app.post('/api/doc/insert', api.docInsert);
 
 app.post('/api/field/delete', api.fieldDelete);
 app.post('/api/field/rename', api.fieldRename);
+app.post('/api/field/add', api.fieldAdd);
 
 // Redirect all others to the index
 // A 404 page is probably a better move
