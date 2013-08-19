@@ -16,4 +16,4 @@ div.value_wrap(ng-switch on="computeType(getAttr(newDoc, field.prefix.concat([fi
         option(ng-selected="getAttr(newDoc, field.prefix.concat([field.field])) == false") false
 
     div.nested_field(ng-switch-when="object", ng-show="field.nested != null")
-        ng-include(src="'/partials/doc_form_field'", onload="newDocFields = deepCopy(field.nested)")
+        ng-include(src="'/partials/doc_form_field'", onload="newDocFields = deepCopy(field.nested); newDocFields.__prefix = field.prefix.concat([field.field])")

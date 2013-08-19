@@ -13,7 +13,7 @@ div.field(ng-repeat="field in newDocFields")
 
 div.newFieldContainer
     input.newField(type="text", placeholder="New field name", ng-model="newField")
-    button.btn.add_field(ng-click="addField(newDocFields, newDocFields)")
+    button.btn.add_field(ng-click="addField(newDocFields, prefix)")
         i.icon-plus-sign
         | Add field
 

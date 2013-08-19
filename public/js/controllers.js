@@ -952,6 +952,7 @@ h.goBack = function($window) {
 }
 
 h.addField = function(field) {
+    var prefix = field.__prefix;
     // AngularJS return undefined and not the empty string.
     if (this.newField === undefined) {
         this.error = 'undefined';
@@ -970,7 +971,7 @@ h.addField = function(field) {
         if (foundDuplicate === false) {
             field.push({
                 field: this.newField,
-                prefix: field[0].prefix
+                prefix: prefix
             })
             // Reset the new field
             this.newField = undefined;
