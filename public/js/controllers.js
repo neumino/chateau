@@ -464,6 +464,14 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
             return h.dateToString(data)
         }
         else if (Object.prototype.toString.call(data) === '[object Object]') {
+            var hasKeys = false;
+            for(var key in data) {
+                hasKeys = true;
+                break;
+            }
+            if (hasKeys === false) {
+                return 'empty object'
+            }
             return 'object'
         }
         return data
