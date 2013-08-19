@@ -222,98 +222,105 @@ exports.table = function (req, res) {
 
     // Callback that is going to compute the schema
     var buildKeysResponse = function(error, cursor) {
-        if (error) handleError(error);
-        cursor.toArray( function(error, documents) {
-            var noDoc = false;
-            if (error) handleError(error);
+        if (error) {
+            handleError(error)
+            res.json({
+                error: error
+            })
+        }
+        else {
+            cursor.toArray( function(error, documents) {
+                var noDoc = false;
+                if (error) handleError(error);
 
-            if (documents.length === 0) {
-                res.json({
-                    error: null,
-                    flattened_fields: [
-                        [primaryKey]
-                    ],
-                    nestedFields: [{
-                        field: primaryKey,
-                        prefix: [],
-                        isPrimaryKey: true
-                    }],
-                    flattenedTypes: ["string"],
-                    documents: [],
-                    noDoc: true,
-                    primaryKey: primaryKey,
-                    indexes: indexes,
-                    more_data: "0",
-                    count: skip
-                })
-            }
-
-
-            // Clean, prepare docs
-            var keys= {};
-            for(var i=0; i<documents.length; i++) {
-                // For each docs, we update keys
-                buildMapKeys({ keys: keys, value: documents[i]})
-            }
-            // Compute the occurence ( = num primitives or average of all fields for objects)
-            computeOccurrenceKeys({ keys: keys, documents: documents});
-
-            // Compute the most frequent type (so we can suggest a schema)
-            buildMostFrequentType(keys);
-
-            // Tag the primary key
-            for(var key in keys['keys']) {
-                if (key === primaryKey) {
-                    keys['keys'][key].occurrenceRebalanced = Infinity;
-                    break;
-                }
-            }
-            
-            // Sort keys by occurence
-            sort_keys(keys);
-
-
-            // Flatten the keys so {obj: key: 1} => obj.key
-            var flattenedKeys = flattenKeys(keys, [], documents.length);
-
-            // Flatten types (used when the user wants to create a new document
-            var flattenedTypes = flattenTypes(flattenedKeys, keys);
-            
-            // Nested fields
-            var nestedFields = nestedKeys(keys);
-            nestedFields[0].isPrimaryKey = true // The first key is alweays the primary key
-
-            if (sample === true) {
-                res.json({
-                    error: error,
-                    flattened_fields: flattenedKeys,
-                    nestedFields: nestedFields,
-                    flattenedTypes: flattenedTypes,
-                    documents: (noDoc === true) ? []: documents,
-                    primaryKey: primaryKey
-                });
-            }
-            else {
-                // Is there more data?
-                var more_data = documents.length > limit;
-                if (more_data === true) {
-                    documents = documents.slice(0, limit)
+                if (documents.length === 0) {
+                    res.json({
+                        error: null,
+                        flattened_fields: [
+                            [primaryKey]
+                        ],
+                        nestedFields: [{
+                            field: primaryKey,
+                            prefix: [],
+                            isPrimaryKey: true
+                        }],
+                        flattenedTypes: ["string"],
+                        documents: [],
+                        noDoc: true,
+                        primaryKey: primaryKey,
+                        indexes: indexes,
+                        more_data: "0",
+                        count: skip
+                    })
                 }
 
-                // We do not flatten documents because undefined is not a valid JSON type
-                res.json({
-                    error: error,
-                    flattened_fields: flattenedKeys,
-                    nestedFields: nestedFields,
-                    flattenedTypes: flattenedTypes,
-                    documents: (noDoc === true) ? []: documents,
-                    primaryKey: primaryKey,
-                    indexes: indexes,
-                    more_data: (more_data) ? '1': '0',
-                    count: count+skip
-                });
-            }
-        })
+
+                // Clean, prepare docs
+                var keys= {};
+                for(var i=0; i<documents.length; i++) {
+                    // For each docs, we update keys
+                    buildMapKeys({ keys: keys, value: documents[i]})
+                }
+                // Compute the occurence ( = num primitives or average of all fields for objects)
+                computeOccurrenceKeys({ keys: keys, documents: documents});
+
+                // Compute the most frequent type (so we can suggest a schema)
+                buildMostFrequentType(keys);
+
+                // Tag the primary key
+                for(var key in keys['keys']) {
+                    if (key === primaryKey) {
+                        keys['keys'][key].occurrenceRebalanced = Infinity;
+                        break;
+                    }
+                }
+                
+                // Sort keys by occurence
+                sort_keys(keys);
+
+
+                // Flatten the keys so {obj: key: 1} => obj.key
+                var flattenedKeys = flattenKeys(keys, [], documents.length);
+
+                // Flatten types (used when the user wants to create a new document
+                var flattenedTypes = flattenTypes(flattenedKeys, keys);
+                
+                // Nested fields
+                var nestedFields = nestedKeys(keys);
+                nestedFields[0].isPrimaryKey = true // The first key is alweays the primary key
+
+                if (sample === true) {
+                    res.json({
+                        error: error,
+                        flattened_fields: flattenedKeys,
+                        nestedFields: nestedFields,
+                        flattenedTypes: flattenedTypes,
+                        documents: (noDoc === true) ? []: documents,
+                        primaryKey: primaryKey
+                    });
+                }
+                else {
+                    // Is there more data?
+                    var more_data = documents.length > limit;
+                    if (more_data === true) {
+                        documents = documents.slice(0, limit)
+                    }
+
+                    // We do not flatten documents because undefined is not a valid JSON type
+                    res.json({
+                        error: error,
+                        flattened_fields: flattenedKeys,
+                        nestedFields: nestedFields,
+                        flattenedTypes: flattenedTypes,
+                        documents: (noDoc === true) ? []: documents,
+                        primaryKey: primaryKey,
+                        indexes: indexes,
+                        more_data: (more_data) ? '1': '0',
+                        count: count+skip
+                    });
+                }
+            })
+        }
     }
 }
 exports.exportTable = function (req, res) {
