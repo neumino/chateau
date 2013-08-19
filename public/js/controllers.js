@@ -397,8 +397,8 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
 
     $scope.deepCopy = h.deepCopy;
 
-    $scope.changeNewDocFieldType = function(field) {
-        h.changeNewDocFieldType(field, this.newType, $scope);
+    $scope.changeNewDocFieldType = function(field, fields, index) {
+        h.changeNewDocFieldType(field, this.newType, $scope, this);
     }
     $scope.updateDoc = function() {
         var data = {
@@ -512,8 +512,8 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route, sha
     $scope.addField = h.addField;
     $scope.getValidTypes = h.getValidTypes;
     $scope.computeType = h.computeType;
-    $scope.changeNewDocFieldType = function(field) {
-        h.changeNewDocFieldType(field, this.newType, $scope);
+    $scope.changeNewDocFieldType = function(field, fields, index) {
+        h.changeNewDocFieldType(field, this.newType, $scope, this);
     }
     $scope.getAttr = h.getAttr;
     $scope.deepCopy = h.deepCopy;
@@ -819,7 +819,8 @@ h.getAttr = function(data, fields, raw) {
 
     return value
 }
-h.changeNewDocFieldType = function(field, newType, $scope) {
+h.changeNewDocFieldType = function(field, newType, $scope, ctx) {
+    // field is an array of strings // the path
     if (field[field.length-1] === null) {
         h.setValue($scope.newDoc, field, undefined)
     }
@@ -850,6 +851,9 @@ h.changeNewDocFieldType = function(field, newType, $scope) {
             h.setValue($scope.newDoc, field, [])
             break;
         case 'object':
+            if (ctx.field.nested == null) {
+                ctx.field.nested = [];
+            }
             h.setValue($scope.newDoc, field, {})
             break;
     }
