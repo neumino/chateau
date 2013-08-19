@@ -419,13 +419,15 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
             });
     }
 
+    // TODO Clean
     $scope.pushScope = function(doc, fields) {
         if (fields == null) {
             fields = $scope.nestedFields
         }
-        //TODO Make a deep copy!!!
         $scope.newDoc = h.deepCopy(doc);
         $scope.newDocFields = h.deepCopy(fields);
+        //TODO Fix me, I don't like being a quick/dirty hack.
+        $scope.newDocFields.__prefix = [];
     }
     $scope.addField = h.addField;
     $scope.cancel = function() {
@@ -603,6 +605,7 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route, sha
                     }
                 }
                 $scope.newDocFields = h.deepCopy($scope.nestedFields);
+                $scope.newDocFields.__prefix = [];
             }
         })
 
@@ -937,17 +940,17 @@ h.goBack = function($window) {
     $window.history.back();
 }
 
-h.addField = function(field) {
+h.addField = function(field, event) {
     var prefix = field.__prefix;
     // AngularJS return undefined and not the empty string.
-    if (this.newField === undefined) {
+    if (field.__newField === undefined) {
         this.error = 'undefined';
     }
     else {
         // Prevent duplicate fields
         var foundDuplicate = false;
         for(var i=0; i<field.length; i++) {
-            if (this.newField === field[i].field) {
+            if (field.__newField === field[i].field) {
                 this.error = 'duplicate'
                 foundDuplicate = true;
                 break;
@@ -956,11 +959,11 @@ h.addField = function(field) {
         // Good to go, let's add the field
         if (foundDuplicate === false) {
             field.push({
-                field: this.newField,
+                field: field.__newField,
                 prefix: prefix
             })
             // Reset the new field
-            this.newField = undefined;
+            field.__newField = undefined;
             delete this.error;
         }
     }
