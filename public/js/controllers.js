@@ -579,32 +579,11 @@ function AddDocCtrl($scope, $http, $location, $routeParams, $window, $route, sha
                                     h.setValue($scope.newDoc, $scope.raw_fields[i], 0)
                                     break;
                                 case 'date':
-                                    var timezoneMin = (new Date()).getTimezoneOffset();
-                                    var timezone = '';
-                                    if (timezoneMin > 0) {
-                                        timezone += '-';
-                                    }
-                                    else {
-                                        timezone += '+';
-                                    }
-                                    if (timezoneMin/60 < 10) {
-                                        timezone += '0'+timezoneMin/60;
-                                    }
-                                    else {
-                                        timezone += ''+timezoneMin/60;
-                                    }
-                                    timezone += ':'
-                                    if (timezoneMin%60 < 10) {
-                                        timezone += '0'+timezoneMin%60;
-                                    }
-                                    else {
-                                        timezone += ''+timezoneMin%60;
-                                    }
 
                                     var newDate = {
                                         $reql_type$: 'TIME',
                                         epoch_time: Date.now()/1000,
-                                        timezone: timezone 
+                                        timezone: h.getCurrentTimezone()
                                     }
                                     h.setValue($scope.newDoc, $scope.raw_fields[i], newDate)
                                     break;
@@ -857,6 +836,13 @@ h.changeNewDocFieldType = function(field, newType, $scope) {
         case 'number':
             h.setValue($scope.newDoc, field, 0)
             break;
+        case 'date':
+            h.setValue($scope.newDoc, field, {
+                $reql_type$: 'TIME',
+                epoch_time: Date.now()/1000,
+                timezone: h.getCurrentTimezone()
+            })
+            break;
         case 'array':
             h.setValue($scope.newDoc, field, [])
             break;
@@ -1020,7 +1006,6 @@ h.dateToString = function(date) {
 
     // Remove the timezone and replace it with the good one
     return raw_date_str.slice(0, raw_date_str.indexOf('GMT')+3)+timezone
-
 }
 
 h.refresh = function(route) {
@@ -1029,4 +1014,28 @@ h.refresh = function(route) {
         event.stopPropagation();
         route.reload();
     }
+}
+h.getCurrentTimezone = function() {
+    var timezoneMin = (new Date()).getTimezoneOffset();
+    var timezone = '';
+    if (timezoneMin > 0) {
+        timezone += '-';
+    }
+    else {
+        timezone += '+';
+    }
+    if (timezoneMin/60 < 10) {
+        timezone += '0'+timezoneMin/60;
+    }
+    else {
+        timezone += ''+timezoneMin/60;
+    }
+    timezone += ':'
+    if (timezoneMin%60 < 10) {
+        timezone += '0'+timezoneMin%60;
+    }
+    else {
+        timezone += ''+timezoneMin%60;
+    }
+    return timezone
 }
