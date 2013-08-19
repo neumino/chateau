@@ -223,7 +223,6 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
                 $scope.status = 'empty'
             }
             else {
-                console.log(data);
                 // Save what we are going to display
                 $scope.raw_fields = data.flattened_fields;
                 $scope.flattenedTypes = data.flattenedTypes;
