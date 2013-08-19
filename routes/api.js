@@ -274,8 +274,7 @@ exports.table = function (req, res) {
                     // Tag the primary key
                     for(var key in keys['keys']) {
                         if (key === primaryKey) {
-                            //keys['keys'][key].occurrenceRebalanced = Infinity;
-                            keys['keys'][key].occurrenceRebalanced = 999999999;
+                            keys['keys'][key].occurrenceRebalanced = Infinity;
                             break;
                         }
                     }
@@ -775,7 +774,7 @@ function computeOccurrenceKeys(args) {
             keys['occurrenceRebalanced'] = occurrence
         }
         else {
-            keys['occurrenceRebalanced'] = keys.objectCount 
+            keys['occurrenceRebalanced'] = keys.object_count 
         }
 
     }
