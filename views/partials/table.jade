@@ -90,11 +90,13 @@ div.table_view(ng-switch on="status")
             tbody(ng-repeat="document in flattened_docs", ng-switch on="display == $index")
                 tr.doc(class="doc-{{$index}}")
                     td.index_cell
-                        span.to_hide {{$index+skip}}
-                        a(ng-click="updateTrigger($index)")
-                            i.icon-edit.float_edit
-                        a(ng-click="deleteTrigger($index)")
-                            i.icon-trash.float_edit
+                        div.expand_vertical(ng-mousedown="resizeVertical($index, $event)")
+                            div.field_container(ng-mousedown="stopPropagation($event)")
+                                span.to_hide {{$index+skip}}
+                                a(ng-click="updateTrigger($index)")
+                                    i.icon-edit.float_edit
+                                a(ng-click="deleteTrigger($index)")
+                                    i.icon-trash.float_edit
                     td.value_td(ng-repeat="field in document", class="col-{{$index}}")
                         div.value_container(class="{{field.type}}") {{formatValue(field.value)}}
                 tr(ng-switch-when="true")

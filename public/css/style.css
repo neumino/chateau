@@ -310,10 +310,24 @@ h3.alert_title{
 }
 .table_view td.index_cell{
     text-align: center;
+    padding: 0px;
+    height: 34px;
 }
+.table_view td.index_cell .expand_vertical{
+    height: 34px;
+    cursor: s-resize; 
+}
+.table_view td.index_cell .expand_vertical .field_container{
+    padding: 7px 0px 0px 0px;
+    height: 22px;
+    margin: 0px 0px 5px 0px;
+    cursor: default;
+}
+.table_view td.index_cell.resizing .float_edit,
 .table_view tr:hover .float_edit{
     display: inline-block;
 }
+.table_view td.index_cell.resizing span.to_hide,
 .table_view tr:hover span.to_hide{
     display: none;
 }
@@ -389,9 +403,9 @@ h3.alert_title{
     height: 20px;
     min-width: 83px;
     max-width: 200px;
-    text-align: right;
+    text-align: left;
     word-break: break-all;
-    word-wrap: break-word;
+    word-wrap: normal;
     overflow: hidden;
 }
 
@@ -426,6 +440,7 @@ h3.alert_title{
 }
 .table_view .value_td .string,  .table_view .value_td .text{
   color: #080;
+  white-space: pre;
 }
 .table_view .value_td .boolean {
   color: #e0f;

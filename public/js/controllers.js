@@ -355,6 +355,28 @@ function TableCtrl($scope, $http, $location, $routeParams, $window, $route, shar
             thElement.removeClass('resizing');
         });
     }
+    $scope.resizeVertical = function(col, originalEvent) {
+        var tdElement = $(originalEvent.target).parent(); // td.index_cell element
+        tdElement.addClass('resizing'); // Display icons so when the users move to the right, it doesn't switch back the th content to the field name
+        var padding = 8;
+        var start_y = originalEvent.pageY;
+        var original_height = $(originalEvent.target).parent().height()-padding;
+        $('body').addClass('resizing');
+        var onmousemove_fn = function(event) {
+            var newHeight = Math.max(34, original_height-start_y+event.pageY)
+            $(originalEvent.target).parent().css('height', newHeight); //tr
+            $(originalEvent.target).css('height', newHeight); //td.index_cell
+            $(originalEvent.target).find('div.field_container').css('height', newHeight-5-14);
+            $(originalEvent.target).parent().parent().find('div.value_container').css('height', newHeight-14);
+        }
+        $(document).on('mousemove', onmousemove_fn);
+        $(document).on('mouseup', function() {
+            $(document).off('mousemove', onmousemove_fn);
+            $('body').removeClass('resizing');
+            tdElement.removeClass('resizing');
+        });
+    }
+
 
     $scope.deleteTrigger = function(index) {
         if ((index === $scope.display) && ($scope.operation === 'delete')) {
