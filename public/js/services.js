@@ -16,6 +16,21 @@ angular.module('chateau.services', [])
         };
 
         return sharedService;
+    })
+    .factory('feedback', function($rootScope) {
+        var sharedService = {};
+
+        sharedService.getMessage = function(scope) {
+            var message = this.message;
+            this.message = null;
+            return message
+        };
+
+        sharedService.setMessage = function(message) {
+            this.message = message;
+        };
+
+        return sharedService;
     });
 
 

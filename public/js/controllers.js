@@ -12,7 +12,7 @@ function mainCtrl($scope, sharedHeader) {
     });        
 }
 // Controller for the list of posts
-function IndexCtrl($scope, $http, $routeParams, $route, sharedHeader) {
+function IndexCtrl($scope, $http, $routeParams, $route, sharedHeader, feedback) {
     $scope.refresh = h.refresh($route);
 
     $scope.db = $routeParams.db
@@ -32,22 +32,9 @@ function IndexCtrl($scope, $http, $routeParams, $route, sharedHeader) {
                 $scope.dbs = data.dbs;
             }
         });
-
-    if ($routeParams.msg != null) {
-        switch($routeParams.msg) {
-            case '1':
-                $('.alert_content').html('Database successfully created.')
-                break;
-            case '2':
-                $('.alert_content').html('Table successfully created.')
-                break;
-            case '3':
-                $('.alert_content').html('Database successfully dropped.')
-                break;
-            case '4':
-                $('.alert_content').html('Table successfully dropped.')
-                break;
-        }
+    var message = feedback.getMessage();
+    if (message != null) {
+        $('.alert_content').html(message)
         $('.alert').slideDown('fast');
     }
 
@@ -58,7 +45,7 @@ function IndexCtrl($scope, $http, $routeParams, $route, sharedHeader) {
     }
 }
 
-function AddDbCtrl($scope, $http, $location, sharedHeader) {
+function AddDbCtrl($scope, $http, $location, sharedHeader, feedback) {
     sharedHeader.updatePath($scope);
 
     $scope.form = {}
@@ -69,7 +56,6 @@ function AddDbCtrl($scope, $http, $location, sharedHeader) {
             $scope.error = true;
         }
         else {
-            $scope.error = false;
             $http.post('/api/database/add', $scope.form).
             success(function(data) {
                 if (data.error != null) {
@@ -80,13 +66,14 @@ function AddDbCtrl($scope, $http, $location, sharedHeader) {
                     h.handleError(error);
                 }
                 else {
-                    $location.path('/msg/1');
+                    feedback.setMessage('Database `'+$scope.form.name+'` successfully created.');
+                    $location.path('/');
                 }
             });
         }
     };
 }
-function AddTableCtrl($scope, $http, $location, sharedHeader, $route, $routeParams) {
+function AddTableCtrl($scope, $http, $location, sharedHeader, $route, $routeParams, feedback) {
     sharedHeader.updatePath($scope);
     $scope.refresh = h.refresh($route);
     $scope.db = $routeParams.db;
@@ -123,12 +110,14 @@ function AddTableCtrl($scope, $http, $location, sharedHeader, $route, $routePara
                 h.handleError(new Error("Table not created, reason unknown"));
             }
             else {
-                $location.path('/msg/2');
+                feedback.setMessage('Table `'+$scope.form.table+'` successfully created.');
+                $location.path('/');
+
             }
         });
     };
 }
-function DeleteDbCtrl($scope, $http, $location, $routeParams, $window, sharedHeader) {
+function DeleteDbCtrl($scope, $http, $location, $routeParams, $window, sharedHeader, feedback) {
     //TODO Give focus
     $scope.db = $routeParams.db;
     sharedHeader.updatePath($scope);
@@ -144,7 +133,8 @@ function DeleteDbCtrl($scope, $http, $location, $routeParams, $window, sharedHea
                 h.handleError(new Error("Database not deleted, reason unknown"));
             }
             else {
-                $location.path('/msg/3');
+                feedback.setMessage('Database `'+$scope.db+'` successfully dropped.');
+                $location.path('/');
             }
         });
     };
@@ -154,7 +144,7 @@ function DeleteDbCtrl($scope, $http, $location, $routeParams, $window, sharedHea
     }
 }
 
-function DeleteTableCtrl($scope, $http, $location, $routeParams, $window, sharedHeader) {
+function DeleteTableCtrl($scope, $http, $location, $routeParams, $window, sharedHeader, feedback) {
     //TODO Give focus
     $scope.db = $routeParams.db
     $scope.table = $routeParams.table
@@ -172,7 +162,9 @@ function DeleteTableCtrl($scope, $http, $location, $routeParams, $window, shared
                 h.handleError(new Error("Table not deleted, reason unknown"));
             }
             else {
-                $location.path('/msg/4');
+                feedback.setMessage('Table `'+$scope.table+'` successfully dropped.');
+                $location.path('/');
+
             }
         });
     };
