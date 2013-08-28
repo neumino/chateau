@@ -1,6 +1,6 @@
 {
   "name": "chateau",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Data explorer for RethinkDB",
   "main": "app.js",
   "directories": {},
