@@ -8,14 +8,27 @@ bootstrap a new application and use Chateau as a panel admin for you data.
 
 You can think of Chateau like a PhpMyAdmin for RethinkDB.
 
+### Install from npm
+```
+sudo npm install -g chateau
+chateau
+```
 
-### Install
+### Install from source
+
+Clone the repository
+
+```
+git clone git@github.com:neumino/chateau
+```
+
+
 Install the dependencies
+
 ```
 npm install
 ```
 
-### Configure
 Copy the file `config.template.js` and name it `config.js`
 
 ```
@@ -30,7 +43,6 @@ exports.debug = true;          // Debug mode
 exports.network = '127.0.0.1'  // Network the node app will run on
 ```
 
-### Run
 Start the server
 ```
 ./bin/chateau [-f config.js]
