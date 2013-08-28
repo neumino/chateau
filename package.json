@@ -20,9 +20,10 @@
   },
   "dependencies": {
     "express": ">= 3.3.4",
-    "jade": ">= 0.34.1",
+    "jade": "0.34.1",
     "rethinkdb": ">= 1.8.0-0",
-    "optimist": " >= 0.6.0"
+    "optimist": " >= 0.6.0",
+    "stream": ">= 0.0.1"
   },
   "bin": "./bin/chateau"
 }
