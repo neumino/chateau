@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 
 argv = require('optimist').argv;
-//portfinder = require('portfinder');
-
-
 
 if (argv.h || argv.help) {
     console.log([
