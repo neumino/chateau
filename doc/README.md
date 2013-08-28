@@ -27,7 +27,7 @@ exports.network = '127.0.0.1'  // Network the node app will run on
 ### Run
 Start the server
 ```
-node app.js
+./bin/chateau [-f config.js]
 ```
 
 ### Features
