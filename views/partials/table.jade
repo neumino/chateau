@@ -1,5 +1,5 @@
-div.table_view(ng-switch on="status")
-    div.actions(ng-switch on="display == -1")
+div.table_view(ng-switch="", on="status")
+    div.actions(ng-switch="", on="display == -1")
         a(href="doc/add/{{db}}/{{table}}") Add a document
         a(href="field/add/{{db}}/{{table}}") Add a field
         a.meta_action(href="/export/{{db}}/{{table}}") Export
@@ -19,7 +19,7 @@ div.table_view(ng-switch on="status")
         div.content Sorry, an error occurred, please <a href="#" ng-click="refresh($event)">try again</a>.
 
     div(ng-switch-when="empty")
-        div.table_view(ng-switch on="status")
+        div.table_view(ng-switch="", on="status")
             div.section
                 h1 No document
 
@@ -31,7 +31,7 @@ div.table_view(ng-switch on="status")
                         a(href="doc/add/{{db}}/{{table}}") add a document
 
     div(ng-switch-when="list")
-        div.link_previous_next(ng-switch on="skip > 0")
+        div.link_previous_next(ng-switch="", on="skip > 0")
             p(ng-switch-when="true") <a href="/table/{{db}}/{{table}}/{{max(skip-limit, 0)}}/{{limit}}/{{order}}/{{ascDescValue}}">«« Previous</a>
             p(ng-switch-default) «« Previous
         div.link_previous_next ||
@@ -41,7 +41,7 @@ div.table_view(ng-switch on="status")
                 select.page(ng-change="jump(page)", ng-model="page", name="page", ng-options="page for page in pages")
             
         div.link_previous_next ||
-        div.link_previous_next(ng-switch on="more_data")
+        div.link_previous_next(ng-switch="", on="more_data")
             p(ng-switch-when="1") <a href="/table/{{db}}/{{table}}/{{skip+limit}}/{{limit}}/{{order}}/{{ascDescValue}}">Next »»</a>
             p(ng-switch-default) Next »»
 
@@ -66,7 +66,7 @@ div.table_view(ng-switch on="status")
 
 
              tr(ng-show="changeField == true")
-                th.op(colspan="{{fields.length+1}}", ng-switch on="operation")
+                th.op(colspan="{{fields.length+1}}", ng-switch="", on="operation")
                     div.confirm_delete.alert.no_border_top(ng-switch-when="delete")
                         h3.alert_title Delete a field
                         p Are you sure you want to delete the field
@@ -87,7 +87,7 @@ div.table_view(ng-switch on="status")
                             button.float.btn(ng-click='renameField()') Update
 
                                    
-            tbody(ng-repeat="document in flattened_docs", ng-switch on="display == $index")
+            tbody(ng-repeat="document in flattened_docs", ng-switch="", on="display == $index")
                 tr.doc(class="doc-{{$index}}")
                     td.index_cell
                         div.expand_vertical(ng-mousedown="resizeVertical($index, $event)")
@@ -100,7 +100,7 @@ div.table_view(ng-switch on="status")
                     td.value_td(ng-repeat="field in document", class="col-{{$index}}")
                         div.value_container(class="{{field.type}}") {{formatValue(field.value)}}
                 tr(ng-switch-when="true")
-                    td.op(colspan="{{document.length+1}}", class="op-{{$index}}", ng-switch on="operation")
+                    td.op(colspan="{{document.length+1}}", class="op-{{$index}}", ng-switch="", on="operation")
                         div.confirm_delete.alert.no_border_top(ng-switch-when="delete")
                             h3.alert_title Delete a document
                             p Are you sure you want to delete the document above?
@@ -116,7 +116,7 @@ div.table_view(ng-switch on="status")
                                 button.float.btn(ng-click='updateDoc()') Update
 
 
-        div.link_previous_next(ng-switch on="skip > 0")
+        div.link_previous_next(ng-switch="", on="skip > 0")
             p(ng-switch-when="true") <a href="/table/{{db}}/{{table}}/{{max(skip-limit, 0)}}/{{limit}}/{{order}}/{{ascDescValue}}">«« Previous</a>
             p(ng-switch-default) «« Previous
         div.link_previous_next ||
@@ -126,7 +126,7 @@ div.table_view(ng-switch on="status")
                 select.page(ng-change="jump(page)", ng-model="page", name="page", ng-options="page for page in pages")
             
         div.link_previous_next ||
-        div.link_previous_next(ng-switch on="more_data")
+        div.link_previous_next(ng-switch="", on="more_data")
             p(ng-switch-when="1") <a href="/table/{{db}}/{{table}}/{{skip+limit}}/{{limit}}/{{order}}/{{ascDescValue}}">Next »»</a>
             p(ng-switch-default) Next »»
 

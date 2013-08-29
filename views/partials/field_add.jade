@@ -14,7 +14,7 @@ div.section.add_field_view
             option(ng-repeat="type in types") {{type}}
 
         label(for='value') Value
-        div(ng-switch on="form.type")
+        div(ng-switch="", on="form.type")
             textarea.value(ng-switch-when="string", ng-auto-expand)
             input.value(ng-switch-when="number", type="text", value="0" )
             select.value(ng-switch-when="boolean")

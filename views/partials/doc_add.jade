@@ -2,7 +2,7 @@ div.table_view
     div.section
         h1 Add a document in {{table}}
 
-        div.content(ng-switch on="status")
+        div.content(ng-switch="", on="status")
             div(ng-switch-when="loading")
                 img(src="images/ajax-loader.gif")
             div(ng-switch-when="error")

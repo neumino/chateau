@@ -1,4 +1,4 @@
-div.value_wrap(ng-switch on="computeType(getAttr(newDoc, field.prefix.concat([field.field])))")
+div.value_wrap(ng-switch="", on="computeType(getAttr(newDoc, field.prefix.concat([field.field])))")
 
     input.value(ng-switch-when="undefined", disabled, type="text", value="undefined")
     input.value(ng-switch-when="null", disabled, type="text", value="null" )
