@@ -62,6 +62,14 @@ Start the server
 ### Documentation
 See [docs/README.md](https://github.com/neumino/chateau/blob/master/doc/README.md) (draft).
 
+
+### Test
+Start RethinKDB and Chateau, the launch karma.
+
+```
+karma start test/config/karma.e2e.js
+```
+
 ### Contribute
 - Feedback is always welcome!
 - Pull requests are welcome!

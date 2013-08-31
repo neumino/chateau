@@ -101,20 +101,28 @@ function AddTableCtrl($scope, $http, $location, sharedHeader, $route, $routePara
  
     // Create a table
     $scope.createTable = function () {
-        $http.post('/api/table/add', $scope.form).
-        success(function(data) {
-            if (data.error != null) {
-                h.handleError(data.error);
-            }
-            else if ((data.result != null) && (data.result.created != 1)) {
-                h.handleError(new Error("Table not created, reason unknown"));
-            }
-            else {
-                feedback.setMessage('Table `'+$scope.form.table+'` successfully created.');
-                $location.path('/');
+        if ($scope.form.db == '') {
+            $scope.error = 'undefined_db';
+        }
+        else if ($scope.form.table == null) {
+            $scope.error = 'undefined_table';
+        }
+        else {
+            $http.post('/api/table/add', $scope.form).
+            success(function(data) {
+                if (data.error != null) {
+                    h.handleError(data.error);
+                }
+                else if ((data.result != null) && (data.result.created != 1)) {
+                    h.handleError(new Error("Table not created, reason unknown"));
+                }
+                else {
+                    feedback.setMessage('Table `'+$scope.form.table+'` successfully created.');
+                    $location.path('/');
 
-            }
-        });
+                }
+            });
+        }
     };
 }
 function DeleteDbCtrl($scope, $http, $location, $routeParams, $window, sharedHeader, feedback) {
@@ -739,6 +747,7 @@ function AddFieldCtrl($scope, $http, $location, $routeParams, $window, sharedHea
     $scope.db = $routeParams.db
     $scope.table = $routeParams.table
     sharedHeader.updatePath($scope);
+<<<<<<< HEAD
 
     $scope.types = ['string', 'number', 'boolean', 'date', 'null', 'arbitrary value', 'function'];
     $scope.form = {}
@@ -766,6 +775,35 @@ function AddFieldCtrl($scope, $http, $location, $routeParams, $window, sharedHea
                 }
             });
 
+=======
+
+    $scope.types = ['string', 'number', 'boolean', 'date', 'null', 'arbitrary value', 'function'];
+    $scope.form = {}
+    $scope.form.type = $scope.types[0];
+    $scope.dateDefault = (new Date()).toString()
+
+    $scope.addField = function() {
+        var data = {};
+        data.type = $scope.form.type;
+        if ((data.type !== 'function') && (($scope.form.name == null) || ($scope.form.name === ""))) {
+            $scope.error = 'emptyName';
+        }
+        else {
+            data.name = $scope.form.name;
+            data.value = $('.value').val();
+            data.db = $scope.db;
+            data.table = $scope.table;
+            $http.post('/api/field/add', data).
+            success(function(data) {
+                if (data.error != null) {
+                    h.handleError(data.error);
+                }
+                else {
+                    $location.path('/table/'+$scope.db+'/'+$scope.table);
+                }
+            });
+
+>>>>>>> test
         }
     }
 }
