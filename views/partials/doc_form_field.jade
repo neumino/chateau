@@ -3,16 +3,17 @@ div.field(ng-repeat="field in newDocFields")
     div.field_and_type_container(data-fields="{{field.prefix.concat([field.field])}}")
         select.type(ng-change="changeNewDocFieldType(field.prefix.concat([field.field]))", ng-disabled="(field.isPrimaryKey == true) && (operation == 'update')", ng-model="newType")
             option(ng-repeat="type in getValidTypes(field.isPrimaryKey)", ng-selected="computeType(getAttr(newDoc, field.prefix.concat([field.field]), 'raw')) == type") {{type}}
+
         
         p {{field.field}}
 
     {{JSON.stringify(getAttr(newDoc, field.prefix.concat([field.field])))}}
 
-    ng-include(src="'/partials/doc_form_input'")
+    ng-include(src="'/partials/doc_form_input'", onload="this.newType = computeType(getAttr(newDoc, field.prefix.concat([field.field]), 'raw'))")
 
 div.newFieldContainer
-    input.newField(type="text", placeholder="New field name", ng-model="newField")
-    button.btn.add_field(ng-click="addField(newDocFields, newDocFields)")
+    input.newField(type="text", placeholder="New field name", ng-model="newDocFields.__newField")
+    button.btn.add_field(ng-click="addField(newDocFields, $event)")
         i.icon-plus-sign
         | Add field
 

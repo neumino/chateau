@@ -1,7 +1,7 @@
-div.home(ng-switch on="status")
+div.home(ng-switch="", on="status")
     div.actions
         a(href="/add/db") Add a database
-        a(href="/add/table") Add a table
+        a(href="/add/table/{{db}}") Add a table
 
     div.alert.hidden
         a.close(href="#", ng-click="hide($event)") ×
@@ -9,22 +9,22 @@ div.home(ng-switch on="status")
 
     div.section(ng-switch-when="error")
         h1 Error
-        div.content Sorry, an error occurred, please try again.
+        div.content Sorry, an error occurred, please <a href="#" ng-click="refresh($event)">try again</a>.
     div(ng-switch-when="loading")
         img(src="images/ajax-loader.gif")
     div(ng-switch-when="empty")
         div No database found
     div(ng-switch-when="list")
-        ul.database(ng-repeat="database in databases")
+        ul.database(ng-repeat="db in dbs")
             li.database
                 div.database
-                    a.meta_action(href="/delete/db/{{database.database}}") Delete
+                    a.meta_action(href="/delete/db/{{db.db}}") Delete
 
                     i.icon-th-large
-                    a.db_name.black.bold(href="/db/{{database.database}}") {{database.database}}
+                    a.db_name.black.bold(href="/db/{{db.db}}") {{db.db}}
                 ul.tables
-                    li.table(ng-repeat="table in database.tables")
-                        a.meta_action(href="/delete/table/{{database.database}}/{{table}}") Delete
+                    li.table(ng-repeat="table in db.tables")
+                        a.meta_action(href="/delete/table/{{db.db}}/{{table}}") Delete
 
                         i.icon-th
-                        a.gray(href="/table/{{database.database}}/{{table}}") {{table}}
+                        a.gray(href="/table/{{db.db}}/{{table}}") {{table}}

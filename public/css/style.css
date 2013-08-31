@@ -70,6 +70,9 @@ header a:hover {
     text-decoration: underline;
     color: #fff;
 }
+header span{
+    padding: 0px 4px;
+}
 .nav {
     float: left;
     width: 60px;
@@ -258,6 +261,7 @@ h3.alert_title{
     table-layout: fixed;
     white-space: nowrap;
     border-right: none;
+    clear: both;
 }
 .table_view table.results.resizing{
     -webkit-user-select: none;  
@@ -288,11 +292,15 @@ h3.alert_title{
 }
 .table_view th div.expand{
     cursor:e-resize; 
-    padding: 0px 5px 0px 0px;
+    height: 34px;
+    overflow: hidden;
 }
 .table_view th .field_container{
     padding: 7px 12px 7px 14px;
     cursor: default;
+    margin-right: 5px;
+    height: 34px;
+    overflow: hidden;
 }
 .table_view tr.doc{
     height: 20px;
@@ -302,10 +310,24 @@ h3.alert_title{
 }
 .table_view td.index_cell{
     text-align: center;
+    padding: 0px;
+    height: 34px;
 }
+.table_view td.index_cell .expand_vertical{
+    height: 34px;
+    cursor: s-resize; 
+}
+.table_view td.index_cell .expand_vertical .field_container{
+    padding: 7px 0px 0px 0px;
+    height: 22px;
+    margin: 0px 0px 5px 0px;
+    cursor: default;
+}
+.table_view td.index_cell.resizing .float_edit,
 .table_view tr:hover .float_edit{
     display: inline-block;
 }
+.table_view td.index_cell.resizing span.to_hide,
 .table_view tr:hover span.to_hide{
     display: none;
 }
@@ -314,13 +336,11 @@ h3.alert_title{
     position: relative;
     width: 100%;
 }
+
 .table_view th .center_edit_container{
-    position: absolute;
-    width: 50px;
-    overflow: auto;
+    text-align: center;
     left: 50%;
-    margin-left: -25px;
-    margin-top: 2px;
+    margin: 2px auto 0px auto;
 }
 .table_view th .center_edit{
     display: none;
@@ -331,14 +351,40 @@ h3.alert_title{
 .table_view th .center_edit:hover{
     opacity: 1;
 }
-.table_view th.can_be_updated:hover .center_edit{
+.table_view th:hover .center_edit,
+.table_view th.resizing .center_edit{
     display: inline-block;
     margin: 0px 3px;
 }
-.table_view th.can_be_updated:hover span.field_span{
+.table_view th.cannot_be_updated:hover .center_edit.icon-trash,
+.table_view th.cannot_be_updated:hover .center_edit.icon-edit,
+.table_view th.cannot_be_updated.resizing .center_edit.icon-trash,
+.table_view th.cannot_be_updated.resizing .center_edit.icon-edit{
+
+    display: none;
+}
+
+.table_view table.order_only_with_index th .center_edit.icon-arrow-up,
+.table_view table.order_only_with_index th .center_edit.icon-arrow-down{
+    display: none;
+}
+.table_view table.order_only_with_index th.has_index:hover .center_edit.icon-arrow-up,
+.table_view table.order_only_with_index th.has_index:hover .center_edit.icon-arrow-down,
+.table_view table.order_only_with_index th.has_index.resizing .center_edit.icon-arrow-up,
+.table_view table.order_only_with_index th.has_index.resizing .center_edit.icon-arrow-down{
+    display: inline-block;
+}
+
+
+.table_view th span.field_span{
+    margin: 0px;
+}
+.table_view th:hover span.field_span,
+.table_view th.resizing span.field_span{
     visibility: hidden;
     height: 0px;
 }
+
 .table_view i.float_edit{
     display: none;
     margin-left: 5px;
@@ -355,15 +401,15 @@ h3.alert_title{
 }
 .table_view td .value_container{
     height: 20px;
-    min-width: 20px;
+    min-width: 83px;
     max-width: 200px;
-    text-align: right;
+    text-align: left;
     word-break: break-all;
-    word-wrap: break-word;
+    word-wrap: normal;
     overflow: hidden;
 }
 
-.table_view tr .op{
+.table_view tr .op:last-child{
     border-left: none;
     border-right: none;
     padding: 0px;
@@ -394,6 +440,7 @@ h3.alert_title{
 }
 .table_view .value_td .string,  .table_view .value_td .text{
   color: #080;
+  white-space: pre;
 }
 .table_view .value_td .boolean {
   color: #e0f;
@@ -416,18 +463,24 @@ h3.alert_title{
     border-top: none;
 }
 
-/* Form for new doc/update */
-.table_view .doc_form_container input, .table_view .doc_form_container textarea{
+/* Form for new doc/update/new field*/
+.table_view .doc_form_container input,
+.table_view .doc_form_container textarea,
+.add_field_view input,
+.add_field_view textarea {
     width: 400px;
 }
-.table_view .doc_form_container select{
+.table_view .doc_form_container select,
+.add_field_view select{
     width: 414px;
 }
-.table_view .doc_form_container textarea{
+.table_view .doc_form_container textarea,
+.add_field_view textarea{
     height: 20px;
     overflow: hidden;
 }
-.table_view .doc_form_container select.type{
+.table_view .doc_form_container select.type,
+.add_field_view select.type{
     float: right;
     width: 200px;
     margin: 0px;
@@ -473,17 +526,26 @@ h3.alert_title{
     border-radius: 4px;
 
 }
-.empty_field.alert{
+.table_view.empty_field.alert,
+.add_field_view .empty_field.alert{
     width: 363px;
     margin: 5px 0px;
     background: #fcf8e3;
     color: #c09853;
     border-color: #fbeed5;
 }
+.add_field_view .empty_field.alert p{
+    margin: 0px;
+}
 
-.link_previous_next{
+.table_view .link_previous_next{
     float: left;
     padding: 0px 10px;
+    line-height: 30px;
+}
+.table_view select.page{
+    width: auto;
+    margin: 0px 0px 0px 5px;
 }
 
 

@@ -8,30 +8,67 @@ bootstrap a new application and use Chateau as a panel admin for you data.
 
 You can think of Chateau like a PhpMyAdmin for RethinkDB.
 
+### Install from npm
+```
+sudo npm install -g chateau
+chateau
+```
 
-### Install
+### Install from source
+
+Clone the repository
+
+```
+git clone git@github.com:neumino/chateau
+```
+
+
 Install the dependencies
+
 ```
 npm install
 ```
 
-### Configure
 Copy the file `config.template.js` and name it `config.js`
-Update the file `config.js` if you are not using the default RethinkDB parameters.
 
-### Run
+```
+// RethinkDB settings
+exports.host = 'localhost';    // RethinkDB host
+exports.port = 28015;          // RethinkDB driver port
+exports.authKey = '';          // Authentification key (leave an empty string if you did not set one)
+
+// Express settings
+exports.expressPort = 3000;    // Port used by express
+exports.debug = true;          // Debug mode
+exports.network = '127.0.0.1'  // Network the node app will run on
+```
+
 Start the server
 ```
-node app.js
+./bin/chateau [-f config.js]
 ```
 
 ### Features
 - Add/Delete databases
 - Add/Delete tables
 - Browse the documents in a table
-- Single update
+- Order by any fields (see [docs/README.md](https://github.com/neumino/chateau/blob/master/doc/README.md) for the limitations) 
+- Delete/Update a document (hover on a field to display options)
 - Add a document // schema provided
-- Import/export JSON files
+- Import/export (JSON only)
+- Empty a table
+- Rename/delete a field for a table (hover above a field name for the options)
+
+### Documentation
+See [docs/README.md](https://github.com/neumino/chateau/blob/master/doc/README.md) (draft).
+
+
+### Test
+Start RethinKDB and Chateau, the launch karma.
+
+```
+karma start test/config/karma.e2e.js
+```
 
 ### Contribute
 - Feedback is always welcome!

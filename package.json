@@ -1,6 +1,6 @@
 {
   "name": "chateau",
-  "version": "0.2.0",
+  "version": "0.3.3",
   "description": "Data explorer for RethinkDB",
   "main": "app.js",
   "directories": {},
@@ -20,19 +20,18 @@
   },
   "dependencies": {
     "express": ">= 3.3.4",
-    "jade": ">= 0.34.1",
-    "rethinkdb": ">= 1.8.0-0"
+    "jade": ">= 0.35.0",
+    "rethinkdb": ">= 1.8.0-0",
+    "optimist": " >= 0.6.0",
+    "stream": ">= 0.0.1"
   },
   "devDependencies": {
     "karma-script-launcher": "~0.1.0",
     "karma-chrome-launcher": "~0.1.0",
     "karma-html2js-preprocessor": "~0.1.0",
-    "karma-jasmine": "~0.1.0",
-    "karma-requirejs": "~0.1.0",
-    "karma-coffee-preprocessor": "~0.1.0",
-    "karma-phantomjs-launcher": "~0.1.0",
     "karma": "~0.10.1",
     "karma-firefox-launcher": "~0.1.0",
     "karma-ng-scenario": "~0.1.0"
-  }
+  },
+  "bin": "./bin/chateau"
 }

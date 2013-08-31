@@ -16,7 +16,7 @@ angular.module('chateau', ['chateau.filters', 'chateau.services', 'chateau.direc
         templateUrl: 'partials/db_add',
         controller: AddDbCtrl
       }).
-      when('/add/table', {
+      when('/add/table/:db', {
         templateUrl: 'partials/table_add',
         controller: AddTableCtrl
       }).
@@ -36,13 +36,17 @@ angular.module('chateau', ['chateau.filters', 'chateau.services', 'chateau.direc
         templateUrl: 'partials/table',
         controller: TableCtrl
       }).
-      when('/table/:db/:table/:order/:skip/:limit', {
+      when('/table/:db/:table/:skip/:limit/:order/:ascDescValue', {
         templateUrl: 'partials/table',
         controller: TableCtrl
       }).
       when('/doc/add/:db/:table', {
         templateUrl: 'partials/doc_add',
         controller: AddDocCtrl 
+      }).
+      when('/field/add/:db/:table', {
+        templateUrl: 'partials/field_add',
+        controller: AddFieldCtrl 
       }).
       when('/export/:db/:table', {
         templateUrl: 'partials/table_export',

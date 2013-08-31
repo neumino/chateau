@@ -1,10 +1,12 @@
-div.table_view(ng-switch on="status")
+div.table_view
     div.section
         h1 Add a document in {{table}}
 
-        div.content
+        div.content(ng-switch="", on="status")
             div(ng-switch-when="loading")
                 img(src="images/ajax-loader.gif")
+            div(ng-switch-when="error")
+                div Sorry, an error occurred, please <a href="#" ng-click="refresh($event)">try again</a>.
             div(ng-switch-when="ready")
 
                 div.update_form_container

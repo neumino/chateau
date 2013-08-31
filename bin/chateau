@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+argv = require('optimist').argv;
+
+if (argv.h || argv.help) {
+    console.log([
+    "usage: chateau [options]",
+    "",
+    "options:",
+    "  -f [config_file]   Default file: config.js",
+    "  -h                 Shows this help",
+    ].join('\n'));
+    process.exit();
+}
+
+var configFile = argv.f || 'config.js';
+
+chateau = require('../app.js')(configFile);

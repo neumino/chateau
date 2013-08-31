@@ -1,0 +1,47 @@
+div.section.add_field_view
+    h1 Add a field in the table {{db}}.{{table}}
+
+    div.content
+        label(for='fieldName') Field name : 
+        input.form-control.name(ng-model='form.name', name='name', type='text', ng-enter="addField", ng-auto-focus, ng-disabled="form.type == 'function'")
+
+        div.alert.empty_field(ng-model="error", ng-show="error == 'emptyName'")
+            p The field name cannot be the empty string.
+ 
+
+        label(for='type') Type : 
+        select(ng-model="form.type", name="type")
+            option(ng-repeat="type in types") {{type}}
+
+        label(for='value') Value
+        div(ng-switch="", on="form.type")
+            textarea.value(ng-switch-when="string", ng-auto-expand)
+            input.value(ng-switch-when="number", type="text", value="0" )
+            select.value(ng-switch-when="boolean")
+                option true
+                option false
+            input.value(ng-switch-when="date", type="text", value="{{dateDefault}}" )
+            input.value(ng-switch-when="null", disabled, type="text", value="null" )
+            textarea.value(ng-switch-when="arbitrary value", ng-auto-expand) 
+            textarea.value(ng-switch-when="function", ng-auto-expand)
+                | function(doc) {
+                |    return {
+                |        field_name: "Hello"
+                |    }
+                | }
+
+            
+        button.submit_post.btn(ng-click='addField()') Add field
+
+        p
+        p
+            em Note: 
+            | Use a dot if you want to create a nested field.
+            | Consequence: You cannot use a dot in the name of a field.
+        p
+            em Note: 
+            | If you used the "arbitrary value", we will call JavaScript's eval function on it.
+        p
+            em Note: 
+            | If you use a function, it will be passed to the update command and has to be written in JavaScript. <br/>
+            | You do not need to wrap your function with parentheses.

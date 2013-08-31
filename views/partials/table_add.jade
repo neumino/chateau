@@ -1,11 +1,11 @@
-div.section(ng-switch on="status")
+div.section(ng-switch="", on="status")
     h1 Add a table
 
     div.content(ng-switch-when="loading")
         img(src="images/ajax-loader.gif")
 
-    div(ng-switch-when="error")
-        div.content Sorry, an error occurred, please try again.
+    div.content(ng-switch-when="error")
+        div Sorry, an error occurred, please <a href="#" ng-click="refresh($event)">try again</a>.
 
 
     div.content(ng-switch-when="empty")
@@ -15,13 +15,18 @@ div.section(ng-switch on="status")
             |  before creating a table.
 
     div.content(ng-switch-when="ready")
-        label(for='database') Database : 
-        select(ng-model="form.database", name="database", ng-options="database for database in databases", ng-disabled="authors.length == 0")
+        label(for='db') Database : 
+        select(ng-model="form.db", name="db")
+            option(ng-repeat="dbName in dbs", ng-selected="dbName == db") {{dbName}}
+
+        div.alert.undefined_db(ng-model="error", ng-show="error == 'undefined_db'") You need to select a database
 
         label(for='table') Table name : 
         input.form-control.name(ng-model='form.table', name='table', type='text', ng-enter="createTable", ng-auto-focus)
 
+        div.alert.undefined_table(ng-model="error", ng-show="error == 'undefined_table'") The table name cannot be empty.
+
         label(for='primaryKey') Primary key : 
         input.form-control(ng-model='form.primaryKey', name='primaryKey', type='text', placeholder="default value: id", ng-enter="createTable")
 
-        button.submit_post.btn(ng-click='createTable()') Create
+        button.submit_table.btn(ng-click='createTable()') Create
