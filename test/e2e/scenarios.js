@@ -112,5 +112,8 @@ describe('Chateau', function() {
             expect(element('#error .alert').count()).toMatch(1);
         });
     });
+    //TODO Add test for `add/table/<db>`
 
+
+    
 });

@@ -747,7 +747,6 @@ function AddFieldCtrl($scope, $http, $location, $routeParams, $window, sharedHea
     $scope.db = $routeParams.db
     $scope.table = $routeParams.table
     sharedHeader.updatePath($scope);
-<<<<<<< HEAD
 
     $scope.types = ['string', 'number', 'boolean', 'date', 'null', 'arbitrary value', 'function'];
     $scope.form = {}
@@ -775,35 +774,6 @@ function AddFieldCtrl($scope, $http, $location, $routeParams, $window, sharedHea
                 }
             });
 
-=======
-
-    $scope.types = ['string', 'number', 'boolean', 'date', 'null', 'arbitrary value', 'function'];
-    $scope.form = {}
-    $scope.form.type = $scope.types[0];
-    $scope.dateDefault = (new Date()).toString()
-
-    $scope.addField = function() {
-        var data = {};
-        data.type = $scope.form.type;
-        if ((data.type !== 'function') && (($scope.form.name == null) || ($scope.form.name === ""))) {
-            $scope.error = 'emptyName';
-        }
-        else {
-            data.name = $scope.form.name;
-            data.value = $('.value').val();
-            data.db = $scope.db;
-            data.table = $scope.table;
-            $http.post('/api/field/add', data).
-            success(function(data) {
-                if (data.error != null) {
-                    h.handleError(data.error);
-                }
-                else {
-                    $location.path('/table/'+$scope.db+'/'+$scope.table);
-                }
-            });
-
->>>>>>> test
         }
     }
 }
