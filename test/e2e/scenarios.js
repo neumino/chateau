@@ -34,6 +34,7 @@ function guid() {
 // Initialize variables used for the test
 var db = s4();
 var table = s4();
+// docs will contain 202 documents
 var docs = [
     { num: 42, str: "Hello", bool: true, nil: null, nested: { field1: 1, field2: 2, field3: 3, field1NotRequired: 4 }, ar: [1,2,3], notRequired: 94 },
     { num: 42, str: "Hello", bool: false, nil: null, nested: { field1: 1, field2: 2, field3: 3 }, ar: [1,2,3] }
@@ -186,7 +187,29 @@ describe('Chateau', function() {
                 done();
             })
         });
+        it('There should be a select/option for each page -- less than 99000 docs', function() {
+            expect(element('option').count()).toMatch(Math.ceil(docs.length/100)*2);
+        });
+        it('Docs should be ordered by id', function() {
+            var ids = []
+            element('td.col-0').query( function(el, done) {
+                el.each( function(i, idContainer) {
+                    ids.push($(idContainer).html());
+                });
+                
+                var orderedIds = [];
+                for(var i=0; i<ids.length; i++) {
+                    orderedIds.push(ids[i]);
+                }
+                orderedIds.sort();
 
+                if (angular.equals(ids, orderedIds) == false) {
+                    throw new Error("The order of field is not the one expected");
+                }
+
+                done();
+            })
+        });
     })
 
 
