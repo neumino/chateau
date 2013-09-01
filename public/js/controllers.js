@@ -1053,6 +1053,8 @@ h.getCurrentTimezone = function() {
     else {
         timezone += '+';
     }
+    // Remove the `-` char if the timezone is < 0
+    timezoneMin = Math.abs(timezoneMin);
     if (timezoneMin/60 < 10) {
         timezone += '0'+timezoneMin/60;
     }
