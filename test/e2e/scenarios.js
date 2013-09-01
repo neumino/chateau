@@ -1,6 +1,7 @@
 'use strict';
-var docs = [ { id: 1 }, { id: 2 }, { id: 3 } ]
 
+
+// Update scope in a e2e test
 angular.scenario.dsl('magic', function() {
     var chain = {};
 
@@ -20,18 +21,30 @@ angular.scenario.dsl('magic', function() {
     };
 });
 
-/* http://docs.angularjs.org/guide/dev_guide.e2e-testing */
+// Geneerate uuid helper
 function s4() {
     return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
 };
 
+// Generate uuid
 function guid() {
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
 
+// Initialize variables used for the test
 var db = s4();
 var table = s4();
+var docs = [
+    { num: 42, str: "Hello", bool: true, nil: null, nested: { field1: 1, field2: 2, field3: 3, field1NotRequired: 4 }, ar: [1,2,3], notRequired: 94 },
+    { num: 42, str: "Hello", bool: false, nil: null, nested: { field1: 1, field2: 2, field3: 3 }, ar: [1,2,3] }
+]
+for(var i=0; i< 100; i++) {
+    docs.push(docs[0]);
+    docs.push(docs[1]);
+}
 
+
+// Rolling the tests
 describe('Chateau', function() {
     describe('view `/`', function() {
         beforeEach(function() {
@@ -146,9 +159,36 @@ describe('Chateau', function() {
             element('.import_btn').click();
             expect(browser().location().path()).toMatch('/table/'+db+'/'+table);
 
-            expect(element('tr:visible').count()).toMatch(docs.length+1);
+            expect(element('tr:visible').count()).toMatch(101); // max elements per page
         });
     })
+
+
+    describe('Testing the table view', function() {
+        beforeEach(function() {
+            browser().navigateTo('/table/'+db+'/'+table);
+        });
+        it('There should be 11 fields and one column for the pound key', function() {
+            expect(element('th:visible').count()).toMatch(12)
+        });
+        it('Fields should be ordered -- pk, occurence, alphabetic', function() {
+            var fields = []
+            element('.field_span').query( function(el, done) {
+                el.each( function(i, field) {
+                    fields.push($(field).html());
+                });
+                
+                var expected = ["id", "ar", "bool", "nil", "num", "str", "nested.field1", "nested.field2", "nested.field3", "nested.field1NotRequired", "notRequired"]
+                if (angular.equals(fields, expected) == false) {
+                    throw new Error("The order of field is not the one expected");
+                }
+
+                done();
+            })
+        });
+
+    })
+
 
     
 });
