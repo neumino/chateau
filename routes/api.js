@@ -435,7 +435,7 @@ module.exports = function(configFile) {
                         bufferStr = '';
                     }
                     else {
-                        if (level !== 0) {
+                        if ((level !== 0) && (level !== 1 || char !== ']')) {
                             bufferStr += char;
                         }
 
@@ -451,6 +451,9 @@ module.exports = function(configFile) {
             }
             doneParsing = true;
             if (bufferAr.length > 0) {
+                // Push the last element
+                bufferAr.push(JSON.parse(bufferStr))
+
                 queriesToDo++;
                 r.db(db).table(table).insert(bufferAr).run( connection, function(error, result) {
                     if (error) errors.push(error)
