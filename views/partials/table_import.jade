@@ -10,5 +10,5 @@ div.section(ng-controller="ImportTableCtrl")
 
         div.alert.empty_field.clear_both(ng-model="error", ng-show="error != undefined") You have to select a file.
         div.clear_both
-            button.float.btn(ng-click='cancel()') Cancel
-            button.float.btn(ng-click='import()') Import file
+            button.float.btn.cancel_btn(ng-click='cancel()') Cancel
+            button.float.btn.import_btn(ng-click='import()') Import file

@@ -1,4 +1,24 @@
 'use strict';
+var docs = [ { id: 1 }, { id: 2 }, { id: 3 } ]
+
+angular.scenario.dsl('magic', function() {
+    var chain = {};
+
+    chain.getScope = function(selector) {
+        var application = this.application;
+        return this.addFutureAction('getting scope', function($window, $document, done) {
+            var scope = $window.angular.element($window.$('.real_file')).scope();
+            var file = new Blob([JSON.stringify(docs)], {type: "text\/plain"});
+            scope.file = file;
+
+            done();
+        })
+    };
+
+    return function() {
+        return chain;
+    };
+});
 
 /* http://docs.angularjs.org/guide/dev_guide.e2e-testing */
 function s4() {
@@ -114,6 +134,21 @@ describe('Chateau', function() {
     });
     //TODO Add test for `add/table/<db>`
 
+    describe('Testing import -- `Holy cow`', function() {
+        beforeEach(function() {
+            browser().navigateTo('/import/'+db+'/'+table);
+        });
+        it('should have a real field `.real_file` for the file', function() {
+            expect(element('.real_file').count()).toMatch(1)
+        });
+        it('should import data', function() {
+            magic().getScope('.real_file');
+            element('.import_btn').click();
+            expect(browser().location().path()).toMatch('/table/'+db+'/'+table);
+
+            expect(element('tr:visible').count()).toMatch(docs.length+1);
+        });
+    })
 
     
 });
