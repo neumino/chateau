@@ -109,7 +109,7 @@ div.table_view(ng-switch="", on="status")
                                 button.float.btn(ng-click='deleteDoc($index)') Delete
                         div.update_form_container.alert.no_border_top(ng-switch-when="update")
                             h3.alert_title Update a document
-                            div.doc_form_container(ng-model="form", ng-include src="'partials/doc_form_field'", onload="pushScope(documents[$index])")
+                            div.doc_form_container(ng-model="form", ng-include='', src="'partials/doc_form_field'", onload="pushScope(documents[$index])")
 
                             div.button_container
                                 button.float.btn(ng-click='cancel()') Cancel

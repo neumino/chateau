@@ -10,7 +10,7 @@ div.table_view
             div(ng-switch-when="ready")
 
                 div.update_form_container
-                    div.doc_form_container(ng-include src="'partials/doc_form_field'")
+                    div.doc_form_container(ng-include="", src="'partials/doc_form_field'")
 
                     div.button_container
                         button.float.btn(ng-click='cancel()') Cancel
