@@ -15,15 +15,15 @@ div.section.add_field_view
 
         label(for='value') Value
         div(ng-switch="", on="form.type")
-            textarea.value(ng-switch-when="string", ng-auto-expand)
-            input.value(ng-switch-when="number", type="text", value="0" )
-            select.value(ng-switch-when="boolean")
+            textarea.value(ng-model="form.value", ng-switch-when="string", ng-auto-expand)
+            input.value(ng-model="form.value", ng-switch-when="number", type="text", value="0" )
+            select.value(ng-model="form.value", ng-switch-when="boolean")
                 option true
                 option false
-            input.value(ng-switch-when="date", type="text", value="{{dateDefault}}" )
-            input.value(ng-switch-when="null", disabled, type="text", value="null" )
-            textarea.value(ng-switch-when="arbitrary value", ng-auto-expand) 
-            textarea.value(ng-switch-when="function", ng-auto-expand)
+            input.value(ng-model="form.value", ng-switch-when="date", type="text", value="{{dateDefault}}" )
+            input.value(ng-model="form.value", ng-switch-when="null", disabled, type="text", value="null" )
+            textarea.value(ng-model="form.value", ng-switch-when="arbitrary value", ng-auto-expand) 
+            textarea.value(ng-model="form.value", ng-switch-when="function", ng-auto-expand)
                 | function(doc) {
                 |    return {
                 |        field_name: "Hello"

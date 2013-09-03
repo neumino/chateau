@@ -761,7 +761,7 @@ function AddFieldCtrl($scope, $http, $location, $routeParams, $window, sharedHea
         }
         else {
             data.name = $scope.form.name;
-            data.value = $('.value').val();
+            data.value = $scope.form.value;
             data.db = $scope.db;
             data.table = $scope.table;
             $http.post('/api/field/add', data).
