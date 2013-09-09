@@ -372,6 +372,7 @@ module.exports = function(configFile) {
         })
     }
     exports.importTable = function (req, res) {
+        //TODO Catch (where?) `Error: ENOSPC, write`
         var db = req.body.db;
         var table = req.body.table;
 
@@ -394,6 +395,7 @@ module.exports = function(configFile) {
         stream.addListener('readable', function() {
             var chunk;
             while (null !== (chunk = stream.read())) {
+                console.log(chunk.length);
                 for(var i=0; i<chunk.length; i++) {
                     var char = chunk[i];
 
@@ -584,6 +586,7 @@ module.exports = function(configFile) {
         var table = req.body.table;
         var path = req.body.name.split('.');
         var name = path[path.length-1];
+        var error = null;
 
         var query = r.db(db).table(table);
         var updateDoc = {};
@@ -608,7 +611,10 @@ module.exports = function(configFile) {
                 query = query.update(updateDoc);
                 break;
             case types[3]://'date':
-                ref[name] = new Date(req.body.value);
+                ref[name] = stringToDate( req.body.value );
+                if ((typeof ref[name].epoch_time != 'number') || (ref[name] != ref[name])) {
+                    error = "Could not parse date";
+                }
                 query = query.update(updateDoc);
                 break;
             case types[4]://'null':
@@ -625,13 +631,21 @@ module.exports = function(configFile) {
                 query = query.update(fn);
                 break;
         }
-        query.run( connection, function(error, result) {
-            if (error) handleError(error);
+        if (error != null) {
             res.json({
                 error: error,
-                result: result
+                result: null
             });
-        })
+        }
+        else {
+            query.run( connection, function(error, result) {
+                if (error) handleError(error);
+                res.json({
+                    error: error,
+                    result: result
+                });
+            })
+        }
     }
 
 
@@ -927,6 +941,13 @@ module.exports = function(configFile) {
             types.push(value.most_frequent_type); 
         }
         return types;
+    }
+    function stringToDate(str) {
+        return {
+            $reql_type$: 'TIME',
+            epoch_time: new Date(str).getTime()/1000,
+            timezone: /.*GMT([^\s]{5,6}).*/.exec(str)[1]
+        }
     }
 
     return exports;

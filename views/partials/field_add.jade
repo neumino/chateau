@@ -10,7 +10,7 @@ div.section.add_field_view
  
 
         label(for='type') Type : 
-        select(ng-model="form.type", name="type")
+        select(ng-model="form.type", name="type", ng-change="changeFieldType()")
             option(ng-repeat="type in types") {{type}}
 
         label(for='value') Value

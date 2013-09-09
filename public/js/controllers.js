@@ -776,6 +776,32 @@ function AddFieldCtrl($scope, $http, $location, $routeParams, $window, sharedHea
 
         }
     }
+    $scope.changeFieldType = function() {
+        switch($scope.form.type) {
+            case 'string':
+                $scope.form.value = ''
+                break;
+            case 'number':
+                $scope.form.value = '0'
+                break;
+            case 'boolean':
+                $scope.form.value = 'true'
+                break;
+            case 'date':
+                $scope.form.value = h.dateToString({
+                    $reql_type$: 'TIME',
+                    epoch_time: Date.now()/1000,
+                    timezone: h.getCurrentTimezone()
+                })
+                break;
+            case 'arbitrary value':
+                $scope.form.value = ''
+                break;
+            case 'function':
+                $scope.form.value = "function(doc) {\n   return {\n       field_name: \"Hello\"\n   }\n}"
+                break;
+        }
+    }
 }
  
 
@@ -944,12 +970,7 @@ h.retrieveDoc = function() {
             h.setValue(newDoc, fieldPath, parseFloat($(field).find('.value').val()))
         }
         else if (type === 'date') {
-            var valueStr = $(field).find('.value').val();
-            value = {
-                $reql_type$: 'TIME',
-                epoch_time: new Date(valueStr).getTime()/1000,
-                timezone: /.*GMT([^\s]{5,6}).*/.exec(valueStr)[1]
-            }
+            var value = h.stringToDate( $(field).find('.value').val() );
             h.setValue(newDoc, fieldPath, value);
         }
         else if (type === 'array') {
@@ -997,16 +1018,24 @@ h.addField = function(field, event) {
 h.handleError = function(error) {
     console.log('Error:')
     console.log(error);
-    var newError = $("<div>", {class: "alert"});
+    var newError = $("<pre>", {class: "alert"});
 
     newError.html('Error:'+error.message);
     $('#error').append(newError);
     newError.fadeIn('fast')
     setTimeout( function() {
         newError.fadeOut('fast', function() { $(this).remove() })
-    }, 2000)
+    }, 3000)
 }
 
+h.stringToDate = function(str) {
+    return {
+        $reql_type$: 'TIME',
+        epoch_time: new Date(str).getTime()/1000,
+        timezone: /.*GMT([^\s]{5,6}).*/.exec(str)[1]
+    }
+
+}
 h.dateToString = function(date) {
     var timezone, timezone_int;
     if (date.timezone != null) {
