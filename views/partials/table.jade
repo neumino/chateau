@@ -52,7 +52,7 @@ div.table_view(ng-switch="", on="status")
                 th(ng-repeat="field in fields", class="col-{{$index}}", ng-class="{cannot_be_updated: $index==0, has_index: field.has_index == true}")
                     div.expand(ng-mousedown="resize($index, $event)")
                         div.field_container(ng-mousedown="stopPropagation($event)")
-                            span.field_span{{field.name}}
+                            span.field_span {{field.name}}
                             div.center_edit_container
                                 a(ng-click="renameFieldConfirm($index)")
                                     i.icon-edit.center_edit
