@@ -27,7 +27,10 @@ module.exports = function(configFile) {
         app.set('view options', {
             layout: false
         });
-        app.use(express.bodyParser());
+        app.use(express.json());
+        app.use(express.urlencoded());
+
+
         app.use(express.methodOverride());
         app.use(express.static(__dirname + '/public'));
         app.use(app.router);
