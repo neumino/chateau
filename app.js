@@ -10,6 +10,16 @@ module.exports = function(configFile) {
 
     var app = module.exports = express();
 
+    process.on('uncaughtException', function(err) {
+        if(err.errno === 'EADDRINUSE') {
+            console.log("Error: Port are already used by another process.\nYou can update config.js to use another port.")
+        }
+        else {
+            throw err;
+        }
+        process.exit(1);
+    })
+
     // Configuration
     app.configure(function(){
         app.set('views', __dirname + '/views');
