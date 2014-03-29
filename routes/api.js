@@ -18,10 +18,7 @@ module.exports = function(configFile) {
         }, function(error, conn) {
             // Throws, if we don't have a connection, we won't do anything...
             if (error) throw error
-            connection = {
-                connection: conn,
-                timeFormat: 'raw'
-            }
+            connection = conn;
         });
     }
     connect();
@@ -38,7 +35,7 @@ module.exports = function(configFile) {
 
     exports.databasesAndTables = function (req, res) {
         if (req.query.db != null) {
-            r.db(req.query.db).tableList().run( connection, function(error, tables) {
+            r.db(req.query.db).tableList().run( connection, {timeFormat: 'raw'}, function(error, tables) {
                 if (error) handleError(error);
                 res.json({
                     error: error,
@@ -58,7 +55,7 @@ module.exports = function(configFile) {
                     }]
                 })
             })('x').default([]) // If ('x') throws, it means there is no database
-            .orderBy('database').run( connection, function(error, dbs) {
+            .orderBy('database').run( connection, {timeFormat: 'raw'}, function(error, dbs) {
                 if (error) handleError(error);
                 res.json({
                     error: error,
@@ -68,7 +65,7 @@ module.exports = function(configFile) {
         }
     }
     exports.databaseAdd = function (req, res) {
-        r.dbCreate(req.body.name).run( connection, function(error, result) {
+        r.dbCreate(req.body.name).run( connection, {timeFormat: 'raw'}, function(error, result) {
             if (error) handleError(error);
             res.json({
                 error: error,
@@ -77,7 +74,7 @@ module.exports = function(configFile) {
         })
     }
     exports.databases = function (req, res) {
-        r.dbList().run( connection, function(error, dbs) {
+        r.dbList().run( connection, {timeFormat: 'raw'}, function(error, dbs) {
             if (error) handleError(error);
             res.json({
                 error: error,
@@ -88,7 +85,7 @@ module.exports = function(configFile) {
     exports.tableAdd = function (req, res) {
         var d = req.body;
         var pk = d.primaryKey || 'id'
-        r.db(d.db).tableCreate(d.table, {primaryKey: pk}).run( connection, function(error, result) {
+        r.db(d.db).tableCreate(d.table, {primaryKey: pk}).run( connection, {timeFormat: 'raw'}, function(error, result) {
             if (error) handleError(error);
             res.json({
                 error: error,
@@ -98,7 +95,7 @@ module.exports = function(configFile) {
     }
     exports.databaseDelete = function (req, res) {
         var d = req.body;
-        r.dbDrop(d.db).run( connection, function(error, result) {
+        r.dbDrop(d.db).run( connection, {timeFormat: 'raw'}, function(error, result) {
             if (error) handleError(error);
             res.json({
                 error: error,
@@ -108,7 +105,7 @@ module.exports = function(configFile) {
     }
     exports.tableDelete = function (req, res) {
         var d = req.body;
-        r.db(d.db).tableDrop(d.table).run( connection, function(error, result) {
+        r.db(d.db).tableDrop(d.table).run( connection, {timeFormat: 'raw'}, function(error, result) {
             if (error) handleError(error);
             res.json({
                 error: error,
@@ -118,7 +115,7 @@ module.exports = function(configFile) {
     }
     exports.tableEmpty = function (req, res) {
         var d = req.body;
-        r.db(d.db).table(d.table).delete().run( connection, function(error, result) {
+        r.db(d.db).table(d.table).delete().run( connection, {timeFormat: 'raw'}, function(error, result) {
             if (error) handleError(error);
             res.json({
                 error: error,
@@ -142,11 +139,11 @@ module.exports = function(configFile) {
         var count;
         var query = r.db(db).table(table);
         if (sample === true) {
-            query = query.sample(sample_size).run( connection, buildKeysResponse);
+            query = query.sample(sample_size).run( connection, {timeFormat: 'raw'}, buildKeysResponse);
         }
         else {
             // Get primary key
-            r.db(db).table(table).info().run( connection, function(error, info) {
+            r.db(db).table(table).info().run( connection, {timeFormat: 'raw'}, function(error, info) {
                 if (error) {
                     handleError(error);
                     res.json({
@@ -163,7 +160,7 @@ module.exports = function(configFile) {
                     var ascDescValue = req.query.ascDescValue || 'asc';
 
                     // Get documents
-                    query.skip(skip).limit(maxCount).count().run( connection, function(error, countResult) { count = countResult;
+                    query.skip(skip).limit(maxCount).count().run( connection, {timeFormat: 'raw'}, function(error, countResult) { count = countResult;
                         if (error) {
                             if (error) handleError(error);
                             res.json({
@@ -216,7 +213,7 @@ module.exports = function(configFile) {
                                     query = query.orderBy(r.desc(order));
                                 }
                             }
-                            if (errorFound === false) query.skip(skip).limit(limit+1).run( connection, buildKeysResponse);
+                            if (errorFound === false) query.skip(skip).limit(limit+1).run( connection, {timeFormat: 'raw'}, buildKeysResponse);
                         }
                     })
                 }
@@ -366,7 +363,7 @@ module.exports = function(configFile) {
             }
         }
        
-        r.db(db).table(table).run( connection, function(error, cursor) {
+        r.db(db).table(table).run( connection, {timeFormat: 'raw'}, function(error, cursor) {
             if (error) handleError(error);
             fetchNext(cursor)
         })
@@ -423,7 +420,7 @@ module.exports = function(configFile) {
                         bufferAr.push(JSON.parse(bufferStr))
                         if (bufferAr.length > 500) {
                             queriesToDo++;
-                            r.db(db).table(table).insert(bufferAr).run( connection, function(error, result) {
+                            r.db(db).table(table).insert(bufferAr).run( connection, {timeFormat: 'raw'}, function(error, result) {
                                 if (error) errors.push(error)
                                 queriesDone++;
                                 if ((doneParsing === true) && (queriesDone === queriesToDo)) {
@@ -457,7 +454,7 @@ module.exports = function(configFile) {
                 bufferAr.push(JSON.parse(bufferStr))
 
                 queriesToDo++;
-                r.db(db).table(table).insert(bufferAr).run( connection, function(error, result) {
+                r.db(db).table(table).insert(bufferAr).run( connection, {timeFormat: 'raw'}, function(error, result) {
                     if (error) errors.push(error)
                     queriesDone++;
                     if ((doneParsing === true) && (queriesDone === queriesToDo)) {
@@ -477,7 +474,7 @@ module.exports = function(configFile) {
         var db = req.body.db;
         var table = req.body.table;
         var id = req.body.id;
-        r.db(db).table(table).get(id).delete().run( connection, function(error, result) {
+        r.db(db).table(table).get(id).delete().run( connection, {timeFormat: 'raw'}, function(error, result) {
             if (error) handleError(error);
             res.json({
                 error: error,
@@ -491,7 +488,7 @@ module.exports = function(configFile) {
         var db = req.body.db;
         var table = req.body.table;
         var doc = req.body.doc;
-        r.db(db).table(table).get(doc[primaryKey]).replace(doc).run( connection, function(error, result) {
+        r.db(db).table(table).get(doc[primaryKey]).replace(doc).run( connection, {timeFormat: 'raw'}, function(error, result) {
             if (error) handleError(error);
             res.json({
                 error: error,
@@ -505,7 +502,7 @@ module.exports = function(configFile) {
         var table = req.body.table;
         var doc = req.body.doc;
 
-        r.db(db).table(table).insert(doc).run( connection, function(error, result) {
+        r.db(db).table(table).insert(doc).run( connection, {timeFormat: 'raw'}, function(error, result) {
             if (error) handleError(error);
             res.json({
                 error: error,
@@ -545,7 +542,7 @@ module.exports = function(configFile) {
                 }
                        
                 return doc.merge().without(fieldObject)
-            }).run( connection, function(error, result) {
+            }).run( connection, {timeFormat: 'raw'}, function(error, result) {
                 if (error) handleError(error);
                 res.json({
                     error: error,
@@ -573,7 +570,7 @@ module.exports = function(configFile) {
         }
         r.db(db).table(table).replace(function(doc) {
                 return doc.without(fieldObject)
-            }).run( connection, function(error, result) {
+            }).run( connection, {timeFormat: 'raw'}, function(error, result) {
                 if (error) handleError(error);
                 res.json({
                     error: error,
@@ -638,7 +635,7 @@ module.exports = function(configFile) {
             });
         }
         else {
-            query.run( connection, function(error, result) {
+            query.run( connection, {timeFormat: 'raw'}, function(error, result) {
                 if (error) handleError(error);
                 res.json({
                     error: error,
@@ -680,7 +677,7 @@ module.exports = function(configFile) {
                     }
                 }
                 return doc.merge(addFieldObject).without(removeFieldObject)
-            }).run( connection, function(error, result) {
+            }).run( connection, {timeFormat: 'raw'}, function(error, result) {
                 if (error) handleError(error);
                 res.json({
                     error: error,
