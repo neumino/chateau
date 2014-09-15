@@ -1,6 +1,6 @@
 {
   "name": "chateau",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "description": "Data explorer for RethinkDB",
   "main": "app.js",
   "directories": {},
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "express": "3.3.4",
-    "jade": "= 1.0.0",
+    "jade": "= 1.0.2",
     "rethinkdb": ">= 1.12.0-0",
     "optimist": " >= 0.6.0",
     "stream": ">= 0.0.1"
