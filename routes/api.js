@@ -343,29 +343,32 @@ module.exports = function(configFile) {
 
 
 
-        stream.emit('data', '[')
-        var fetchNext = function(cursor) {
-            if (cursor.hasNext() === true) {
-                cursor.next( function(error, data) {
-                    if (init === true) {
-                        stream.emit('data', JSON.stringify(data))
-                        init = false;
-                    }
-                    else {
-                        stream.emit('data', ','+JSON.stringify(data))
-                    }
-                    fetchNext(cursor)
-                })
-            }
-            else {
-                stream.emit('data', ']')
-                stream.emit('close')
-            }
-        }
        
         r.db(db).table(table).run( connection, {timeFormat: 'raw'}, function(error, cursor) {
-            if (error) handleError(error);
-            fetchNext(cursor)
+            if (error) {
+                handleError(error);
+            }
+            else {
+                stream.emit('data', '[')
+                var fetchNext = function(err, row) {
+                    if (err) {
+                        stream.emit('data', ']')
+                        stream.emit('close')
+                    }
+                    else {
+                        if (init === true) {
+                            stream.emit('data', JSON.stringify(row))
+                            init = false;
+                        }
+                        else {
+                            stream.emit('data', ','+JSON.stringify(row))
+                        }
+                        console.log(this)
+                        cursor.next(fetchNext);
+                    }
+                }
+                cursor.next(fetchNext)
+            }
         })
     }
     exports.importTable = function (req, res) {
