@@ -1,11 +1,9 @@
-module.exports = function(configFile) {
-    configFile = configFile || 'config.js';
+module.exports = function(config) {
 
     // Import
     var express = require('express'),
         routes = require('./routes'),
-        api = require('./routes/api')(configFile);
-        config = require(configFile);
+        api = require('./routes/api')(config);
 
 
     var app = module.exports = express();
