@@ -4,7 +4,7 @@ module.exports = function(configFile) {
     // Import
     var r = require('rethinkdb'),
         //config = require('../config'),
-        config = require('../'+configFile),
+        config = require(configFile),
         Stream = require('stream'),
         fs = require('fs');
 

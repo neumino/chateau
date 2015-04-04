@@ -5,7 +5,7 @@ module.exports = function(configFile) {
     var express = require('express'),
         routes = require('./routes'),
         api = require('./routes/api')(configFile);
-        config = require('./'+configFile);
+        config = require(configFile);
 
 
     var app = module.exports = express();

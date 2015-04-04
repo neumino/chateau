@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-argv = require('optimist').argv;
+var argv = require('optimist').argv,
+    path = require('path');
 
 if (argv.h || argv.help) {
     console.log([
@@ -13,6 +14,6 @@ if (argv.h || argv.help) {
     process.exit();
 }
 
-var configFile = argv.f || 'config.js';
+var configFile = path.resolve(argv.f || 'config.js');
 
 chateau = require('../app.js')(configFile);
