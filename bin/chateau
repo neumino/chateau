@@ -3,11 +3,11 @@
 var argv = require('optimist').argv,
     path = require('path'),
     fs = require('fs'),
-    configFile = {};
+    configFile = {},
+    configPath;
 
 if (argv.h || argv.help) {
     console.log([
-    "usage: chateau [options]",
     'usage: chateau [options]',
     '',
     'options:',
@@ -18,19 +18,19 @@ if (argv.h || argv.help) {
     process.exit();
 }
 
-configFile = path.resolve(argv.f || 'config.js');
+configPath = path.resolve(argv.f || 'config.js');
 
-if(!fs.existsSync(configFile))
+if(!fs.existsSync(configPath))
 {
     console.warn('Warning:','Configuration file does not exists. Using default one instead.');
-    configFile = path.resolve(__dirname, '../', 'config.template.js');
+    configPath = path.resolve(__dirname, '../', 'config.template.js');
 }
 
-configFile = require(configFile);
+configFile = require(configPath);
 
 if(argv.p)
 {
-  configFile.expressPort = argv.p;
+    configFile.expressPort = argv.p;
 }
 
 require('../app.js')(configFile);
