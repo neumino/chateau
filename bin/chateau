@@ -8,11 +8,12 @@ var argv = require('optimist').argv,
 if (argv.h || argv.help) {
     console.log([
     "usage: chateau [options]",
-    "",
-    "options:",
-    "  -f [config_file]   Default file: config.js",
-    "  -p [server_port]   Default port: 3000",
-    "  -h                 Shows this help",
+    'usage: chateau [options]',
+    '',
+    'options:',
+    '  -f [config_file]   Default file: config.js',
+    '  -p [server_port]   Default port: 3000',
+    '  -h                 Shows this help',
     ].join('\n'));
     process.exit();
 }
