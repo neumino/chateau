@@ -2,7 +2,8 @@
 
 var argv = require('optimist').argv,
     path = require('path'),
-    fs = require('fs');
+    fs = require('fs')
+    configFile = {};
 
 if (argv.h || argv.help) {
     console.log([
@@ -10,12 +11,13 @@ if (argv.h || argv.help) {
     "",
     "options:",
     "  -f [config_file]   Default file: config.js",
+    "  -p [server_port]   Default port: 3000",
     "  -h                 Shows this help",
     ].join('\n'));
     process.exit();
 }
 
-var configFile = path.resolve(argv.f || 'config.js');
+configFile = path.resolve(argv.f || 'config.js');
 
 if(!fs.existsSync(configFile))
 {
@@ -24,4 +26,9 @@ if(!fs.existsSync(configFile))
 }
 
 configFile = require(configFile);
+
+if(argv.p) {
+  configFile.expressPort = argv.p;
+}
+
 require('../app.js')(configFile);
