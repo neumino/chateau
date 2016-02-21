@@ -2,7 +2,7 @@
 
 var argv = require('optimist').argv,
     path = require('path'),
-    fs = require('fs')
+    fs = require('fs'),
     configFile = {};
 
 if (argv.h || argv.help) {
@@ -27,7 +27,8 @@ if(!fs.existsSync(configFile))
 
 configFile = require(configFile);
 
-if(argv.p) {
+if(argv.p)
+{
   configFile.expressPort = argv.p;
 }
 
