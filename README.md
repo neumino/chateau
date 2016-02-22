@@ -45,14 +45,14 @@ exports.network = '127.0.0.1'  // Network the node app will run on
 
 Start the server
 ```
-./bin/chateau [-f config.js]
+./bin/chateau [-f config.js] [-p port]
 ```
 
 ### Features
 - Add/Delete databases
 - Add/Delete tables
 - Browse the documents in a table
-- Order by any fields (see [docs/README.md](https://github.com/neumino/chateau/blob/master/doc/README.md) for the limitations) 
+- Order by any fields (see [docs/README.md](https://github.com/neumino/chateau/blob/master/doc/README.md) for the limitations)
 - Delete/Update a document (hover on a field to display options)
 - Add a document // schema provided
 - Import/export (JSON only)
@@ -95,4 +95,3 @@ PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS 
 FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
-
