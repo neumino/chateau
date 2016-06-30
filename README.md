@@ -1,12 +1,12 @@
 # Chateau - Data explorer for RethinkDB.
 
-RethinkDB already comes with a "data explorer", which is more like a query buider.
+RethinkDB already comes with a "data explorer", which is more like a query builder.
 Chateau is a data explorer where you can manage your data without writing a single query.
 
-It's still an alpha version so many features are missing, but it's enough if you want to
-bootstrap a new application and use Chateau as a panel admin for you data.
+It's still an alpha version, so many features are missing, but it's enough if you want to
+bootstrap a new application and use Chateau as an admin panel for you data.
 
-You can think of Chateau like a PhpMyAdmin for RethinkDB.
+You can think of Chateau like a phpMyAdmin for RethinkDB.
 
 ### Install from npm
 ```
@@ -49,11 +49,11 @@ Start the server
 ```
 
 ### Features
-- Add/Delete databases
-- Add/Delete tables
+- Add/delete databases
+- Add/delete tables
 - Browse the documents in a table
 - Order by any fields (see [docs/README.md](https://github.com/neumino/chateau/blob/master/doc/README.md) for the limitations)
-- Delete/Update a document (hover on a field to display options)
+- Delete/update a document (hover on a field to display options)
 - Add a document // schema provided
 - Import/export (JSON only)
 - Empty a table
@@ -64,7 +64,7 @@ See [docs/README.md](https://github.com/neumino/chateau/blob/master/doc/README.m
 
 
 ### Test
-Start RethinKDB and Chateau, the launch karma.
+Start RethinkDB and Chateau, then launch karma.
 
 ```
 karma start test/config/karma.e2e.js
