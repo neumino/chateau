@@ -7,7 +7,7 @@ div.field(ng-repeat="field in newDocFields")
         
         p {{field.field}}
 
-    {{JSON.stringify(getAttr(newDoc, field.prefix.concat([field.field])))}}
+    | {{JSON.stringify(getAttr(newDoc, field.prefix.concat([field.field])))}}
 
     ng-include(src="'/partials/doc_form_input'", onload="this.newType = computeType(getAttr(newDoc, field.prefix.concat([field.field]), 'raw'))")
 
