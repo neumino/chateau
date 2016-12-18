@@ -61,7 +61,7 @@ function AddDbCtrl($scope, $http, $location, sharedHeader, feedback) {
                 if (data.error != null) {
                     h.handleError(data.error);
                 }
-                else if ((data.result != null) && (data.result.created != 1)) {
+                else if ((data.result != null) && (data.result.dbs_created != 1)) {
                     var error = new Error("The database could not be created")
                     h.handleError(error);
                 }
@@ -113,7 +113,7 @@ function AddTableCtrl($scope, $http, $location, sharedHeader, $route, $routePara
                 if (data.error != null) {
                     h.handleError(data.error);
                 }
-                else if ((data.result != null) && (data.result.created != 1)) {
+                else if ((data.result != null) && (data.result.tables_created != 1)) {
                     h.handleError(new Error("Table not created, reason unknown"));
                 }
                 else {
@@ -137,7 +137,7 @@ function DeleteDbCtrl($scope, $http, $location, $routeParams, $window, sharedHea
             if (data.error != null) {
                 h.handleError(data.error);
             }
-            else if ((data.result != null) && (data.result.dropped != 1)) {
+            else if ((data.result != null) && (data.result.dbs_dropped != 1)) {
                 h.handleError(new Error("Database not deleted, reason unknown"));
             }
             else {
@@ -166,7 +166,7 @@ function DeleteTableCtrl($scope, $http, $location, $routeParams, $window, shared
             if (data.error != null) {
                 h.handleError(data.error);
             }
-            else if ((data.result != null) && (data.result.dropped != 1)) {
+            else if ((data.result != null) && (data.result.tables_dropped != 1)) {
                 h.handleError(new Error("Table not deleted, reason unknown"));
             }
             else {
